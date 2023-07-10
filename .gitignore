@@ -1,0 +1,13 @@
+/.DS_Store
+resources
+com.example.demo.config.secret
+secret
+Secret
+Secret.java
+com.example.demo.config.secret.Secret.java
+
+
+# Project exclude paths
+/.gradle/
+/build/
+/build/classes/java/main/
