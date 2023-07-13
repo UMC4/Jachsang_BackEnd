@@ -1,11 +1,14 @@
 package com.example.demo.src.post;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.post.generalModel.DeleteReq;
+import com.example.demo.src.post.generalModel.HeartPostReq;
 import com.example.demo.src.post.generalModel.PostingRes;
-import com.example.demo.src.post.likeModel.LikeReq;
+import com.example.demo.src.post.generalModel.LikeReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 
 @Service
@@ -29,4 +32,17 @@ public class PostService {
     public boolean scrapPost(LikeReq likeReq) throws BaseException {
         return this.postDao.scrapPost(likeReq);
     }
+
+    public boolean heartPost(HeartPostReq heartPostReq) throws  BaseException {
+        return this.postDao.heartPost(heartPostReq);
+    }
+
+    public boolean deletePost(DeleteReq deleteReq) throws BaseException{
+        return this.postDao.deletePost(deleteReq);
+    }
+
+    public Timestamp extendDeadLine(int postIdx)throws BaseException {
+        return this.postDao.extendDeadLine(postIdx);
+    }
+
 }

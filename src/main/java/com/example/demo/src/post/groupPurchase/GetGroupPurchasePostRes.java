@@ -1,6 +1,7 @@
 package com.example.demo.src.post.groupPurchase;
 
 import com.example.demo.src.post.generalModel.GetGeneralPost;
+import com.example.demo.src.post.generalModel.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +33,7 @@ public class GetGroupPurchasePostRes {
     private boolean hasExtension;
     private boolean calculated;
 
-    public GetGroupPurchasePostRes(GetGeneralPost generalPost, GroupPurchasePost groupPurchasePost){
+    public GetGroupPurchasePostRes(Post generalPost, GroupPurchasePost groupPurchasePost){
         this.postIdx = generalPost.getPostIdx();
         this.categoryIdx = generalPost.getCategoryIdx();
         this.userIdx = generalPost.getUserIdx();

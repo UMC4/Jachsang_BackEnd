@@ -1,6 +1,7 @@
 package com.example.demo.src.post.recipe;
 
 import com.example.demo.src.post.generalModel.GetGeneralPost;
+import com.example.demo.src.post.generalModel.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,7 @@ public class GetRecipePostRes {
     private String contents;
     private String tag;
 
-    public GetRecipePostRes(GetGeneralPost generalPost, RecipePost recipePost){
+    public GetRecipePostRes(Post generalPost, RecipePost recipePost){
         this.postIdx = generalPost.getPostIdx();
         this.categoryIdx = generalPost.getCategoryIdx();
         this.userIdx = generalPost.getUserIdx();

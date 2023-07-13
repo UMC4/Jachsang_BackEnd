@@ -3,21 +3,17 @@ package com.example.demo.src.post;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.category.CATEGORY;
-import com.example.demo.src.post.community.CommunityPostingReq;
 import com.example.demo.src.post.community.GetCommunityPostRes;
-import com.example.demo.src.post.generalModel.GetPostReq;
-import com.example.demo.src.post.generalModel.PostingReq;
-import com.example.demo.src.post.generalModel.PostingRes;
+import com.example.demo.src.post.generalModel.*;
 import com.example.demo.src.post.groupPurchase.GetGroupPurchasePostRes;
-import com.example.demo.src.post.likeModel.LikeReq;
 import com.example.demo.src.post.recipe.GetRecipePostRes;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -30,9 +26,6 @@ public class PostController {
     private final PostProvider postProvider;
     @Autowired
     private final PostService postService;
-    private Object postingReq;
-
-
 
     @Autowired
     public PostController(PostProvider postProvider, PostService postService) {
@@ -77,7 +70,7 @@ public class PostController {
 
     @ResponseBody
     @PostMapping(value = "scrapPost")
-    public BaseResponse<String> createCommunityPost(@RequestBody LikeReq likeReq){
+    public BaseResponse<String> scrapPost(@RequestBody LikeReq likeReq){
         try{
             if(this.postService.scrapPost(likeReq)) return new BaseResponse<>("성공했습니다.");
             // 실패한 경우 예외처리
@@ -85,5 +78,51 @@ public class PostController {
             return new BaseResponse<>(e.getStatus());
         }
         return new BaseResponse<>("실패했습니다.");
+    }
+    @ResponseBody
+    @PostMapping(value = "heartPost")
+    public BaseResponse<String> heartPost(@RequestBody HeartPostReq heartPostReq){
+        try{
+            if(this.postService.heartPost(heartPostReq)) return new BaseResponse<>("성공했습니다.");
+            // 실패한 경우 예외처리
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+        return new BaseResponse<>("실패했습니다.");
+    }
+
+    @ResponseBody
+    @PostMapping(value = "deletePost")
+    public BaseResponse<String> deletePost(@RequestBody DeleteReq deleteReq){
+        try{
+            if(this.postService.deletePost(deleteReq)) return new BaseResponse<>("성공했습니다.");
+            // 실패한 경우 예외처리
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+        return new BaseResponse<>("실패했습니다.");
+    }
+
+    @ResponseBody
+    @GetMapping(value = "getLikeCount")
+    public BaseResponse<Integer> getLikeCount(@RequestBody int postIdx){
+        try{
+            int likeCount = this.postProvider.getLikeCount(postIdx);
+            //if(likeCount == -1) TODO:예외처리하기
+            return new BaseResponse<>(likeCount);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+    @ResponseBody
+    @PatchMapping(value = "extendDeadline")
+    public BaseResponse<Timestamp> extendDeadLine(@RequestBody int posdIdx) {
+        try {
+            Timestamp extended = this.postService.extendDeadLine(posdIdx);
+            //if(extended == null) TODO:예외처리하기
+            return new BaseResponse<>(extended);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 }

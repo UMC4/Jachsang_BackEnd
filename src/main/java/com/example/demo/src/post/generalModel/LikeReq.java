@@ -1,4 +1,4 @@
-package com.example.demo.src.post.likeModel;
+package com.example.demo.src.post.generalModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

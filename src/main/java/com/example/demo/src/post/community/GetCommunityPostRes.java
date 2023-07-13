@@ -1,6 +1,7 @@
 package com.example.demo.src.post.community;
 
 import com.example.demo.src.post.generalModel.GetGeneralPost;
+import com.example.demo.src.post.generalModel.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,7 @@ public class GetCommunityPostRes {
     private int communityDetailIdx;
     private String contents;
 
-    public GetCommunityPostRes(GetGeneralPost generalPost, CommunityPost communityPost) {
+    public GetCommunityPostRes(Post generalPost, CommunityPost communityPost) {
         this.postIdx = generalPost.getPostIdx();
         this.categoryIdx = generalPost.getCategoryIdx();
         this.userIdx = generalPost.getUserIdx();

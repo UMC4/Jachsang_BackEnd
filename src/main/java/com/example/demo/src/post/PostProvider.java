@@ -17,4 +17,7 @@ public class PostProvider {
     public Object getPost(int categoryIdx, GetPostReq getPostReq) throws BaseException {
         return this.postDao.getPost(categoryIdx,getPostReq);
     }
+    public int getLikeCount(int postIdx) throws BaseException{
+        return this.postDao.getLikeCount(postIdx);
+    }
 }
