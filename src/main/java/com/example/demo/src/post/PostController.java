@@ -3,6 +3,7 @@ package com.example.demo.src.post;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.category.CATEGORY;
+import com.example.demo.src.image.PostImageReq;
 import com.example.demo.src.post.community.GetCommunityPostRes;
 import com.example.demo.src.post.generalModel.*;
 import com.example.demo.src.post.groupPurchase.GetGroupPurchasePostRes;
@@ -116,13 +117,14 @@ public class PostController {
     }
     @ResponseBody
     @PatchMapping(value = "extendDeadline")
-    public BaseResponse<Timestamp> extendDeadLine(@RequestBody int posdIdx) {
+    public BaseResponse<Timestamp> extendDeadLine(@RequestBody int postIdx) {
         try {
-            Timestamp extended = this.postService.extendDeadLine(posdIdx);
+            Timestamp extended = this.postService.extendDeadLine(postIdx);
             //if(extended == null) TODO:예외처리하기
             return new BaseResponse<>(extended);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
 }

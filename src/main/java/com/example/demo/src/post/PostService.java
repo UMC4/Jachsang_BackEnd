@@ -1,6 +1,7 @@
 package com.example.demo.src.post;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.image.PostImageReq;
 import com.example.demo.src.post.generalModel.DeleteReq;
 import com.example.demo.src.post.generalModel.HeartPostReq;
 import com.example.demo.src.post.generalModel.PostingRes;
@@ -41,7 +42,7 @@ public class PostService {
         return this.postDao.deletePost(deleteReq);
     }
 
-    public Timestamp extendDeadLine(int postIdx)throws BaseException {
+    public Timestamp extendDeadLine(int postIdx) throws BaseException {
         return this.postDao.extendDeadLine(postIdx);
     }
 

@@ -1,6 +1,7 @@
 package com.example.demo.src.post;
 
 import com.example.demo.src.category.CATEGORY;
+import com.example.demo.src.image.PostImageReq;
 import com.example.demo.src.post.community.CommunityPost;
 import com.example.demo.src.post.community.GetCommunityPostRes;
 import com.example.demo.src.post.generalModel.*;
@@ -192,6 +193,14 @@ public class PostDao {
         }
     }
 
+    public boolean postImage(PostImageReq postImageReq) {
+        String sql = "INSERT INTO Image(postIdx, path) VALUES";
+        for (String path : postImageReq.getPaths()) {
+            sql += "(" + "??<<" + "," + path + ")";
+        }
+        return this.jdbcTemplate.update(sql) == 1 ? true : false;
+    }
+
     public Post _getPost(int postIdx){
         String sql = "SELECT * FROM Post WHERE postIdx = " + postIdx;
         return this.jdbcTemplate.queryForObject(sql, (rs,rowNum)-> new Post(
@@ -241,7 +250,6 @@ public class PostDao {
                     rs.getString("contents"),
                     rs.getString("tag")
             ));
-            // Post와 detail의 정보를 합친 후 리턴하기
             return (RecipePost)detailPost;
         }
         else return null;
