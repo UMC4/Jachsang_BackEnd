@@ -7,6 +7,7 @@ public enum CATEGORY {
     QUESTION(12,"질문있어요"),
     TALKING(13,"대화해요"),
     SHARING(14,"공유해요"),
+    NOTICE(15, "공지"),
     //공동구매(2) : 식재료(1), 생활용품(2), 기타(3)
     GROUP_PURCHASE(20,"공동구매"),
     FOODS(21,"식재료"),
