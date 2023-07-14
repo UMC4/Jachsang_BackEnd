@@ -33,15 +33,6 @@ public class PostDao {
         this.mapper = new ObjectMapper();
     }
 
-    /*	3.1 커뮤니티
-    Post : postIdx; categoryIdx; userIdx; title; viewCount; likeCount; createAt; updateAt; url;
-    GroupPurchaseDetail : groupPurchaseDetailIdx; postIdx; productName; productURL; singlePrice;
-                          deliveryFee; members; deadline;hasExtension; calculated;
-    CommunityDetail :     communityDetailIdx; postIdx; contents;
-    RecipeDetail :        recipeDetailIdx; postIdx; contents; tag;
-    PostingRes :          categoryIdx; userIdx; title; createAt; url;
-     */
-
     // TODO : 사진 올리기 추가해야한다.
     // 글쓰기
     public PostingRes posting(int boardIdx, int categoryIdx, HashMap<String,Object> postingReq) {
@@ -114,7 +105,6 @@ public class PostDao {
         // 기본정보와 detail 정보 불러오기
         Object generalPost = _getPost(getPostReq.getPostIdx()),
                 detailPost = _getDetailPost(categoryIdx,getPostReq.getPostIdx());
-        // 기본 정보(Post의 정보)를 불러오기 위한 sql문
         
         // 조회수 1 증가시키기 위해 sql문 작성 및 실행
         String viewUpdateSql = "UPDATE Post set viewCount = viewCount+1 WHERE postIdx = "+getPostReq.getPostIdx();
@@ -132,7 +122,80 @@ public class PostDao {
         }
         else return null;
     }
+    // 글 삭제
+    public boolean deletePost(DeleteReq deleteReq) {
+        // 결과 확인용 변수 선언 - Post(general)와 Detail 각각 준비한다.
+        int general = 0, detail = 0, image = 0;
+        // 게시판 종류를 확인한다.
+        int boardIdx = CATEGORY.getNumber(deleteReq.getBoard());
+        // 게시판 종류를 저장한다.
+        String board = boardIdx == 10 ? "Community" :
+                (boardIdx == 20 ? "GroupPurchase" :
+                        (boardIdx == 30 ? "Recipe" : null));
+        // 잘못된 게시판 이름 입력 시
+        if (board == null) return false;
+        // Detail의 내용을 먼저 없애야 한다 (ANOMALY 예방)
+        String deleteDetailSql = "DELETE FROM "+board+"Detail WHERE postIdx = "+deleteReq.getPostIdx();
+        // Image 내용을 삭제한다.
+        String deleteImageSql = "DELETE FROM Image WHERE postIdx = "+deleteReq.getPostIdx();
+        // 마지막으로 Post 내용을 삭제한다.
+        String deleteGeneralSql = "DELETE FROM Post WHERE postIdx = "+deleteReq.getPostIdx();
+        // sql문 실행
+        detail = this.jdbcTemplate.update(deleteDetailSql);
+        general = this.jdbcTemplate.update(deleteGeneralSql);
+        image = this.jdbcTemplate.update(deleteImageSql);
 
+        if(detail * general * image == 1) return true;
+        else return false;
+    }
+    // 글 수정
+    public Object editPost(EditPostReq editPostReq){
+        // postIdx값 저장
+        int postIdx = editPostReq.getPostIdx();
+        // board값 추출
+        String board = _getBoardName(_getBoardIdx(postIdx));
+        // Post 수정 sql
+        String postEditSql = "UPDATE Post SET postIdx = "+postIdx;
+        String postEditCondition = " WHERE postIdx = "+postIdx;
+        
+        // Detail 수정 sql
+        String frontSql = "UPDATE "+board+"Detail";
+        String behindSql = " SET postIdx"+" = "+postIdx;
+        String condition = " WHERE postIdx = "+postIdx;
+
+        // 수정 과정
+        for(ParamPack parameter : editPostReq.getParams()){
+            // parameter를 param(칼럼)과 value(값)으로 구분
+            String param = parameter.getParamName();
+            Object value = parameter.getParamValue();
+            // Post의 데이터 중 변경 가능 사항 sql문 작성 : 제목과 카테고리 밖에 없음
+            if(param.equals("title") || param.equals("categoryIdx")) {
+                // String형 자료는 ""로 감싸야하므로 처리함
+                if(param.equals("title")) postEditSql = postEditSql +", "+ param + " = " + "\"" + value +"\"";
+                // 아닌건 그냥 추가
+                else postEditSql = postEditSql + ", " + param + " = "+ value;
+            }
+            // Detail의 데이터 변경 sql문 작성
+            else {
+                // String 자료
+                if(param.equals("contents") || param.equals("url") || param.equals("productName") ||
+                        param.equals("productUrl") || param.equals("tag")) {
+                    behindSql = behindSql +", "+ param + " = " + "\"" + value +"\"" ;
+                }
+                // 아닌 것
+                else behindSql = behindSql+ ", " + param+" = "+value ;
+            }
+        }
+        // sql문 합치기
+        postEditSql = postEditSql + ", updateAt = now()" + postEditCondition;
+        String detailEditSql = frontSql + behindSql + condition;
+        // sql문 실행하기
+        this.jdbcTemplate.update(postEditSql+";");
+        this.jdbcTemplate.update(detailEditSql+";");
+        return "성공했습니다";
+    }
+
+    // 관심목록 추가
     public boolean scrapPost(LikeReq likeReq){
         // 어떤 유저가 어떤 게시글에 스크랩을 눌렀는가를 LikedPost 테이블에 기록하는 과정
         String sql = "INSERT INTO LikedPost(postIdx, userIdx) VALUES (?,?)";
@@ -147,74 +210,26 @@ public class PostDao {
             String likeCountIncreaseSql = "UPDATE Post SET likeCount = likeCount + 1 WHERE postIdx = "+likeReq.getPostIdx();
             // 좋아요 수를 증가시키는 것을 실패한 경우
             if(this.jdbcTemplate.update(likeCountIncreaseSql) == 0) return false;
-            // 좋아요 수를 증가시키고, 해당 게시글의 좋아요 수를 불러오는 과정
+                // 좋아요 수를 증가시키고, 해당 게시글의 좋아요 수를 불러오는 과정
             else {
                 return true;
             }
         }
     }
 
+    // 좋아요 누르기
     public boolean heartPost(HeartPostReq heartPostReq){
+        // sql 작성
         String sql = "UPDATE CommunityDetail SET heartCount = heartCount+1 WHERE postIdx = "+heartPostReq.getPostIdx();
         if(this.jdbcTemplate.update(sql) == 0) return false;
         else return true;
     }
-    public boolean deletePost(DeleteReq deleteReq) {
-        int general = 0, detail = 0;
-        int boardIdx = CATEGORY.getNumber(deleteReq.getBoard());
-        String board = boardIdx == 10 ? "Community" :
-                (boardIdx == 20 ? "GroupPurchase" :
-                        (boardIdx == 30 ? "Recipe" : null));
-        if (board == null) return false;
-
-        String deleteDetailSql = "DELETE FROM "+board+"Detail WHERE postIdx = "+deleteReq.getPostIdx();
-        String deleteGeneralSql = "DELETE FROM Post WHERE postIdx = "+deleteReq.getPostIdx();
-        detail = this.jdbcTemplate.update(deleteDetailSql);
-        general = this.jdbcTemplate.update(deleteGeneralSql);
-
-        if(detail * general == 1) return true;
-        else return false;
-    }
-
-    public Object editPost(EditPostReq editPostReq){
-        int postIdx = editPostReq.getPostIdx();
-        String board = _getBoardName(_getBoardIdx(postIdx));
-        // Post 수정
-        String postEditSql = "UPDATE Post SET postIdx = "+postIdx;
-        String postEditCondition = " WHERE postIdx = "+postIdx;
-        
-        //Detail 수정
-        String frontSql = "UPDATE "+board+"Detail";
-        String behindSql = " SET postIdx"+" = "+postIdx;
-        String condition = " WHERE postIdx = "+postIdx;
-        for(ParamPack parameter : editPostReq.getParams()){
-            String param = parameter.getParamName();
-            Object value = parameter.getParamValue();
-            if(param.equals("title") || param.equals("categoryIdx")) {
-                if(param.equals("title")) postEditSql = postEditSql +", "+ param + " = " + "\"" + value +"\"";
-                else postEditSql = postEditSql + ", " + param + " = "+ value;
-
-            }
-            else {
-                if(param.equals("contents") || param.equals("url") || param.equals("productName") ||
-                        param.equals("productUrl") || param.equals("tag")) {
-                    behindSql = behindSql +", "+ param + " = " + "\"" + value +"\"" ;
-                }
-                else behindSql = behindSql+ ", " + param+" = "+value ;
-            }
-        }
-        postEditSql += postEditCondition;
-        String detailEditSql = frontSql + behindSql + condition;
-        System.out.println(postEditSql);
-        System.out.println(detailEditSql);
-        this.jdbcTemplate.update(postEditSql+";");
-        this.jdbcTemplate.update(detailEditSql+";");
-        return "성공했습니다";
-    }
-
+    
+    // 게시글이 관심목록으로 등록된 수 반환 
     public int getLikeCount(int postIdx) {
         int likeCount = -1;
         try{
+            //sql 작성
             String sql = "SELECT likeCount FROM Post WHERE postIdx = "+postIdx;
             likeCount = this.jdbcTemplate.queryForObject(sql,int.class);
             }catch(Exception e){
@@ -222,9 +237,11 @@ public class PostDao {
             }
         return likeCount;
     }
-
+    
+    // 공구 - 마감기한 연장
     public Timestamp extendDeadLine(int postIdx){
         try{
+            // sql 작성
             String sql = "SELECT deadline FROM CommunityDetail WHERE postIdx = "+postIdx;
             return this.jdbcTemplate.queryForObject(sql,Timestamp.class);
         } catch (Exception e) {
@@ -232,6 +249,11 @@ public class PostDao {
         }
     }
 
+
+
+
+    //////////////////////// 내부 메서드 //////////////////////////////
+    // 사진 첨부 메서드
     public boolean postImage(int postIdx, int userIdx, List<String> paths) {
         String sql = "INSERT INTO Image(postIdx, userIdx, path) VALUES";
         for (String path : paths) {
