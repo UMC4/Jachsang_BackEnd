@@ -18,10 +18,12 @@ public class CommentDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
     public int commenting(CommentingReq commeningReq) {
-        String sql = "INSERT INTO Comment(postIdx,parentCommentIdx,userIdx,contents,likeCount,createAt,updateAt)"
-                +"VALUES (?,?,?,?,0,now(),now())";
-        Object[] param = { commeningReq.getPostIdx(), commeningReq.getParentCommentIdx(),
-                commeningReq.getUserIdx(),commeningReq.getContents()};
+        String sql = "INSERT INTO (postIdx,userIdx," +
+                "parentCommentIdx,childCommentIdx,commentFamily," +
+                "likeCount,contents,createAt,updateAt)"
+                +"VALUES (?,?,?,0,?,?,0,now(),now())";
+        Object[] param = { commeningReq.getPostIdx(), commeningReq.getUserIdx(),
+                commeningReq.getParentCommentIdx(), commeningReq.getContents()};
         return this.jdbcTemplate.queryForObject(sql,param,int.class);
     }
 
@@ -42,16 +44,43 @@ public class CommentDao {
         return this.jdbcTemplate.update(sql);
     }
     public Comment getComment(int commentIdx) {
-        String sql = "SELECT * FROM Comment(postIdx,userIdx,contents,parentCommentIdx,createAt,updateAt,likeCount) WHERE commentIdx = " + commentIdx;
+        String sql = "SELECT * FROM Comment(postIdx,userIdx,parentCommentIdx,childCommentIdx," +
+                "commentFamily,likeCount,contents,createAt,updateAt) " +
+                "WHERE commentIdx = " + commentIdx;
         return this.jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new Comment(
                 commentIdx,
                 rs.getInt("postIdx"),
-                rs.getInt("parentCommentIdx"),
                 rs.getInt("userIdx"),
+                rs.getInt("parentCommentIdx"),
+                rs.getInt("childCommentIdx"),
+                rs.getInt("commentFamily"),
                 rs.getInt("likeCount"),
                 rs.getString("contents"),
                 rs.getTimestamp("createAt"),
                 rs.getTimestamp("updateAt")
         ));
+    }
+
+    public int deleteComment(int commentIdx) {
+        int parentIdx = _getParentCommentIdx(commentIdx);
+        int childIdx = _getChildCommentIdx(commentIdx);
+        String deleteSql;
+        // 최상위 부모 댓글인 경우
+        if(parentIdx == 0) {
+            // 자식 댓글이 없는 경우 -> 완전 삭제
+            if(childIdx == 0)
+                deleteSql = "DELETE FROM Comment WHERE commentIdx = "+
+        }
+
+        return 0;
+    }
+
+    public int _getParentCommentIdx(int commentIdx){
+        String getParentIdxSql = "SELECT parentCommentIdx FROM Comment WHERE commentIdx = "+commentIdx;
+        return this.jdbcTemplate.queryForObject(getParentIdxSql,int.class);
+    }
+    public int _getChildCommentIdx(int commentIdx){
+        String getChildIdxSql = "SELECT childCommentIdx FROM Comment WHERE commentIdx = "+commentIdx;
+        return this.jdbcTemplate.queryForObject(getChildIdxSql,int.class);
     }
 }

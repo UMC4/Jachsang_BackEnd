@@ -15,8 +15,10 @@ import java.sql.Timestamp;
 public class Comment {
     private int commentIdx;
     private int postIdx;
-    private int parentCommentIdx;
     private int userIdx;
+    private int parentCommentIdx;
+    private int childCommentIdx;
+    private int commentFamily;
     private int likeCount;
     private String contents;
     private Timestamp createAt;

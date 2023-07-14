@@ -50,6 +50,8 @@ public class PostController {
     @GetMapping(value ="get")
     public BaseResponse<Object> getPost(@RequestBody GetPostReq getPostReq){
         try{
+
+
             int boardIdx = 10*this.postProvider._getBoardIdxOf(getPostReq.getPostIdx());
             if(boardIdx == 10){
                 Object result = (GetCommunityPostRes)this.postProvider.getPost(boardIdx,getPostReq);

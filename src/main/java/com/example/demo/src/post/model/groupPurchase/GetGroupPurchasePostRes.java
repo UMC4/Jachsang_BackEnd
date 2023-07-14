@@ -1,5 +1,6 @@
 package com.example.demo.src.post.model.groupPurchase;
 
+import com.example.demo.src.post.model.generalModel.Image;
 import com.example.demo.src.post.model.generalModel.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,12 +8,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetGroupPurchasePostRes {
+public class GetGroupPurchasePostRes extends Image {
     private int postIdx;
     private int categoryIdx;
     private int userIdx;
@@ -32,7 +34,8 @@ public class GetGroupPurchasePostRes {
     private boolean hasExtension;
     private boolean calculated;
 
-    public GetGroupPurchasePostRes(Post generalPost, GroupPurchasePost groupPurchasePost){
+    public GetGroupPurchasePostRes(Post generalPost, GroupPurchasePost groupPurchasePost, List<String> paths){
+        super(paths);
         this.postIdx = generalPost.getPostIdx();
         this.categoryIdx = generalPost.getCategoryIdx();
         this.userIdx = generalPost.getUserIdx();

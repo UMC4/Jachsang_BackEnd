@@ -32,7 +32,6 @@ public class PostDao {
         this.mapper = new ObjectMapper();
     }
 
-    // TODO : 사진 올리기 추가해야한다. -- > 이거때문에 인텔리제이 오류남
     // 글쓰기
     public PostingRes posting(int boardIdx, int categoryIdx, HashMap<String,Object> postingReq) {
         // 입력받은 정보를 general information, specific information으로 구분하는 작업
@@ -92,13 +91,13 @@ public class PostDao {
         // 반환할 응답 생성
         PostingRes postingRes = new PostingRes(postIdx, categoryIdx, general.getCategory(), general.getUserIdx(), general.getTitle(), "null");
         // 응답 반환
-
+        
+        //이미지 등록
+        //여기서 이미지 없을 때 예외처리 해야됨
         postImage(postIdx,(List<String>)postingReq.get("paths"));
 
         return postingRes;
     }
-
-    //TODO : 사진 불러오기 추가해야 한다. --> 이거 때문에 sql은 작동하는데 인텔리제이에서 오류남
 
     // 글보기
     public Object getPost(int categoryIdx, GetPostReq getPostReq) {
@@ -106,20 +105,23 @@ public class PostDao {
         // 기본정보와 detail 정보 불러오기
         Object generalPost = _getPost(getPostReq.getPostIdx()),
                 detailPost = _getDetailPost(categoryIdx,getPostReq.getPostIdx());
-        
         // 조회수 1 증가시키기 위해 sql문 작성 및 실행
         String viewUpdateSql = "UPDATE Post set viewCount = viewCount+1 WHERE postIdx = "+getPostReq.getPostIdx();
         this.jdbcTemplate.update(viewUpdateSql);
 
+        String getImageSql = "SELECT path FROM Image WHERE imageIdx = "+getPostReq.getPostIdx();
+        List<String> paths = this.jdbcTemplate.query(getImageSql, (rs,rowNum) -> new String(
+                rs.getString("path")
+        ));
         // Post와 detail의 정보를 합친 후 리턴하기
         if (categoryIdx == 10) {
-            return new GetCommunityPostRes((Post)generalPost, (CommunityPost)detailPost);
+            return new GetCommunityPostRes((Post)generalPost, (CommunityPost)detailPost,paths);
         }
         else if(categoryIdx == 20) {
-            return new GetGroupPurchasePostRes((Post)generalPost,(GroupPurchasePost)detailPost);
+            return new GetGroupPurchasePostRes((Post)generalPost,(GroupPurchasePost)detailPost,paths);
         }
         else if (categoryIdx == 30) {
-            return new GetRecipePostRes((Post)generalPost, (RecipePost)detailPost);
+            return new GetRecipePostRes((Post)generalPost, (RecipePost)detailPost,paths);
         }
         else return null;
     }

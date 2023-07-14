@@ -1,5 +1,6 @@
 package com.example.demo.src.post.model.community;
 
+import com.example.demo.src.post.model.generalModel.Image;
 import com.example.demo.src.post.model.generalModel.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,12 +8,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetCommunityPostRes {
+public class GetCommunityPostRes extends Image {
     private int postIdx;
     private int categoryIdx;
     private int userIdx;
@@ -25,7 +27,8 @@ public class GetCommunityPostRes {
     private int communityDetailIdx;
     private String contents;
 
-    public GetCommunityPostRes(Post generalPost, CommunityPost communityPost) {
+    public GetCommunityPostRes(Post generalPost, CommunityPost communityPost, List<String> paths) {
+        super(paths);
         this.postIdx = generalPost.getPostIdx();
         this.categoryIdx = generalPost.getCategoryIdx();
         this.userIdx = generalPost.getUserIdx();
