@@ -1,7 +1,6 @@
-package com.example.demo.src.post.groupPurchase;
+package com.example.demo.src.post.model.groupPurchase;
 
-import com.example.demo.src.post.generalModel.GetGeneralPost;
-import com.example.demo.src.post.generalModel.Post;
+import com.example.demo.src.post.model.generalModel.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.example.demo.src.post.generalModel;
+package com.example.demo.src.comment.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,12 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostingRes {
+public class CommentingReq {
     private int postIdx;
-    private int categoryIdx;
-    private String category;
+    private int parentCommentIdx;
     private int userIdx;
-    private String title;
-    private String url;
-
+    private String contents;
 }

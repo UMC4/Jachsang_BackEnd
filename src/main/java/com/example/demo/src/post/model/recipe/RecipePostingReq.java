@@ -1,7 +1,6 @@
-package com.example.demo.src.post.recipe;
+package com.example.demo.src.post.model.recipe;
 
-import com.example.demo.src.post.generalModel.Post;
-import com.example.demo.src.post.generalModel.PostingReq;
+import com.example.demo.src.post.model.generalModel.PostingReq;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

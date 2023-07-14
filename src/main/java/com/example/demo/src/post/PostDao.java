@@ -1,24 +1,23 @@
 package com.example.demo.src.post;
 
-import com.example.demo.src.category.CATEGORY;
-import com.example.demo.src.post.community.CommunityPost;
-import com.example.demo.src.post.community.GetCommunityPostRes;
-import com.example.demo.src.post.generalModel.*;
-import com.example.demo.src.post.community.CommunityPostingReq;
-import com.example.demo.src.post.groupPurchase.GetGroupPurchasePostRes;
-import com.example.demo.src.post.groupPurchase.GroupPurchasePost;
-import com.example.demo.src.post.groupPurchase.GroupPurchasePostingReq;
-import com.example.demo.src.post.generalModel.LikeReq;
-import com.example.demo.src.post.recipe.GetRecipePostRes;
-import com.example.demo.src.post.recipe.RecipePost;
-import com.example.demo.src.post.recipe.RecipePostingReq;
+import com.example.demo.src.comment.model.CommentingReq;
+import com.example.demo.src.comment.model.EditCommentReq;
+import com.example.demo.src.post.model.community.CommunityPost;
+import com.example.demo.src.post.model.community.GetCommunityPostRes;
+import com.example.demo.src.post.model.community.CommunityPostingReq;
+import com.example.demo.src.post.model.generalModel.*;
+import com.example.demo.src.post.model.groupPurchase.GetGroupPurchasePostRes;
+import com.example.demo.src.post.model.groupPurchase.GroupPurchasePost;
+import com.example.demo.src.post.model.groupPurchase.GroupPurchasePostingReq;
+import com.example.demo.src.post.model.recipe.GetRecipePostRes;
+import com.example.demo.src.post.model.recipe.RecipePost;
+import com.example.demo.src.post.model.recipe.RecipePostingReq;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 
@@ -284,6 +283,8 @@ public class PostDao {
             return 0;
         }
     }
+
+
 
     //////////////////////// 내부 메서드 //////////////////////////////
 

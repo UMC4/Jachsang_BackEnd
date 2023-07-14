@@ -1,4 +1,4 @@
-package com.example.demo.src.post.generalModel;
+package com.example.demo.src.post.model.community;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetPostReq {
-    private String boardName;
-    private int postIdx;
+public class CommunityPost {
+    private int communityDetailIdx;
+    private String contents;
 }

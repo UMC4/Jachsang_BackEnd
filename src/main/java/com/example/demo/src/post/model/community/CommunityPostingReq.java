@@ -1,13 +1,10 @@
-package com.example.demo.src.post.community;
+package com.example.demo.src.post.model.community;
 
-import com.example.demo.src.post.generalModel.Post;
-import com.example.demo.src.post.generalModel.PostingReq;
+import com.example.demo.src.post.model.generalModel.PostingReq;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.sql.Timestamp;
 
 @Getter
 @Setter

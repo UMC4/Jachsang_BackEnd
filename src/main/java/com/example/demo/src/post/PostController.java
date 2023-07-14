@@ -3,18 +3,18 @@ package com.example.demo.src.post;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.category.CATEGORY;
-import com.example.demo.src.image.PostImageReq;
-import com.example.demo.src.post.community.GetCommunityPostRes;
-import com.example.demo.src.post.generalModel.*;
-import com.example.demo.src.post.groupPurchase.GetGroupPurchasePostRes;
-import com.example.demo.src.post.recipe.GetRecipePostRes;
+import com.example.demo.src.comment.model.CommentingReq;
+import com.example.demo.src.comment.model.EditCommentReq;
+import com.example.demo.src.post.model.community.GetCommunityPostRes;
+import com.example.demo.src.post.model.generalModel.*;
+import com.example.demo.src.post.model.groupPurchase.GetGroupPurchasePostRes;
+import com.example.demo.src.post.model.recipe.GetRecipePostRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -34,7 +34,7 @@ public class PostController {
     }
     //글쓰기
     @ResponseBody
-    @PostMapping(value = "createPost")
+    @PostMapping(value = "create")
     public BaseResponse<PostingRes> createPost(@RequestBody Object postingReq){
         try{
             HashMap<String,Object> req = (LinkedHashMap)postingReq;
@@ -47,7 +47,7 @@ public class PostController {
         }
     }
     @ResponseBody
-    @GetMapping(value ="getPost")
+    @GetMapping(value ="get")
     public BaseResponse<Object> getPost(@RequestBody GetPostReq getPostReq){
         try{
             int boardIdx = 10*this.postProvider._getBoardIdxOf(getPostReq.getPostIdx());
@@ -70,7 +70,7 @@ public class PostController {
     }
 
     @ResponseBody
-    @DeleteMapping(value = "deletePost")
+    @DeleteMapping(value = "delete")
     public BaseResponse<String> deletePost(@RequestParam("postIdx") int postIdx){
         try{
             if(this.postService.deletePost(postIdx)) return new BaseResponse<>("성공했습니다.");
@@ -82,7 +82,7 @@ public class PostController {
     }
 
     @ResponseBody
-    @PatchMapping(value = "editPost")
+    @PatchMapping(value = "update")
     public BaseResponse<Object> editPost(@RequestBody EditPostReq editPostReq) {
         try{
             // Object 받고, 요청 시 postIdx 반드시 포함하도록 하면 어떨까
@@ -95,7 +95,7 @@ public class PostController {
 
     //TODO : 게시글 스크랩 취소 API 작성해야함.
     @ResponseBody
-    @PostMapping(value = "scrapPost")
+    @PostMapping(value = "scrap")
     public BaseResponse<String> scrapPost(@RequestBody LikeReq likeReq){
         try{
             if(this.postService.scrapPost(likeReq)) return new BaseResponse<>("성공했습니다.");
@@ -106,7 +106,7 @@ public class PostController {
         return new BaseResponse<>("실패했습니다.");
     }
     @ResponseBody
-    @PostMapping(value = "cancelScrapPost")
+    @PostMapping(value = "scrap/cancel")
     public BaseResponse<String> cancelScrapPost(@RequestBody LikeReq likeReq){
         try{
             if(this.postService.cancelScrapPost(likeReq)) return new BaseResponse<>("성공했습니다.");
@@ -118,7 +118,7 @@ public class PostController {
     }
     //TODO : 게시글 하트 취소 API 작성해야함.
     @ResponseBody
-    @PostMapping(value = "heartPost")
+    @PostMapping(value = "heart")
     public BaseResponse<String> heartPost(@RequestBody HeartPostReq heartPostReq){
         try{
             if(this.postService.heartPost(heartPostReq)) return new BaseResponse<>("성공했습니다.");
@@ -130,7 +130,7 @@ public class PostController {
     }
 
     @ResponseBody
-    @PostMapping(value = "cancelHeartPost")
+    @PostMapping(value = "heart/cancel")
     public BaseResponse<String> cancelHeartPost(@RequestBody HeartPostReq heartPostReq){
         try{
             if(this.postService.cancelHeartPost(heartPostReq)) return new BaseResponse<>("성공했습니다.");
@@ -142,7 +142,7 @@ public class PostController {
     }
 
     @ResponseBody
-    @GetMapping(value = "getLikeCount")
+    @GetMapping(value = "get/like")
     public BaseResponse<Integer> getLikeCount(@RequestParam("postIdx") int postIdx){
         try{
             int likeCount = this.postProvider.getLikeCount(postIdx);
@@ -153,7 +153,7 @@ public class PostController {
         }
     }
     @ResponseBody
-    @PatchMapping(value = "extendDeadline")
+    @PatchMapping(value = "update/deadline")
     public BaseResponse<String> extendDeadLine(@RequestParam("postIdx") int postIdx) {
         try {
             this.postService.extendDeadLine(postIdx);
@@ -163,5 +163,6 @@ public class PostController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
 
 }

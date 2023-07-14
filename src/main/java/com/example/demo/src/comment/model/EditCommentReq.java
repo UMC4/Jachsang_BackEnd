@@ -1,4 +1,4 @@
-package com.example.demo.src.post.recipe;
+package com.example.demo.src.comment.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,11 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecipePost {
-
-    private int recipeDetailIdx;
+public class EditCommentReq {
+    private int commentIdx;
     private String contents;
-    private String tag;
-
-
 }

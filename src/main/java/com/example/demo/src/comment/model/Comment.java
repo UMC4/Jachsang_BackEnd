@@ -1,4 +1,4 @@
-package com.example.demo.src.post.generalModel;
+package com.example.demo.src.comment.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,18 +7,18 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetGeneralPost {
+public class Comment {
+    private int commentIdx;
     private int postIdx;
-    private int categoryIdx;
+    private int parentCommentIdx;
     private int userIdx;
-    private String title;
-    private int viewCount;
     private int likeCount;
+    private String contents;
     private Timestamp createAt;
     private Timestamp updateAt;
-    private String url;
 }

@@ -1,17 +1,19 @@
-package com.example.demo.src.post.generalModel;
+package com.example.demo.src.post.model.recipe;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EditPostReq {
-    private int postIdx;
-    private List<ParamPack> params;
+public class RecipePost {
+
+    private int recipeDetailIdx;
+    private String contents;
+    private String tag;
+
+
 }

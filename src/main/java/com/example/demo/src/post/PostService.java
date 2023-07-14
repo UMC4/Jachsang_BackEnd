@@ -1,12 +1,15 @@
 package com.example.demo.src.post;
 
 import com.example.demo.config.BaseException;
-import com.example.demo.src.image.PostImageReq;
-import com.example.demo.src.post.generalModel.*;
+import com.example.demo.src.comment.model.CommentingReq;
+import com.example.demo.src.comment.model.EditCommentReq;
+import com.example.demo.src.post.model.generalModel.EditPostReq;
+import com.example.demo.src.post.model.generalModel.HeartPostReq;
+import com.example.demo.src.post.model.generalModel.LikeReq;
+import com.example.demo.src.post.model.generalModel.PostingRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.HashMap;
 
 @Service
@@ -51,5 +54,6 @@ public class PostService {
     public Object editPost(EditPostReq editPostReq) throws BaseException{
         return this.postDao.editPost(editPostReq);
     }
+
 
 }

@@ -1,19 +1,17 @@
-package com.example.demo.src.post.community;
+package com.example.demo.src.post.model.recipe;
 
-import com.example.demo.src.post.generalModel.GetGeneralPost;
-import com.example.demo.src.post.generalModel.Post;
+import com.example.demo.src.post.model.generalModel.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetCommunityPostRes {
+public class GetRecipePostRes {
     private int postIdx;
     private int categoryIdx;
     private int userIdx;
@@ -23,10 +21,11 @@ public class GetCommunityPostRes {
     private Timestamp createAt;
     private Timestamp updateAt;
     private String url;
-    private int communityDetailIdx;
+    private int recipeDetailIdx;
     private String contents;
+    private String tag;
 
-    public GetCommunityPostRes(Post generalPost, CommunityPost communityPost) {
+    public GetRecipePostRes(Post generalPost, RecipePost recipePost){
         this.postIdx = generalPost.getPostIdx();
         this.categoryIdx = generalPost.getCategoryIdx();
         this.userIdx = generalPost.getUserIdx();
@@ -36,7 +35,8 @@ public class GetCommunityPostRes {
         this.createAt = generalPost.getCreateAt();
         this.updateAt = generalPost.getUpdateAt();
         this.url = generalPost.getUrl();
-        this.communityDetailIdx = communityPost.getCommunityDetailIdx();
-        this.contents = communityPost.getContents();
+        this.recipeDetailIdx = recipePost.getRecipeDetailIdx();
+        this.contents = recipePost.getContents();
+        this.tag = recipePost.getTag();
     }
 }

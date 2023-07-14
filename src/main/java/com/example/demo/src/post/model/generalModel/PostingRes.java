@@ -1,24 +1,20 @@
-package com.example.demo.src.post.generalModel;
+package com.example.demo.src.post.model.generalModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Post {
+public class PostingRes {
     private int postIdx;
     private int categoryIdx;
+    private String category;
     private int userIdx;
     private String title;
-    private int viewCount;
-    private int likeCount;
-    private Timestamp createAt;
-    private Timestamp updateAt;
     private String url;
+
 }

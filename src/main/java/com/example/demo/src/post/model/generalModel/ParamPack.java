@@ -1,4 +1,4 @@
-package com.example.demo.src.post.community;
+package com.example.demo.src.post.model.generalModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommunityPost {
-    private int communityDetailIdx;
-    private String contents;
+public class ParamPack {
+    private String paramName;
+    private Object paramValue;
 }
