@@ -1,7 +1,6 @@
 package com.example.demo.src.post;
 
 import com.example.demo.src.category.CATEGORY;
-import com.example.demo.src.image.PostImageReq;
 import com.example.demo.src.post.community.CommunityPost;
 import com.example.demo.src.post.community.GetCommunityPostRes;
 import com.example.demo.src.post.generalModel.*;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 
 @Repository
 public class PostDao {
@@ -100,6 +100,9 @@ public class PostDao {
         // 반환할 응답 생성
         PostingRes postingRes = new PostingRes(postIdx, categoryIdx, general.getCategory(), general.getUserIdx(), general.getTitle(), "null");
         // 응답 반환
+
+        postImage(postIdx, (int)postingReq.get("userIdx"),(List<String>)postingReq.get("paths"));
+
         return postingRes;
     }
 
@@ -173,6 +176,42 @@ public class PostDao {
         else return false;
     }
 
+    public Object editPost(EditPostReq editPostReq){
+        int postIdx = editPostReq.getPostIdx();
+        String board = _getBoardName(_getBoardIdx(postIdx));
+        // Post 수정
+        String postEditSql = "UPDATE Post SET postIdx = "+postIdx;
+        String postEditCondition = " WHERE postIdx = "+postIdx;
+        
+        //Detail 수정
+        String frontSql = "UPDATE "+board+"Detail";
+        String behindSql = " SET postIdx"+" = "+postIdx;
+        String condition = " WHERE postIdx = "+postIdx;
+        for(ParamPack parameter : editPostReq.getParams()){
+            String param = parameter.getParamName();
+            Object value = parameter.getParamValue();
+            if(param.equals("title") || param.equals("categoryIdx")) {
+                if(param.equals("title")) postEditSql = postEditSql +", "+ param + " = " + "\"" + value +"\"";
+                else postEditSql = postEditSql + ", " + param + " = "+ value;
+
+            }
+            else {
+                if(param.equals("contents") || param.equals("url") || param.equals("productName") ||
+                        param.equals("productUrl") || param.equals("tag")) {
+                    behindSql = behindSql +", "+ param + " = " + "\"" + value +"\"" ;
+                }
+                else behindSql = behindSql+ ", " + param+" = "+value ;
+            }
+        }
+        postEditSql += postEditCondition;
+        String detailEditSql = frontSql + behindSql + condition;
+        System.out.println(postEditSql);
+        System.out.println(detailEditSql);
+        this.jdbcTemplate.update(postEditSql+";");
+        this.jdbcTemplate.update(detailEditSql+";");
+        return "성공했습니다";
+    }
+
     public int getLikeCount(int postIdx) {
         int likeCount = -1;
         try{
@@ -193,10 +232,10 @@ public class PostDao {
         }
     }
 
-    public boolean postImage(PostImageReq postImageReq) {
-        String sql = "INSERT INTO Image(postIdx, path) VALUES";
-        for (String path : postImageReq.getPaths()) {
-            sql += "(" + "??<<" + "," + path + ")";
+    public boolean postImage(int postIdx, int userIdx, List<String> paths) {
+        String sql = "INSERT INTO Image(postIdx, userIdx, path) VALUES";
+        for (String path : paths) {
+            sql += "(" + postIdx + "," + userIdx + "," + path + ")";
         }
         return this.jdbcTemplate.update(sql) == 1 ? true : false;
     }
@@ -255,5 +294,13 @@ public class PostDao {
         else return null;
     }
 
+    public int _getBoardIdx(int postIdx){
+        String sql = "SELECT categoryIdx FROM Post WHERE postIdx = "+postIdx;
+        return this.jdbcTemplate.queryForObject(sql,int.class)/10;
+    }
+
+    public String _getBoardName(int categoryIdx) {
+        return categoryIdx == 1 ? "Community" : (categoryIdx == 2 ? "GroupPurchase" : "Recipe");
+    }
 
 }

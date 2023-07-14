@@ -70,6 +70,30 @@ public class PostController {
     }
 
     @ResponseBody
+    @PostMapping(value = "deletePost")
+    public BaseResponse<String> deletePost(@RequestBody DeleteReq deleteReq){
+        try{
+            if(this.postService.deletePost(deleteReq)) return new BaseResponse<>("성공했습니다.");
+            // 실패한 경우 예외처리
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+        return new BaseResponse<>("실패했습니다.");
+    }
+
+    @ResponseBody
+    @PatchMapping(value = "editPost")
+    public BaseResponse<Object> editPost(@RequestBody EditPostReq editPostReq) {
+        try{
+            // Object 받고, 요청 시 postIdx 반드시 포함하도록 하면 어떨까
+            return new BaseResponse<>(this.postService.editPost(editPostReq));
+            // 실패한 경우 예외처리
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    @ResponseBody
     @PostMapping(value = "scrapPost")
     public BaseResponse<String> scrapPost(@RequestBody LikeReq likeReq){
         try{
@@ -92,17 +116,7 @@ public class PostController {
         return new BaseResponse<>("실패했습니다.");
     }
 
-    @ResponseBody
-    @PostMapping(value = "deletePost")
-    public BaseResponse<String> deletePost(@RequestBody DeleteReq deleteReq){
-        try{
-            if(this.postService.deletePost(deleteReq)) return new BaseResponse<>("성공했습니다.");
-            // 실패한 경우 예외처리
-        }catch (BaseException e){
-            return new BaseResponse<>(e.getStatus());
-        }
-        return new BaseResponse<>("실패했습니다.");
-    }
+
 
     @ResponseBody
     @GetMapping(value = "getLikeCount")

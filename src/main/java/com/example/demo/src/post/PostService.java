@@ -2,10 +2,7 @@ package com.example.demo.src.post;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.src.image.PostImageReq;
-import com.example.demo.src.post.generalModel.DeleteReq;
-import com.example.demo.src.post.generalModel.HeartPostReq;
-import com.example.demo.src.post.generalModel.PostingRes;
-import com.example.demo.src.post.generalModel.LikeReq;
+import com.example.demo.src.post.generalModel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +41,10 @@ public class PostService {
 
     public Timestamp extendDeadLine(int postIdx) throws BaseException {
         return this.postDao.extendDeadLine(postIdx);
+    }
+
+    public Object editPost(EditPostReq editPostReq) throws BaseException{
+        return this.postDao.editPost(editPostReq);
     }
 
 }
