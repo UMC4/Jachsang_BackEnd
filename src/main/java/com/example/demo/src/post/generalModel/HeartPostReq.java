@@ -10,5 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HeartPostReq {
+    private int userIdx;
     private int postIdx;
 }

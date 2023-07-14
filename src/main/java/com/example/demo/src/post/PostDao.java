@@ -33,7 +33,7 @@ public class PostDao {
         this.mapper = new ObjectMapper();
     }
 
-    // TODO : 사진 올리기 추가해야한다.
+    // TODO : 사진 올리기 추가해야한다. -- > 이거때문에 인텔리제이 오류남
     // 글쓰기
     public PostingRes posting(int boardIdx, int categoryIdx, HashMap<String,Object> postingReq) {
         // 입력받은 정보를 general information, specific information으로 구분하는 작업
@@ -63,11 +63,13 @@ public class PostDao {
         }
         //공동구매
         else if (boardIdx == 2) {
-            GroupPurchasePostingReq posting = new GroupPurchasePostingReq(postingReq);
+            GroupPurchasePostingReq posting = new GroupPurchasePostingReq(postIdx, postingReq);
             sqlSpecific = "INSERT INTO GroupPurchaseDetail(groupPurchaseDetailIdx, postIdx, productName, productURL, singlePrice, deliveryFee, " +
-                    "members, deadline,hasExtension, calculated) VALUES (" + postIdx + "," + postIdx + ",?,?,?,?,?,?,?,?)";
-            paramSpecific = new Object[]{posting.getProductName(), posting.getProductURL(), posting.getSinglePrice(),
-                    posting.getDeliveryFee(), posting.getMembers(), posting.getDeadline(), posting.isHasExtension(), posting.isCalculated()
+                    "members, deadline,hasExtension, calculated) VALUES (" + postIdx + "," + postIdx + ",?,?,?,?,?,?,false,false)";
+
+            paramSpecific = new Object[]{
+                    posting.getProductName(), posting.getProductURL(), posting.getSinglePrice(),
+                    posting.getDeliveryFee(), posting.getMembers(), posting.getDeadline()
             };
         }
         //레시피
@@ -92,12 +94,12 @@ public class PostDao {
         PostingRes postingRes = new PostingRes(postIdx, categoryIdx, general.getCategory(), general.getUserIdx(), general.getTitle(), "null");
         // 응답 반환
 
-        postImage(postIdx, (int)postingReq.get("userIdx"),(List<String>)postingReq.get("paths"));
+        postImage(postIdx,(List<String>)postingReq.get("paths"));
 
         return postingRes;
     }
 
-    //TODO : 사진 불러오기 추가해야 한다.
+    //TODO : 사진 불러오기 추가해야 한다. --> 이거 때문에 sql은 작동하는데 인텔리제이에서 오류남
 
     // 글보기
     public Object getPost(int categoryIdx, GetPostReq getPostReq) {
@@ -123,11 +125,11 @@ public class PostDao {
         else return null;
     }
     // 글 삭제
-    public boolean deletePost(DeleteReq deleteReq) {
+    public boolean deletePost(int postIdx) {
         // 결과 확인용 변수 선언 - Post(general)와 Detail 각각 준비한다.
-        int general = 0, detail = 0, image = 0;
+        int general = 0, detail = 0, image = 0, like = 0;
         // 게시판 종류를 확인한다.
-        int boardIdx = CATEGORY.getNumber(deleteReq.getBoard());
+        int boardIdx = _getBoardIdx(postIdx);;
         // 게시판 종류를 저장한다.
         String board = boardIdx == 10 ? "Community" :
                 (boardIdx == 20 ? "GroupPurchase" :
@@ -135,17 +137,20 @@ public class PostDao {
         // 잘못된 게시판 이름 입력 시
         if (board == null) return false;
         // Detail의 내용을 먼저 없애야 한다 (ANOMALY 예방)
-        String deleteDetailSql = "DELETE FROM "+board+"Detail WHERE postIdx = "+deleteReq.getPostIdx();
+        String deleteDetailSql = "DELETE FROM "+board+"Detail WHERE postIdx = "+postIdx;
         // Image 내용을 삭제한다.
-        String deleteImageSql = "DELETE FROM Image WHERE postIdx = "+deleteReq.getPostIdx();
+        String deleteImageSql = "DELETE FROM Image WHERE postIdx = "+postIdx;
+        // LikedTable 내용을 삭제한다.
+        String deleteLikeSql = "DELETE FROM LikedPost WHERE postIdx = "+postIdx;
         // 마지막으로 Post 내용을 삭제한다.
-        String deleteGeneralSql = "DELETE FROM Post WHERE postIdx = "+deleteReq.getPostIdx();
+        String deleteGeneralSql = "DELETE FROM Post WHERE postIdx = "+postIdx;
         // sql문 실행
         detail = this.jdbcTemplate.update(deleteDetailSql);
         general = this.jdbcTemplate.update(deleteGeneralSql);
         image = this.jdbcTemplate.update(deleteImageSql);
+        like = this.jdbcTemplate.update(deleteDetailSql);
 
-        if(detail * general * image == 1) return true;
+        if(detail * general * image * like == 1) return true;
         else return false;
     }
     // 글 수정
@@ -207,24 +212,50 @@ public class PostDao {
         }
         // 기록에 성공하고, 해당 게시글의 좋아요 수를 1 증가시키는 과정
         else {
-            String likeCountIncreaseSql = "UPDATE Post SET likeCount = likeCount + 1 WHERE postIdx = "+likeReq.getPostIdx();
+            String likeCountIncreaseSql = "UPDATE CommunityDetail SET likeCount = likeCount + 1 WHERE postIdx = "+likeReq.getPostIdx();
             // 좋아요 수를 증가시키는 것을 실패한 경우
             if(this.jdbcTemplate.update(likeCountIncreaseSql) == 0) return false;
-                // 좋아요 수를 증가시키고, 해당 게시글의 좋아요 수를 불러오는 과정
+                // 좋아요 수를 증가시키고, 해당 게시글의 좋아요 수를 불러오는 과정 (리턴과 관련)
             else {
                 return true;
             }
         }
     }
-
+    //관심목록에서 제거
+    public boolean cancelScrapPost(LikeReq likeReq){
+        String subSql = "UPDATE CommunityDetail SET likeCount = likeCount - 1 WHERE postIdx = "+likeReq.getPostIdx();
+        String delSql = "DELETE LikedPost WHERE postIdx = "+likeReq.getPostIdx()+
+                " AND userIdx = "+likeReq.getUserIdx();
+        if(this.jdbcTemplate.update(subSql) == 0) return false;
+        // 예외처리 필요
+        if(this.jdbcTemplate.update(delSql) == 0) return false;
+        // 예외처리 필요
+        return true;
+    }
     // 좋아요 누르기
     public boolean heartPost(HeartPostReq heartPostReq){
-        // sql 작성
-        String sql = "UPDATE CommunityDetail SET heartCount = heartCount+1 WHERE postIdx = "+heartPostReq.getPostIdx();
-        if(this.jdbcTemplate.update(sql) == 0) return false;
-        else return true;
+        // 게시글 공감 수 늘리는 sql 작성
+        String countSql = "UPDATE CommunityDetail SET heartCount = heartCount+1 WHERE postIdx = "+heartPostReq.getPostIdx();
+        String addSql = "INSERT INTO HeartPost VALUE(?,?)";
+        Object[] param = {heartPostReq.getPostIdx(),heartPostReq.getUserIdx()};
+        if(this.jdbcTemplate.update(countSql) == 0) return false;
+        // 예외처리 필요
+        if(this.jdbcTemplate.update(addSql,param,int.class) == 0) return false;
+
+        return true;
     }
-    
+    // 좋아요(하트) 취소
+    public boolean cancelHeartPost(HeartPostReq heartPostReq){
+        String countSql = "UPDATE CommunityDetail SET heartCount = heartCount-1 WHERE postIdx = "+heartPostReq.getPostIdx();
+        String delSql = "DELETE HeartPost WHERE postIdx = "+heartPostReq.getPostIdx()
+                +" AND userIdx = "+heartPostReq.getUserIdx();
+        if(this.jdbcTemplate.update(countSql) == 0) return false;
+        // 예외처리 필요
+        if(this.jdbcTemplate.update(delSql) == 0) return false;
+        // 예외처리 필요
+        return true;
+    }
+
     // 게시글이 관심목록으로 등록된 수 반환 
     public int getLikeCount(int postIdx) {
         int likeCount = -1;
@@ -239,26 +270,30 @@ public class PostDao {
     }
     
     // 공구 - 마감기한 연장
-    public Timestamp extendDeadLine(int postIdx){
+    public int extendDeadLine(int postIdx){
         try{
+            String checkSql = "SELECT hasExtension FROM GroupPurchaseDetail WHERE postIdx = "+postIdx;
+            if(this.jdbcTemplate.queryForObject(checkSql,int.class) == 0) return 0;
+
             // sql 작성
-            String sql = "SELECT deadline FROM CommunityDetail WHERE postIdx = "+postIdx;
-            return this.jdbcTemplate.queryForObject(sql,Timestamp.class);
+            String updateSql =
+                    "UPDATE GroupPurchaseDetail SET deadline =  " +
+                    "TIMESTAMPADD(WEEK,1,deadline), hasExtension = true WHERE postIdx = "+postIdx;
+            return this.jdbcTemplate.update(updateSql);
         } catch (Exception e) {
-            return null;
+            return 0;
         }
     }
 
-
-
-
     //////////////////////// 내부 메서드 //////////////////////////////
+
     // 사진 첨부 메서드
-    public boolean postImage(int postIdx, int userIdx, List<String> paths) {
-        String sql = "INSERT INTO Image(postIdx, userIdx, path) VALUES";
+    public boolean postImage(int postIdx, List<String> paths) {
+        String sql = "INSERT INTO Image(postIdx, path) VALUES";
         for (String path : paths) {
-            sql += "(" + postIdx + "," + userIdx + "," + path + ")";
+            sql += "(" + postIdx + ",\"" + path + "\"),";
         }
+        sql = sql.substring(0,sql.length()-1);
         return this.jdbcTemplate.update(sql) == 1 ? true : false;
     }
 
@@ -325,4 +360,17 @@ public class PostDao {
         return categoryIdx == 1 ? "Community" : (categoryIdx == 2 ? "GroupPurchase" : "Recipe");
     }
 
+    public boolean _isExtended(int postIdx){
+        String sql = "SELECT hasExtension FROM GroupPurchase WHERE postIdx = "+postIdx;
+        boolean result = this.jdbcTemplate.queryForObject(sql,boolean.class);
+        return result;
+    }
+    public int _isExistPostIdx(int postIdx) {
+        String sql = "SELECT postIdx FROM Post WHERE postIdx = "+postIdx;
+        try{
+            return this.jdbcTemplate.queryForObject(sql,int.class);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
 }

@@ -31,15 +31,20 @@ public class PostService {
         return this.postDao.scrapPost(likeReq);
     }
 
+    public boolean cancelScrapPost(LikeReq likeReq)throws BaseException {
+        return this.postDao.cancelScrapPost(likeReq);
+    }
     public boolean heartPost(HeartPostReq heartPostReq) throws  BaseException {
         return this.postDao.heartPost(heartPostReq);
     }
-
-    public boolean deletePost(DeleteReq deleteReq) throws BaseException{
-        return this.postDao.deletePost(deleteReq);
+    public boolean cancelHeartPost(HeartPostReq heartPostReq) throws BaseException{
+        return this.postDao.cancelHeartPost(heartPostReq);
+    }
+    public boolean deletePost(int postIdx) throws BaseException{
+        return this.postDao.deletePost(postIdx);
     }
 
-    public Timestamp extendDeadLine(int postIdx) throws BaseException {
+    public int extendDeadLine(int postIdx) throws BaseException {
         return this.postDao.extendDeadLine(postIdx);
     }
 

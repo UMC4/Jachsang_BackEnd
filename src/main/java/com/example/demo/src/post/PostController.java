@@ -27,19 +27,18 @@ public class PostController {
     private final PostProvider postProvider;
     @Autowired
     private final PostService postService;
-
     @Autowired
     public PostController(PostProvider postProvider, PostService postService) {
         this.postService = postService;
         this.postProvider = postProvider;
     }
-
     //글쓰기
     @ResponseBody
     @PostMapping(value = "createPost")
     public BaseResponse<PostingRes> createPost(@RequestBody Object postingReq){
         try{
             HashMap<String,Object> req = (LinkedHashMap)postingReq;
+           // if(this.postProvider._isExistPostIDx((int)req.get("postIdx")) == -1) throw new BaseException();
             int categoryIdx = CATEGORY.getNumber((String)req.get("category"));
             PostingRes postingRes = this.postService.posting(categoryIdx/10, categoryIdx, req);
             return new BaseResponse<>(postingRes);
@@ -51,16 +50,17 @@ public class PostController {
     @GetMapping(value ="getPost")
     public BaseResponse<Object> getPost(@RequestBody GetPostReq getPostReq){
         try{
-            if(getPostReq.getBoardName().equals("커뮤니티")){
-                Object result = (GetCommunityPostRes)this.postProvider.getPost(10,getPostReq);
+            int boardIdx = 10*this.postProvider._getBoardIdxOf(getPostReq.getPostIdx());
+            if(boardIdx == 10){
+                Object result = (GetCommunityPostRes)this.postProvider.getPost(boardIdx,getPostReq);
                 return new BaseResponse<>(result);
             }
-            else if (getPostReq.getBoardName().equals("공동구매")){
-                Object result = (GetGroupPurchasePostRes)this.postProvider.getPost(20,getPostReq);
+            else if (boardIdx == 20){
+                Object result = (GetGroupPurchasePostRes)this.postProvider.getPost(boardIdx,getPostReq);
                 return new BaseResponse<>(result);
             }
-            else if (getPostReq.getBoardName().equals("레시피")){
-                Object result = (GetRecipePostRes)this.postProvider.getPost(30,getPostReq);
+            else if (boardIdx == 30){
+                Object result = (GetRecipePostRes)this.postProvider.getPost(boardIdx,getPostReq);
                 return new BaseResponse<>(result);
             }
             else return null; //TODO : 이 부분 예외처리하기
@@ -70,10 +70,10 @@ public class PostController {
     }
 
     @ResponseBody
-    @PostMapping(value = "deletePost")
-    public BaseResponse<String> deletePost(@RequestBody DeleteReq deleteReq){
+    @DeleteMapping(value = "deletePost")
+    public BaseResponse<String> deletePost(@RequestParam("postIdx") int postIdx){
         try{
-            if(this.postService.deletePost(deleteReq)) return new BaseResponse<>("성공했습니다.");
+            if(this.postService.deletePost(postIdx)) return new BaseResponse<>("성공했습니다.");
             // 실패한 경우 예외처리
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
@@ -93,6 +93,7 @@ public class PostController {
         }
     }
 
+    //TODO : 게시글 스크랩 취소 API 작성해야함.
     @ResponseBody
     @PostMapping(value = "scrapPost")
     public BaseResponse<String> scrapPost(@RequestBody LikeReq likeReq){
@@ -105,6 +106,18 @@ public class PostController {
         return new BaseResponse<>("실패했습니다.");
     }
     @ResponseBody
+    @PostMapping(value = "cancelScrapPost")
+    public BaseResponse<String> cancelScrapPost(@RequestBody LikeReq likeReq){
+        try{
+            if(this.postService.cancelScrapPost(likeReq)) return new BaseResponse<>("성공했습니다.");
+            // 실패한 경우 예외처리
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+        return new BaseResponse<>("실패했습니다.");
+    }
+    //TODO : 게시글 하트 취소 API 작성해야함.
+    @ResponseBody
     @PostMapping(value = "heartPost")
     public BaseResponse<String> heartPost(@RequestBody HeartPostReq heartPostReq){
         try{
@@ -116,11 +129,21 @@ public class PostController {
         return new BaseResponse<>("실패했습니다.");
     }
 
-
+    @ResponseBody
+    @PostMapping(value = "cancelHeartPost")
+    public BaseResponse<String> cancelHeartPost(@RequestBody HeartPostReq heartPostReq){
+        try{
+            if(this.postService.cancelHeartPost(heartPostReq)) return new BaseResponse<>("성공했습니다.");
+            // 실패한 경우 예외처리
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+        return new BaseResponse<>("실패했습니다.");
+    }
 
     @ResponseBody
     @GetMapping(value = "getLikeCount")
-    public BaseResponse<Integer> getLikeCount(@RequestBody int postIdx){
+    public BaseResponse<Integer> getLikeCount(@RequestParam("postIdx") int postIdx){
         try{
             int likeCount = this.postProvider.getLikeCount(postIdx);
             //if(likeCount == -1) TODO:예외처리하기
@@ -131,11 +154,11 @@ public class PostController {
     }
     @ResponseBody
     @PatchMapping(value = "extendDeadline")
-    public BaseResponse<Timestamp> extendDeadLine(@RequestBody int postIdx) {
+    public BaseResponse<String> extendDeadLine(@RequestParam("postIdx") int postIdx) {
         try {
-            Timestamp extended = this.postService.extendDeadLine(postIdx);
+            this.postService.extendDeadLine(postIdx);
             //if(extended == null) TODO:예외처리하기
-            return new BaseResponse<>(extended);
+            return new BaseResponse<>("성공했습니다");
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

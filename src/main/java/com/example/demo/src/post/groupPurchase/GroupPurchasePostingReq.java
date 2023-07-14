@@ -27,15 +27,16 @@ public class GroupPurchasePostingReq extends PostingReq {
     private boolean hasExtension;
     private boolean calculated;
 
-    public GroupPurchasePostingReq(HashMap<String,Object> req) {
-        this.groupPurchaseDetailIdx = (int)req.get("postIdx");
+    public GroupPurchasePostingReq(int postIdx, HashMap<String,Object> req) {
+        this.groupPurchaseDetailIdx = postIdx;
         this.postIdx = this.groupPurchaseDetailIdx;
         this.productName = (String)req.get("productName");
         this.productURL = (String)req.get("productURL");
-        this.singlePrice = (double)req.get("singlePrice");
-        this.deliveryFee = (double)req.get("deliveryFee");
-        this.deadline = (Timestamp)req.get("deadline");
-        this.hasExtension = (boolean)req.get("hasExtension");
-        this.calculated = (boolean)req.get("calculated");
+        this.singlePrice = (int)req.get("singlePrice");
+        this.deliveryFee = (int)req.get("deliveryFee");
+        this.members = (int)req.get("members");
+        this.deadline = Timestamp.valueOf((String)req.get("deadline"));
+        this.hasExtension = false;
+        this.calculated = false;
     }
 }

@@ -5,13 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EditPostReq {
-    private int postIdx;
-    private List<ParamPack> params;
+public class ExtendRes {
+    private String state;
+    private Timestamp time;
 }
