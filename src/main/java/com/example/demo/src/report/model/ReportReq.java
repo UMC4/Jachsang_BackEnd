@@ -11,7 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ReportReq {
     private int reportingUserIdx;
-    private String reportingContents;
     private int reportCategoryIdx;
 
     private int reportedContentsIdx;

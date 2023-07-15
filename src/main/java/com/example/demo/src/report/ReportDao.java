@@ -18,13 +18,12 @@ public class ReportDao {
     }
 
     public int reporting(ReportReq reportReq){
-        String createReportSql = "INSERT INTO Report(reportingUserIdx,reportingContents," +
-                "reportCategoryIdx, reportedContentsIdx,reportedUserIdx" +
-                "VALUES(?,?,?,?,?)";
+        String createReportSql = "INSERT INTO Report(reportingUserIdx," +
+                "reportCategoryIdx, reportedContentsIdx,reportedUserIdx,reportingContents)" +
+                "VALUES (?,?,?,?,\'내용 없음\')";
         Object[] param = {
-                reportReq.getReportingUserIdx(), reportReq.getReportingContents(),
-                reportReq.getReportCategoryIdx(), reportReq.getReportedContentsIdx(),
-                reportReq.getReportedUserIdx()
+                reportReq.getReportingUserIdx(), reportReq.getReportCategoryIdx(),
+                reportReq.getReportedContentsIdx(), reportReq.getReportedUserIdx()
         };
         return this.jdbcTemplate.update(createReportSql,param);
     }
@@ -45,7 +44,7 @@ public class ReportDao {
     }
 
     public int finishReport(FinishReq finishReq){
-        String finishSql = "UPDATE Report SET answer = ? WHERE reportIdx = ?";
+        String finishSql = "UPDATE Report SET answer = ?, finishAt = CURRENT_TIMESTAMP WHERE reportIdx = ?";
         Object[] param = {finishReq.getAnswer(), finishReq.getReportIdx()};
 
         return this.jdbcTemplate.update(finishSql,param);
