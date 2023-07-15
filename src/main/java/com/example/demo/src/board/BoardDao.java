@@ -272,7 +272,7 @@ public class BoardDao {
                         rs.getBoolean("likeStatus"),
                         rs.getInt("likeCount"),
                         rs.getString("imagePath")),
-                userIdx);
+                userIdx, limit);
     }
 
     // 모든 레시피 게시물을 가져오는 메서드입니다.

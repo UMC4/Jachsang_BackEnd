@@ -95,10 +95,10 @@ public class BoardController {
      */
     // 그룹 구매 게시판
     @ResponseBody
-    @GetMapping("/groupPurchase")
+    @GetMapping("/grouppurchase")
     public BaseResponse<List<GetGroupPurchaseItemRes>> getGroupPurchaseList(@RequestParam(value = "category", required = false) String category,
                                                                             @RequestParam(value = "sort", required = false) String sort,
-                                                                            @RequestParam(value = "limit", required = false, defaultValue = "-1") int limit) {
+                                                                            @RequestParam(value = "limit", required = false, defaultValue = "2147483647") int limit) {
         try {
             //실전용
             //int userIdxByJWT = jwtService.getUserIdx();
@@ -145,7 +145,7 @@ public class BoardController {
     @ResponseBody
     @GetMapping("/recipe")
     public BaseResponse<List<GetRecipeItemRes>> getRecipeList(@RequestParam(value = "sort") String sort,
-                                                              @RequestParam(value = "limit", required = false, defaultValue = "-1") int limit) {
+                                                              @RequestParam(value = "limit", required = false, defaultValue = "2147483647") int limit) {
         try {
             //실전용
             //int userIdxByJWT = jwtService.getUserIdx();
