@@ -73,7 +73,7 @@ public class PostDao {
         //레시피
         else if (boardIdx == 3) {
             RecipePostingReq posting = mapper.convertValue(postingReq, RecipePostingReq.class);
-            sqlSpecific = "INSERT INTO RecipeDetail(recipeDetailIdx,postIdx, contents, tag) VALUES(" + postIdx + "" + postIdx + ",?,?)";
+            sqlSpecific = "INSERT INTO RecipeDetail(recipeDetailIdx,postIdx, contents, tag) VALUES(" + postIdx + "," + postIdx + ",?,?)";
             paramSpecific = new Object[]{(String)postingReq.get("contents"), (String)postingReq.get("tag")};
         }
         // 오류 처리
@@ -224,8 +224,8 @@ public class PostDao {
     }
     //관심목록에서 제거
     public boolean cancelScrapPost(LikeReq likeReq){
-        String subSql = "UPDATE CommunityDetail SET likeCount = likeCount - 1 WHERE postIdx = "+likeReq.getPostIdx();
-        String delSql = "DELETE LikedPost WHERE postIdx = "+likeReq.getPostIdx()+
+        String subSql = "UPDATE Post SET likeCount = likeCount - 1 WHERE postIdx = "+likeReq.getPostIdx();
+        String delSql = "DELETE FROM LikedPost WHERE postIdx = "+likeReq.getPostIdx()+
                 " AND userIdx = "+likeReq.getUserIdx();
         if(this.jdbcTemplate.update(subSql) == 0) return false;
         // 예외처리 필요
@@ -237,18 +237,18 @@ public class PostDao {
     public boolean heartPost(HeartPostReq heartPostReq){
         // 게시글 공감 수 늘리는 sql 작성
         String countSql = "UPDATE CommunityDetail SET heartCount = heartCount+1 WHERE postIdx = "+heartPostReq.getPostIdx();
-        String addSql = "INSERT INTO HeartPost VALUE(?,?)";
+        String addSql = "INSERT INTO HeartPost(postIdx,userIdx) VALUES (?,?)";
         Object[] param = {heartPostReq.getPostIdx(),heartPostReq.getUserIdx()};
         if(this.jdbcTemplate.update(countSql) == 0) return false;
         // 예외처리 필요
-        if(this.jdbcTemplate.update(addSql,param,int.class) == 0) return false;
+        if(this.jdbcTemplate.update(addSql,param) == 0) return false;
 
         return true;
     }
     // 좋아요(하트) 취소
     public boolean cancelHeartPost(HeartPostReq heartPostReq){
         String countSql = "UPDATE CommunityDetail SET heartCount = heartCount-1 WHERE postIdx = "+heartPostReq.getPostIdx();
-        String delSql = "DELETE HeartPost WHERE postIdx = "+heartPostReq.getPostIdx()
+        String delSql = "DELETE From HeartPost WHERE postIdx = "+heartPostReq.getPostIdx()
                 +" AND userIdx = "+heartPostReq.getUserIdx();
         if(this.jdbcTemplate.update(countSql) == 0) return false;
         // 예외처리 필요

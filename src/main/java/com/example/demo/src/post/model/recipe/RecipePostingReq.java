@@ -11,8 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecipePostingReq extends PostingReq {
-    public int recipeDetailIdx;
-    public int postIdx;
     public String contents;
     public String tag;
 }

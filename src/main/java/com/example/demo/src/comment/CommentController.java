@@ -2,9 +2,7 @@ package com.example.demo.src.comment;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.src.comment.model.Comment;
-import com.example.demo.src.comment.model.CommentingReq;
-import com.example.demo.src.comment.model.EditCommentReq;
+import com.example.demo.src.comment.model.*;
 import com.example.demo.src.post.PostProvider;
 import com.example.demo.src.post.PostService;
 import lombok.Getter;
@@ -52,9 +50,9 @@ public class CommentController {
     }
     @ResponseBody
     @PostMapping(value = "/like")
-    public BaseResponse<Integer> likeComment(@RequestParam("commentIdx") int commentIdx) {
+    public BaseResponse<Integer> likeComment(@RequestBody LikeReq likeReq) {
         try {
-            int result = this.commentService.likeComment(commentIdx);
+            int result = this.commentService.likeComment(likeReq);
             //if(extended == null) TODO:예외처리하기
             return new BaseResponse<>(result);
         } catch (BaseException e) {
@@ -63,9 +61,9 @@ public class CommentController {
     }
     @ResponseBody
     @PostMapping(value = "/like/cancel")
-    public BaseResponse<Integer> cancelLikeComment(@RequestParam("commentIdx") int commentIdx) {
+    public BaseResponse<Integer> cancelLikeComment(@RequestBody LikeReq likeReq) {
         try {
-            int result = this.commentService.cancelLikeComment(commentIdx);
+            int result = this.commentService.cancelLikeComment(likeReq);
             //if(extended == null) TODO:예외처리하기
             return new BaseResponse<>(result);
         } catch (BaseException e) {
@@ -78,6 +76,30 @@ public class CommentController {
     public BaseResponse<Comment> getComment(@RequestParam("commentIdx") int commentIdx){
         try {
             Comment result = this.commentProvider.getComment(commentIdx);
+            //if(extended == null) TODO:예외처리하기
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/create/reply")
+    public BaseResponse<Integer> getComment(@RequestBody ReplyReq replyReq){
+        try {
+            int result = this.commentService.replying(replyReq);
+            //if(extended == null) TODO:예외처리하기
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    @ResponseBody
+    @PatchMapping(value = "/delete")
+    public BaseResponse<Integer> deleteComment(@RequestParam("commentIdx") int commentIdx){
+        try {
+            int result = this.commentService.deleteComment(commentIdx);
             //if(extended == null) TODO:예외처리하기
             return new BaseResponse<>(result);
         } catch (BaseException e) {

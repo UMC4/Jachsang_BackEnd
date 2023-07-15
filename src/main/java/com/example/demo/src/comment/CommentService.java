@@ -3,6 +3,8 @@ package com.example.demo.src.comment;
 import com.example.demo.config.BaseException;
 import com.example.demo.src.comment.model.CommentingReq;
 import com.example.demo.src.comment.model.EditCommentReq;
+import com.example.demo.src.comment.model.LikeReq;
+import com.example.demo.src.comment.model.ReplyReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +22,18 @@ public class CommentService {
     public int editComment(EditCommentReq editCommentReq) throws BaseException {
         return this.commentDao.editComment(editCommentReq);
     }
-    public int likeComment(int commentIdx) throws BaseException{
-        return this.commentDao.likeComment(commentIdx);
+
+    public int deleteComment(int commentIdx) throws BaseException{
+        return this.commentDao.deleteComment(commentIdx);
     }
 
-    public int cancelLikeComment(int commentIdx) throws BaseException {
-        return this.commentDao.cancelLikeComment(commentIdx);
+    public int likeComment(LikeReq likeReq) throws BaseException{
+        return this.commentDao.likeComment(likeReq);
+    }
+    public int cancelLikeComment(LikeReq likeReq) throws BaseException {
+        return this.commentDao.cancelLikeComment(likeReq);
+    }
+    public int replying(ReplyReq replyReq) throws BaseException {
+        return this.commentDao.replying(replyReq);
     }
 }
