@@ -71,9 +71,9 @@ public class PostController {
 
     @ResponseBody
     @DeleteMapping(value = "delete")
-    public BaseResponse<String> deletePost(@RequestParam("postIdx") int postIdx){
+    public BaseResponse<String> deletePost(@RequestBody DeleteReq deleteReq){
         try{
-            if(this.postService.deletePost(postIdx)) return new BaseResponse<>("성공했습니다.");
+            if(this.postService.deletePost(deleteReq)) return new BaseResponse<>("성공했습니다.");
             // 실패한 경우 예외처리
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
@@ -82,12 +82,14 @@ public class PostController {
     }
 
     @ResponseBody
-    @PatchMapping(value = "update")
-    public BaseResponse<Object> editPost(@RequestBody EditPostReq editPostReq) {
+    @PostMapping(value = "update")
+    public BaseResponse<PostingRes> updatePost(@RequestBody Object postingReq){
         try{
-            // Object 받고, 요청 시 postIdx 반드시 포함하도록 하면 어떨까
-            return new BaseResponse<>(this.postService.editPost(editPostReq));
-            // 실패한 경우 예외처리
+            HashMap<String,Object> req = (LinkedHashMap)postingReq;
+            // if(this.postProvider._isExistPostIDx((int)req.get("postIdx")) == -1) throw new BaseException();
+            int categoryIdx = CATEGORY.getNumber((String)req.get("category"));
+            PostingRes postingRes = this.postService.updatePost(categoryIdx/10, categoryIdx, req);
+            return new BaseResponse<>(postingRes);
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }

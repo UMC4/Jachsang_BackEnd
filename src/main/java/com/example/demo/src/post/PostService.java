@@ -3,10 +3,7 @@ package com.example.demo.src.post;
 import com.example.demo.config.BaseException;
 import com.example.demo.src.comment.model.CommentingReq;
 import com.example.demo.src.comment.model.EditCommentReq;
-import com.example.demo.src.post.model.generalModel.EditPostReq;
-import com.example.demo.src.post.model.generalModel.HeartPostReq;
-import com.example.demo.src.post.model.generalModel.LikeReq;
-import com.example.demo.src.post.model.generalModel.PostingRes;
+import com.example.demo.src.post.model.generalModel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,16 +40,16 @@ public class PostService {
     public boolean cancelHeartPost(HeartPostReq heartPostReq) throws BaseException{
         return this.postDao.cancelHeartPost(heartPostReq);
     }
-    public boolean deletePost(int postIdx) throws BaseException{
-        return this.postDao.deletePost(postIdx);
+    public boolean deletePost(DeleteReq deleteReq) throws BaseException{
+        return this.postDao.deletePost(deleteReq);
     }
 
     public int extendDeadLine(int postIdx) throws BaseException {
         return this.postDao.extendDeadLine(postIdx);
     }
 
-    public Object editPost(EditPostReq editPostReq) throws BaseException{
-        return this.postDao.editPost(editPostReq);
+    public PostingRes updatePost(int boardIdx, int categoryIdx, HashMap<String,Object> postingReq) throws BaseException{
+        return this.postDao.updatePost(boardIdx, categoryIdx, postingReq);
     }
 
 
