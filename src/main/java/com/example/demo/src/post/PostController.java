@@ -82,17 +82,17 @@ public class PostController {
     }
 
     @ResponseBody
-    @PostMapping(value = "update")
-    public BaseResponse<PostingRes> updatePost(@RequestBody Object postingReq){
+    @PutMapping(value = "update")
+    public BaseResponse<String> updatePost(@RequestBody Object updateReq){
         try{
-            HashMap<String,Object> req = (LinkedHashMap)postingReq;
+            HashMap<String,Object> req = (LinkedHashMap)updateReq;
             // if(this.postProvider._isExistPostIDx((int)req.get("postIdx")) == -1) throw new BaseException();
-            int categoryIdx = CATEGORY.getNumber((String)req.get("category"));
-            PostingRes postingRes = this.postService.updatePost(categoryIdx/10, categoryIdx, req);
-            return new BaseResponse<>(postingRes);
+            if(this.postService.updatePost(req))
+                return new BaseResponse<>("성공했습니다.");
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
+        return new BaseResponse<>("실패입니다!");
     }
 
     @ResponseBody
@@ -150,17 +150,6 @@ public class PostController {
             //if(likeCount == -1) TODO:예외처리하기
             return new BaseResponse<>(likeCount);
         }catch (BaseException e){
-            return new BaseResponse<>(e.getStatus());
-        }
-    }
-    @ResponseBody
-    @PatchMapping(value = "update/deadline")
-    public BaseResponse<String> extendDeadLine(@RequestParam("postIdx") int postIdx) {
-        try {
-            this.postService.extendDeadLine(postIdx);
-            //if(extended == null) TODO:예외처리하기
-            return new BaseResponse<>("성공했습니다");
-        } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }

@@ -44,12 +44,8 @@ public class PostService {
         return this.postDao.deletePost(deleteReq);
     }
 
-    public int extendDeadLine(int postIdx) throws BaseException {
-        return this.postDao.extendDeadLine(postIdx);
-    }
-
-    public PostingRes updatePost(int boardIdx, int categoryIdx, HashMap<String,Object> postingReq) throws BaseException{
-        return this.postDao.updatePost(boardIdx, categoryIdx, postingReq);
+    public boolean updatePost(HashMap<String,Object> updateReq) throws BaseException{
+        return this.postDao.updatePost(updateReq);
     }
 
 

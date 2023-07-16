@@ -1,5 +1,6 @@
 package com.example.demo.src.post;
 
+import com.example.demo.src.category.CATEGORY;
 import com.example.demo.src.post.model.community.CommunityPost;
 import com.example.demo.src.post.model.community.GetCommunityPostRes;
 import com.example.demo.src.post.model.community.CommunityPostingReq;
@@ -109,7 +110,7 @@ public class PostDao {
         String viewUpdateSql = "UPDATE Post set viewCount = viewCount+1 WHERE postIdx = "+getPostReq.getPostIdx();
         this.jdbcTemplate.update(viewUpdateSql);
 
-        String getImageSql = "SELECT path FROM Image WHERE imageIdx = "+getPostReq.getPostIdx();
+        String getImageSql = "SELECT path FROM Image WHERE postIdx = "+getPostReq.getPostIdx();
         List<String> paths = this.jdbcTemplate.query(getImageSql, (rs,rowNum) -> new String(
                 rs.getString("path")
         ));
@@ -161,18 +162,19 @@ public class PostDao {
         else return true;
     }
     // 글 수정
-    public PostingRes updatePost(int boardIdx, int categoryIdx, HashMap<String,Object> postingReq){
+    public boolean updatePost(HashMap<String,Object> updateReq){
         // 입력받은 정보를 general information, specific information으로 구분하는 작업
         // 그 중에서 general information을 Post general에 담는 과정
-        PostingReq general = new PostingReq(
-                (int)postingReq.get("userIdx"), (String)postingReq.get("title")
-        );
-        // postIdx를 저장
-        int postIdx = (int)postingReq.get("postIdx");
+        // postIdx, title을 저장
+        int postIdx = (int)updateReq.get("postIdx");
+        int boardIdx = _getBoardIdx(postIdx);
+        int categoryIdx = _getCategoryIdx(postIdx);
+        String title = (String)updateReq.get("title");
+
         // Post table에 insert 하는 sql 문장과 그 파라미터, URL의 경우 'null'로 저장함.
         String sqlGeneral = "UPDATE Post SET categoryIdx = ?, title = ?, updateAt = now() WHERE postIdx = "+postIdx;
         Object[] paramGeneral = {
-                categoryIdx, general.getTitle()
+                categoryIdx, title
         };
         // general 쿼리를 실행하는 부분
         this.jdbcTemplate.update(sqlGeneral, paramGeneral);
@@ -184,7 +186,7 @@ public class PostDao {
         if (boardIdx == 1) {
             sqlSpecific = "UPDATE CommunityDetail SET contents =  ? WHERE postIdx = "+postIdx;
             paramSpecific = new Object[]{
-                    (String)postingReq.get("contents")
+                    (String)updateReq.get("contents")
             };
         }
         //공동구매
@@ -192,39 +194,37 @@ public class PostDao {
             sqlSpecific = "UPDATE GroupPurchaseDetail SET productURL =  ?, singlePrice = ?, deliveryFee = ?," +
                     " members = ?, deadline = ? WHERE postIdx = "+postIdx;
             paramSpecific = new Object[]{
-                    (String)postingReq.get("productURL"), (int)postingReq.get("singlePrice"),
-                    (int)postingReq.get("deliveryFee"), (int)postingReq.get("members"),
-                    (Timestamp)postingReq.get("deadline")
+                    (String)updateReq.get("productURL"), (int)updateReq.get("singlePrice"),
+                    (int)updateReq.get("deliveryFee"), (int)updateReq.get("members"),
+                    (Timestamp)updateReq.get("deadline")
             };
         }
         //레시피
         else if (boardIdx == 3) {
             sqlSpecific = "UPDATE RecipeDetail SET contents =  ?, tag = ? WHERE postIdx = "+postIdx;
             paramSpecific = new Object[]{
-                    (String)postingReq.get("contents"),(String)postingReq.get("tag")
+                    (String)updateReq.get("contents"),(String)updateReq.get("tag")
             };
         }
         // 오류 처리
         else {
             System.out.println("잘못된 카테고리 이름입니다.");
-            return null;
+            return false;
         }
         // validation : 오류 처리
         if (sqlSpecific.equals("") || paramSpecific == null) {
             System.out.println("쿼리 또는 파라미터가 제대로 설정되지 않았습니다.");
-            return null;
+            return false;
         }
         // 공동구매, 커뮤니티, 레시피 sql과 param을 이용해 쿼리문 실행
         this.jdbcTemplate.update(sqlSpecific, paramSpecific);
         // 반환할 응답 생성
-        PostingRes postingRes = new PostingRes(postIdx, categoryIdx, general.getCategory(), general.getUserIdx(), general.getTitle(), "null");
-        // 응답 반환
 
         //이미지 등록
         //여기서 이미지 없을 때 예외처리 해야됨
-        updateImage(postIdx,(List<String>)postingReq.get("paths"));
+        updateImage(postIdx,(List<String>)updateReq.get("paths"));
 
-        return postingRes;
+        return true;
     }
 
     // 관심목록 추가
@@ -294,22 +294,6 @@ public class PostDao {
                 return -1;
             }
         return likeCount;
-    }
-    
-    // 공구 - 마감기한 연장
-    public int extendDeadLine(int postIdx){
-        try{
-            String checkSql = "SELECT hasExtension FROM GroupPurchaseDetail WHERE postIdx = "+postIdx;
-            if(this.jdbcTemplate.queryForObject(checkSql,int.class) == 0) return 0;
-
-            // sql 작성
-            String updateSql =
-                    "UPDATE GroupPurchaseDetail SET deadline =  " +
-                    "TIMESTAMPADD(WEEK,1,deadline), hasExtension = true WHERE postIdx = "+postIdx;
-            return this.jdbcTemplate.update(updateSql);
-        } catch (Exception e) {
-            return 0;
-        }
     }
 
     // 사진 첨부 메서드
@@ -381,12 +365,13 @@ public class PostDao {
         }
         else return null;
     }
-
-    public int _getBoardIdx(int postIdx){
+    public int _getCategoryIdx(int postIdx){
         String sql = "SELECT categoryIdx FROM Post WHERE postIdx = "+postIdx;
-        return this.jdbcTemplate.queryForObject(sql,int.class)/10;
+        return this.jdbcTemplate.queryForObject(sql,int.class);
     }
-
+    public int _getBoardIdx(int postIdx){
+        return this._getCategoryIdx(postIdx)/10;
+    }
     public String _getBoardName(int categoryIdx) {
         return categoryIdx == 1 ? "Community" : (categoryIdx == 2 ? "GroupPurchase" : "Recipe");
     }
