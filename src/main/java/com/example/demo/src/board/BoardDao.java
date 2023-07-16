@@ -304,6 +304,98 @@ public class BoardDao {
                         rs.getString("imagePath")),
                 userIdx, limit);
     }
+
+    public List<GetCommunityItemRes> searchCommunity(int userIdx, String query) {
+        String Query =
+                "WITH cte AS ( " +
+                    "SELECT P.postIdx, PC.categoryIdx, PC.category, P.title, Author.nickname, P.createAt, imagePath, " +
+                        "IF(U.role = 1 OR Author.role = 1, NULL, ST_DISTANCE_SPHERE(POINT(Author.longitude, Author.latitude), POINT(U.longitude, U.latitude))) AS distance " +
+                    "FROM Post P " +
+                        "JOIN PostCategory PC ON P.categoryIdx = PC.categoryIdx " +
+                        "JOIN User Author ON P.userIdx = Author.userIdx  " +
+                        "LEFT JOIN (SELECT postIdx, MIN(imageIdx) as minIdx, path as imagePath FROM Image GROUP BY postIdx) MinIdImage " +
+                        "ON P.postIdx = MinIdImage.postIdx " +
+                        "JOIN User U ON U.userIdx = ? " +
+                    "WHERE FLOOR(P.categoryIdx/10) = 1 " +
+                ") " +
+                "SELECT postIdx, categoryIdx, category, title, nickname, distance, createAt, imagePath " +
+                "FROM cte  " +
+                "WHERE (distance IS NULL OR distance <= 3000) " +
+                    "AND (MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE))";
+
+
+        return this.jdbcTemplate.query(Query,
+                (rs,rowNum) -> new GetCommunityItemRes(
+                        rs.getInt("postIdx"),
+                        rs.getInt("categoryIdx"),
+                        rs.getString("category"),
+                        rs.getString("title"),
+                        rs.getString("nickname"),
+                        rs.getInt("distance"),
+                        rs.getString("createAt"),
+                        rs.getString("imagePath")),
+                userIdx, query);
+    }
+
+    public List<GetGroupPurchaseItemRes> searchGroupPurchase(int userIdx, String query) {
+        String Query =
+                "WITH cte AS (" +
+                    "SELECT P.postIdx, PC.category, P.title, GPD.productName, Author.nickname, P.createAt, TIMESTAMPDIFF(DAY, CURRENT_TIMESTAMP, GPD.deadline) as remainDay, imagePath, " +
+                        "IF(U.role = 1 OR Author.role = 1, NULL, ST_DISTANCE_SPHERE(POINT(Author.longitude, Author.latitude), POINT(U.longitude, U.latitude))) AS distance " +
+                    "FROM Post P  " +
+                        "JOIN PostCategory PC ON P.categoryIdx = PC.categoryIdx  " +
+                        "JOIN GroupPurchaseDetail GPD ON P.postIdx = GPD.postIdx  " +
+                        "JOIN User Author ON P.userIdx = Author.userIdx  " +
+                        "LEFT JOIN (" +
+                            "SELECT postIdx, MIN(imageIdx) as minIdx, path as imagePath " +
+                            "FROM Image  " +
+                            "GROUP BY postIdx  " +
+                        ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
+                        "JOIN User U ON U.userIdx = ? " +
+                    "WHERE FLOOR(P.categoryIdx/10) = 2" +
+                ") " +
+                "SELECT postIdx, category, title, productName, nickname, distance, createAt, remainDay, imagePath  " +
+                "FROM cte  " +
+                "WHERE (distance IS NULL OR distance <= 3000) " +
+                    "AND MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE)";
+
+        return this.jdbcTemplate.query(Query,
+                (rs,rowNum) -> new GetGroupPurchaseItemRes(
+                        rs.getInt("postIdx"),
+                        rs.getString("category"),
+                        rs.getString("title"),
+                        rs.getString("productName"),
+                        rs.getString("nickname"),
+                        rs.getInt("distance"),
+                        rs.getInt("remainDay"),
+                        rs.getString("imagePath")),
+                userIdx, query);
+    }
+
+    public List<GetRecipeItemRes> searchRecipe(int userIdx, String query) {
+        String Query =
+                "SELECT P.postIdx, P.title, RD.tag, P.likeCount, imagePath, IF(LP.postIdx IS NOT NULL, TRUE, FALSE) AS likestatus " +
+                "FROM Post P " +
+                    "JOIN RecipeDetail RD ON P.postIdx = RD.postIdx " +
+                    "LEFT JOIN LikedPost LP ON P.postIdx = LP.postIdx AND LP.userIdx = ? " +
+                    "LEFT JOIN ( " +
+                        "SELECT postIdx, MIN(imageIdx) as minIdx, path as imagePath " +
+                        "FROM Image  " +
+                        "GROUP BY postIdx  " +
+                    ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
+                "WHERE MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE)" +
+                    "OR MATCH(tag) AGAINST(? IN NATURAL LANGUAGE MODE)";
+
+        return this.jdbcTemplate.query(Query,
+                (rs,rowNum) -> new GetRecipeItemRes(
+                        rs.getInt("postIdx"),
+                        rs.getString("title"),
+                        rs.getString("tag"),
+                        rs.getBoolean("likeStatus"),
+                        rs.getInt("likeCount"),
+                        rs.getString("imagePath")),
+                userIdx, query, query);
+    }
 }
 
 

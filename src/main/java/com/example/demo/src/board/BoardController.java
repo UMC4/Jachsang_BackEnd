@@ -167,5 +167,99 @@ public class BoardController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-}
 
+    /**
+     * 커뮤니티 검색 API
+     * [GET] /boards/community/search?query=keyword
+     *
+     * @return BaseResponse<List<GetCommunityItemRes>>
+     */
+    // 커뮤니티 게시판 검색
+    @ResponseBody
+    @GetMapping("/community/search")
+    public BaseResponse<List<GetCommunityItemRes>> searchCommunityList(@RequestParam("query") String query) {
+        try {
+            //실전용
+            //int userIdxByJWT = jwtService.getUserIdx();
+            //테스트용
+            //int userIdxByJWT = 1; //일반 사용자
+            int userIdxByJWT = 2; //관리자
+
+            List<GetCommunityItemRes> communityList;
+            //쿼리 값이 없으면 오류 발생시킨다.
+            if(query == null) {
+                throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+            } else {
+                communityList = boardProvider.getSearchedCommunityList(userIdxByJWT, query);
+            }
+
+            return new BaseResponse<>(communityList);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 공동구매 검색 API
+     * [GET] /boards/grouppurchase/search?query=keyword
+     *
+     * @return BaseResponse<List<GetGroupPurchaseItemRes>>
+     */
+    // 공동구매 게시판 검색
+    @ResponseBody
+    @GetMapping("/grouppurchase/search")
+    public BaseResponse<List<GetGroupPurchaseItemRes>> searchGroupPurchaseList(@RequestParam("query") String query) {
+        try {
+            //실전용
+            //int userIdxByJWT = jwtService.getUserIdx();
+            //테스트용
+            //int userIdxByJWT = 1; //일반 사용자
+            int userIdxByJWT = 2; //관리자
+
+            List<GetGroupPurchaseItemRes> groupPurchaseList;
+
+            //쿼리 값이 없으면 오류 발생시킨다.
+            if(query == null) {
+                throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+            } else {
+                groupPurchaseList = boardProvider.getSearchedGroupPurchaseList(userIdxByJWT, query);
+            }
+
+            return new BaseResponse<>(groupPurchaseList);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 레시피 검색 API
+     * [GET] /boards/recipe/search?query=keyword
+     *
+     * @return BaseResponse<List<GetRecipeItemRes>>
+     */
+    // 레시피 게시판 검색
+    @ResponseBody
+    @GetMapping("/recipe/search")
+    public BaseResponse<List<GetRecipeItemRes>> searchRecipeList(@RequestParam("query") String query) {
+        try {
+            //실전용
+            //int userIdxByJWT = jwtService.getUserIdx();
+            //테스트용
+            //int userIdxByJWT = 1; //일반 사용자
+            int userIdxByJWT = 2; //관리자
+
+            List<GetRecipeItemRes> recipeList;
+
+            //쿼리 값이 없으면 오류 발생시킨다.
+            if(query == null) {
+                throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+            } else {
+                recipeList = boardProvider.getSearchedRecipeList(userIdxByJWT, query);
+            }
+
+            return new BaseResponse<>(recipeList);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+}

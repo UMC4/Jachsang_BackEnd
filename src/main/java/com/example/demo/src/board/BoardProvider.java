@@ -72,4 +72,16 @@ public class BoardProvider {
         }
         return getSortedRecipeList;
     }
+
+    public List<GetCommunityItemRes> getSearchedCommunityList(int userIdx, String query) {
+        return boardDao.searchCommunity(userIdx, query);
+    }
+
+    public List<GetGroupPurchaseItemRes> getSearchedGroupPurchaseList(int userIdx, String query) {
+        return boardDao.searchGroupPurchase(userIdx, query);
+    }
+
+    public List<GetRecipeItemRes> getSearchedRecipeList(int userIdx, String query) {
+        return boardDao.searchRecipe(userIdx, query);
+    }
 }
