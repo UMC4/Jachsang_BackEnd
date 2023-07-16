@@ -12,6 +12,7 @@ import lombok.Setter;
 public class ReportReq {
     private int reportingUserIdx;
     private int reportCategoryIdx;
+    private String reportingContents;
 
     private int reportedContentsIdx;
     private int reportedUserIdx;

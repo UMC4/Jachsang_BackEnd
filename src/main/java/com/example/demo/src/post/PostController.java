@@ -3,8 +3,6 @@ package com.example.demo.src.post;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.category.CATEGORY;
-import com.example.demo.src.comment.model.CommentingReq;
-import com.example.demo.src.comment.model.EditCommentReq;
 import com.example.demo.src.post.model.community.GetCommunityPostRes;
 import com.example.demo.src.post.model.generalModel.*;
 import com.example.demo.src.post.model.groupPurchase.GetGroupPurchasePostRes;
@@ -95,7 +93,6 @@ public class PostController {
         }
     }
 
-    //TODO : 게시글 스크랩 취소 API 작성해야함.
     @ResponseBody
     @PostMapping(value = "scrap")
     public BaseResponse<String> scrapPost(@RequestBody LikeReq likeReq){

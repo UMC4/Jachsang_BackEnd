@@ -1,7 +1,5 @@
 package com.example.demo.src.post;
 
-import com.example.demo.src.comment.model.CommentingReq;
-import com.example.demo.src.comment.model.EditCommentReq;
 import com.example.demo.src.post.model.community.CommunityPost;
 import com.example.demo.src.post.model.community.GetCommunityPostRes;
 import com.example.demo.src.post.model.community.CommunityPostingReq;
@@ -26,6 +24,7 @@ public class PostDao {
 
     private JdbcTemplate jdbcTemplate;
     private ObjectMapper mapper;
+
     @Autowired
     public PostDao(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -211,9 +210,9 @@ public class PostDao {
             System.out.println("LikedPost 테이블에 기록하지 못했습니다.");
             return false;
         }
-        // 기록에 성공하고, 해당 게시글의 좋아요 수를 1 증가시키는 과정
+        // 기록에 성공하고, 해당 게시글의 관심 지정한 수를 1 증가시키는 과정
         else {
-            String likeCountIncreaseSql = "UPDATE CommunityDetail SET likeCount = likeCount + 1 WHERE postIdx = "+likeReq.getPostIdx();
+            String likeCountIncreaseSql = "UPDATE Post SET likeCount = likeCount + 1 WHERE postIdx = "+likeReq.getPostIdx();
             // 좋아요 수를 증가시키는 것을 실패한 경우
             if(this.jdbcTemplate.update(likeCountIncreaseSql) == 0) return false;
                 // 좋아요 수를 증가시키고, 해당 게시글의 좋아요 수를 불러오는 과정 (리턴과 관련)
@@ -235,7 +234,7 @@ public class PostDao {
     }
     // 좋아요 누르기
     public boolean heartPost(HeartPostReq heartPostReq){
-        // 게시글 공감 수 늘리는 sql 작성
+        // 게시글 좋아요 수 늘리는 sql 작성
         String countSql = "UPDATE CommunityDetail SET heartCount = heartCount+1 WHERE postIdx = "+heartPostReq.getPostIdx();
         String addSql = "INSERT INTO HeartPost(postIdx,userIdx) VALUES (?,?)";
         Object[] param = {heartPostReq.getPostIdx(),heartPostReq.getUserIdx()};
@@ -285,10 +284,6 @@ public class PostDao {
             return 0;
         }
     }
-
-
-
-    //////////////////////// 내부 메서드 //////////////////////////////
 
     // 사진 첨부 메서드
     public boolean postImage(int postIdx, List<String> paths) {
@@ -376,4 +371,5 @@ public class PostDao {
             return -1;
         }
     }
+
 }

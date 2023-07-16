@@ -18,4 +18,5 @@ public class ReportProvider {
     public Report getReport(int reportIdx) throws BaseException  {
         return this.reportDao.getReport(reportIdx);
     }
+
 }

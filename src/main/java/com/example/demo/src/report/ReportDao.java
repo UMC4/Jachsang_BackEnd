@@ -20,10 +20,11 @@ public class ReportDao {
     public int reporting(ReportReq reportReq){
         String createReportSql = "INSERT INTO Report(reportingUserIdx," +
                 "reportCategoryIdx, reportedContentsIdx,reportedUserIdx,reportingContents)" +
-                "VALUES (?,?,?,?,\'내용 없음\')";
+                "VALUES (?,?,?,?,?)";
         Object[] param = {
                 reportReq.getReportingUserIdx(), reportReq.getReportCategoryIdx(),
-                reportReq.getReportedContentsIdx(), reportReq.getReportedUserIdx()
+                reportReq.getReportedContentsIdx(), reportReq.getReportedUserIdx(),
+                reportReq.getReportingContents()
         };
         return this.jdbcTemplate.update(createReportSql,param);
     }
@@ -50,4 +51,6 @@ public class ReportDao {
         return this.jdbcTemplate.update(finishSql,param);
 
     }
+
+
 }

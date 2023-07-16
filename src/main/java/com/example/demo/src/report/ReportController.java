@@ -2,7 +2,6 @@ package com.example.demo.src.report;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.src.comment.model.CommentingReq;
 import com.example.demo.src.report.model.FinishReq;
 import com.example.demo.src.report.model.Report;
 import com.example.demo.src.report.model.ReportReq;
@@ -17,7 +16,6 @@ public class ReportController {
     private final ReportService reportService;
     @Autowired
     private final ReportProvider reportProvider;
-
     @Autowired
     public ReportController(ReportService reportService, ReportProvider reportProvider){
         this.reportProvider = reportProvider;
@@ -57,5 +55,6 @@ public class ReportController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
 
 }
