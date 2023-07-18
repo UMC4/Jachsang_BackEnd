@@ -9,6 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GetGroupPurchaseItemRes {
     private int postIdx;
+    private int categoryIdx;
     private String category;
     private String title;
     private String productName;

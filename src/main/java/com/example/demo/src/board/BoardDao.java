@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.sql.DataSource;
 import java.util.List;
 
@@ -144,7 +143,8 @@ public class BoardDao {
     public List<GetGroupPurchaseItemRes> filterGroupPurchaseByCategory(int userIdx, int categoryIdx, int limit) {
         String Query =
                 "WITH cte AS ( " +
-                    "SELECT P.postIdx, PC.category, P.title, GPD.productName, Author.nickname, P.createAt, TIMESTAMPDIFF(DAY, CURRENT_TIMESTAMP, GPD.deadline) as remainDay, imagePath,  " +
+                    "SELECT P.postIdx, P.categoryIdx, PC.category, P.title, GPD.productName, Author.nickname, P.createAt, " +
+                        "TIMESTAMPDIFF(DAY, CURRENT_TIMESTAMP, GPD.deadline) as remainDay, imagePath,  " +
                         "IF(U.role = 1 OR Author.role = 1, NULL, ST_DISTANCE_SPHERE(POINT(Author.longitude, Author.latitude), POINT(U.longitude, U.latitude))) AS distance " +
                     "FROM Post P  " +
                         "JOIN PostCategory PC ON P.categoryIdx = PC.categoryIdx  " +
@@ -158,7 +158,7 @@ public class BoardDao {
                         "JOIN User U ON U.userIdx = ? " +
                     "WHERE P.categoryIdx = ? " +
                 ") " +
-                    "SELECT postIdx, category, title, productName, nickname, distance, createAt, remainDay, imagePath  " +
+                    "SELECT postIdx, categoryIdx, category, title, productName, nickname, distance, createAt, remainDay, imagePath  " +
                     "FROM cte  " +
                     "WHERE distance IS NULL OR distance <= 3000  " +
                     "ORDER BY createAt DESC LIMIT ?";
@@ -166,6 +166,7 @@ public class BoardDao {
         return this.jdbcTemplate.query(Query,
                 (rs,rowNum) -> new GetGroupPurchaseItemRes(
                         rs.getInt("postIdx"),
+                        rs.getInt("categoryIdx"),
                         rs.getString("category"),
                         rs.getString("title"),
                         rs.getString("productName"),
@@ -180,7 +181,7 @@ public class BoardDao {
     public List<GetGroupPurchaseItemRes> sortGroupPurchaseByLatest(int userIdx, int limit) {
         String Query =
                 "WITH cte AS ( " +
-                    "SELECT P.postIdx, PC.category, P.title, GPD.productName, Author.nickname, P.createAt, TIMESTAMPDIFF(DAY, CURRENT_TIMESTAMP, GPD.deadline) as remainDay, imagePath,  " +
+                    "SELECT P.postIdx, P.categoryIdx, PC.category, P.title, GPD.productName, Author.nickname, P.createAt, TIMESTAMPDIFF(DAY, CURRENT_TIMESTAMP, GPD.deadline) as remainDay, imagePath,  " +
                         "IF(U.role = 1 OR Author.role = 1, NULL, ST_DISTANCE_SPHERE(POINT(Author.longitude, Author.latitude), POINT(U.longitude, U.latitude))) AS distance " +
                     "FROM Post P  " +
                         "JOIN PostCategory PC ON P.categoryIdx = PC.categoryIdx  " +
@@ -194,7 +195,7 @@ public class BoardDao {
                         "JOIN User U ON U.userIdx = ? " +
                     "WHERE FLOOR(P.categoryIdx/10) = 2" +
                 ") " +
-                    "SELECT postIdx, category, title, productName, nickname, distance, createAt, remainDay, imagePath  " +
+                    "SELECT postIdx, categoryIdx, category, title, productName, nickname, distance, createAt, remainDay, imagePath  " +
                     "FROM cte  " +
                     "WHERE distance IS NULL OR distance <= 3000  " +
                     "ORDER BY createAt DESC LIMIT ?";
@@ -202,6 +203,7 @@ public class BoardDao {
         return this.jdbcTemplate.query(Query,
                 (rs,rowNum) -> new GetGroupPurchaseItemRes(
                         rs.getInt("postIdx"),
+                        rs.getInt("categoryIdx"),
                         rs.getString("category"),
                         rs.getString("title"),
                         rs.getString("productName"),
@@ -216,7 +218,7 @@ public class BoardDao {
     public List<GetGroupPurchaseItemRes> sortGroupPurchaseByRemainTime(int userIdx, int limit) {
         String Query =
                 "WITH cte AS ( " +
-                    "SELECT P.postIdx, PC.category, P.title, GPD.productName, Author.nickname, P.createAt, TIMESTAMPDIFF(DAY, CURRENT_TIMESTAMP, GPD.deadline) as remainDay, imagePath,  " +
+                    "SELECT P.postIdx, P.categoryIdx, PC.category, P.title, GPD.productName, Author.nickname, P.createAt, TIMESTAMPDIFF(DAY, CURRENT_TIMESTAMP, GPD.deadline) as remainDay, imagePath,  " +
                         "IF(U.role = 1 OR Author.role = 1, NULL, ST_DISTANCE_SPHERE(POINT(Author.longitude, Author.latitude), POINT(U.longitude, U.latitude))) AS distance " +
                     "FROM Post P  " +
                         "JOIN PostCategory PC ON P.categoryIdx = PC.categoryIdx  " +
@@ -230,7 +232,7 @@ public class BoardDao {
                     "JOIN User U ON U.userIdx = ? " +
                     "WHERE FLOOR(P.categoryIdx/10) = 2" +
                 ") " +
-                "SELECT postIdx, category, title, productName, nickname, distance, createAt, remainDay, imagePath  " +
+                "SELECT postIdx, categoryIdx, category, title, productName, nickname, distance, createAt, remainDay, imagePath  " +
                 "FROM cte  " +
                 "WHERE distance IS NULL OR distance <= 3000  " +
                 "ORDER BY remainDay LIMIT ?";
@@ -238,6 +240,7 @@ public class BoardDao {
         return this.jdbcTemplate.query(Query,
                 (rs,rowNum) -> new GetGroupPurchaseItemRes(
                         rs.getInt("postIdx"),
+                        rs.getInt("categoryIdx"),
                         rs.getString("category"),
                         rs.getString("title"),
                         rs.getString("productName"),
@@ -340,7 +343,7 @@ public class BoardDao {
     public List<GetGroupPurchaseItemRes> searchGroupPurchase(int userIdx, String query) {
         String Query =
                 "WITH cte AS (" +
-                    "SELECT P.postIdx, PC.category, P.title, GPD.productName, Author.nickname, P.createAt, TIMESTAMPDIFF(DAY, CURRENT_TIMESTAMP, GPD.deadline) as remainDay, imagePath, " +
+                    "SELECT P.postIdx, P.categoryIdx, PC.category, P.title, GPD.productName, Author.nickname, P.createAt, TIMESTAMPDIFF(DAY, CURRENT_TIMESTAMP, GPD.deadline) as remainDay, imagePath, " +
                         "IF(U.role = 1 OR Author.role = 1, NULL, ST_DISTANCE_SPHERE(POINT(Author.longitude, Author.latitude), POINT(U.longitude, U.latitude))) AS distance " +
                     "FROM Post P  " +
                         "JOIN PostCategory PC ON P.categoryIdx = PC.categoryIdx  " +
@@ -354,7 +357,7 @@ public class BoardDao {
                         "JOIN User U ON U.userIdx = ? " +
                     "WHERE FLOOR(P.categoryIdx/10) = 2" +
                 ") " +
-                "SELECT postIdx, category, title, productName, nickname, distance, createAt, remainDay, imagePath  " +
+                "SELECT postIdx, categoryIdx, category, title, productName, nickname, distance, createAt, remainDay, imagePath  " +
                 "FROM cte  " +
                 "WHERE (distance IS NULL OR distance <= 3000) " +
                     "AND MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE)";
@@ -362,6 +365,7 @@ public class BoardDao {
         return this.jdbcTemplate.query(Query,
                 (rs,rowNum) -> new GetGroupPurchaseItemRes(
                         rs.getInt("postIdx"),
+                        rs.getInt("categoryIdx"),
                         rs.getString("category"),
                         rs.getString("title"),
                         rs.getString("productName"),
