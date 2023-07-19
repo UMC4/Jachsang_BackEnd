@@ -38,7 +38,7 @@ public class CommentController {
     }
 
     @ResponseBody
-    @PatchMapping(value = "/edit")
+    @PatchMapping(value = "/update")
     public BaseResponse<Integer> editComment(@RequestBody EditCommentReq editCommentReq) {
         try {
             int result = this.commentService.editComment(editCommentReq);
@@ -85,7 +85,7 @@ public class CommentController {
 
     @ResponseBody
     @PostMapping(value = "/create/reply")
-    public BaseResponse<Integer> getComment(@RequestBody ReplyReq replyReq){
+    public BaseResponse<Integer> replyComment(@RequestBody ReplyReq replyReq){
         try {
             int result = this.commentService.replying(replyReq);
             //if(extended == null) TODO:예외처리하기
@@ -96,7 +96,7 @@ public class CommentController {
     }
 
     @ResponseBody
-    @PatchMapping(value = "/delete")
+    @DeleteMapping(value = "/delete")
     public BaseResponse<Integer> deleteComment(@RequestParam("commentIdx") int commentIdx){
         try {
             int result = this.commentService.deleteComment(commentIdx);

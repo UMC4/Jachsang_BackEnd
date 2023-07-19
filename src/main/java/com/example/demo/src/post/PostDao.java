@@ -158,7 +158,7 @@ public class PostDao {
         detail = this.jdbcTemplate.update(deleteDetailSql);
         general = this.jdbcTemplate.update(deleteGeneralSql);
 
-        if(detail * general * image * like * heart == 0) return false;
+        if(detail * general == 0) return false;
         else return true;
     }
     // 글 수정
@@ -196,7 +196,7 @@ public class PostDao {
             paramSpecific = new Object[]{
                     (String)updateReq.get("productURL"), (int)updateReq.get("singlePrice"),
                     (int)updateReq.get("deliveryFee"), (int)updateReq.get("members"),
-                    (Timestamp)updateReq.get("deadline")
+                    (String)updateReq.get("deadline")
             };
         }
         //레시피
