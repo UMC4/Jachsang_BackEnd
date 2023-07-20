@@ -414,4 +414,9 @@ public class PostDao {
         };
         return this.jdbcTemplate.update(insertOnRecipeSql,recipeParam);
     }
+
+    public String _getUserRole(int userIdx){
+        String getUserRoleIdxSql = "SELECT role FROM User Where userIdx = "+userIdx;
+        return this.jdbcTemplate.queryForObject(getUserRoleIdxSql,String.class);
+    }
 }

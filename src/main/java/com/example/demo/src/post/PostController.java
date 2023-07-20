@@ -2,17 +2,20 @@ package com.example.demo.src.post;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.category.CATEGORY;
 import com.example.demo.src.post.model.community.GetCommunityPostRes;
 import com.example.demo.src.post.model.generalModel.*;
 import com.example.demo.src.post.model.groupPurchase.GetGroupPurchasePostRes;
 import com.example.demo.src.post.model.recipe.GetRecipePostRes;
+import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -36,12 +39,24 @@ public class PostController {
     public BaseResponse<PostingRes> createPost(@RequestBody Object postingReq){
         try{
             HashMap<String,Object> req = (LinkedHashMap)postingReq;
+            //카테고리가 존재하지 않는 것일 때
+            if(CATEGORY.getNumber((String)req.get("category")) == 0){
+                throw new BaseException(BaseResponseStatus.WRONG_CATEGORY);
+            }
+            //공지 작성 시 유저 권한이 없을 때
+            if(((String)req.get("category")).equals("공지")){
+                if(!this.postService._getUserRole((int)req.get("userIdx")).equals("admin")){
+                    throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+                }
+            }
            // if(this.postProvider._isExistPostIDx((int)req.get("postIdx")) == -1) throw new BaseException();
             int categoryIdx = CATEGORY.getNumber((String)req.get("category"));
             PostingRes postingRes = this.postService.posting(categoryIdx/10, categoryIdx, req);
             return new BaseResponse<>(postingRes);
-        }catch (BaseException e){
+        }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
+        }catch (SQLIntegrityConstraintViolationException e){
+            return new BaseResponse<>(BaseResponseStatus.OMITTED_PARAMETER);
         }
     }
     @ResponseBody
