@@ -45,7 +45,7 @@ public class PostService {
         return this.postDao.deletePost(deleteReq);
     }
 
-    public boolean updatePost(HashMap<String,Object> updateReq) throws BaseException{
+    public boolean updatePost(HashMap<String,Object> updateReq) throws BaseException, SQLIntegrityConstraintViolationException{
         return this.postDao.updatePost(updateReq);
     }
 
@@ -55,5 +55,13 @@ public class PostService {
 
     public String _getUserRole(int userIdx){
         return this.postDao._getUserRole(userIdx);
+    }
+
+    public int _getUserIdxByPostIdx(int postIdx){
+        return this.postDao._getUserIdxByPostIdx(postIdx);
+    }
+
+    public boolean _isExistPostIdx(int postIdx){
+        return this.postDao._isExistPostIdx(postIdx);
     }
 }

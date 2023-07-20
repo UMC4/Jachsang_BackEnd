@@ -24,7 +24,7 @@ public class PostProvider {
     public int _getBoardIdxOf(int postIdx){
         return this.postDao._getBoardIdx(postIdx);
     }
-    public int _isExistPostIdx(int postIdx){
+    public boolean _isExistPostIdx(int postIdx){
         return this.postDao._isExistPostIdx(postIdx);
     }
 }

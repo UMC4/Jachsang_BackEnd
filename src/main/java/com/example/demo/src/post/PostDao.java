@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.security.Timestamp;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,65 +39,69 @@ public class PostDao {
 
     // 글쓰기
     public PostingRes posting(int boardIdx, int categoryIdx, HashMap<String,Object> postingReq) {
-        // 입력받은 정보를 general information, specific information으로 구분하는 작업
-        // 그 중에서 general information을 Post general에 담는 과정
-        PostingReq general = new PostingReq(
-                (int)postingReq.get("userIdx"), (String)postingReq.get("title")
-        );
-        
-        // Post table에 insert 하는 sql 문장과 그 파라미터, URL의 경우 'null'로 저장함.
-        String sqlGeneral = "INSERT INTO Post(categoryIdx, userIdx, title, viewCount, likeCount, createAt, updateAt, url) VALUES (?,?,?,0,0,now(),now(),'null')";
-        Object[] paramGeneral = {
-                categoryIdx, general.getUserIdx(), general.getTitle()
-        };
-        // general 쿼리를 실행하는 부분
-        this.jdbcTemplate.update(sqlGeneral, paramGeneral);
-        // postIdx 값을 쉽게 사용하기 위해 정의함.
-        String lastInsertIdQuery = "select last_insert_id()";
-        int postIdx = this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class);
-        // 공동구매, 커뮤니티, 레시피 세 경우에 대해, 각 테이블에 정보를 저장하기 위해 sql문과 param을 정의함.
-        String sqlSpecific = "";
-        Object[] paramSpecific = null;
-        //커뮤니티
-        if (boardIdx == 1) {
-            CommunityPostingReq posting = new CommunityPostingReq(postIdx, (String)postingReq.get("contents"));
-            sqlSpecific = "INSERT INTO CommunityDetail(communityDetailIdx, postIdx, contents, heartCount) VALUES (" + postIdx + "," + postIdx + ",?, 0)";
-            paramSpecific = new Object[]{posting.getContents()};
-        }
-        //공동구매
-        else if (boardIdx == 2) {
-            GroupPurchasePostingReq posting = new GroupPurchasePostingReq(postIdx, postingReq);
-            sqlSpecific = "INSERT INTO GroupPurchaseDetail(groupPurchaseDetailIdx, postIdx, productName, productURL, singlePrice, deliveryFee, " +
-                    "members, deadline,hasExtension, calculated) VALUES (" + postIdx + "," + postIdx + ",?,?,?,?,?,?,false,false)";
+        try {
+            // 입력받은 정보를 general information, specific information으로 구분하는 작업
+            // 그 중에서 general information을 Post general에 담는 과정
+            PostingReq general = new PostingReq(
+                    (int) postingReq.get("userIdx"), (String) postingReq.get("title")
+            );
 
-            paramSpecific = new Object[]{
-                    posting.getProductName(), posting.getProductURL(), posting.getSinglePrice(),
-                    posting.getDeliveryFee(), posting.getMembers(), posting.getDeadline()
+            // Post table에 insert 하는 sql 문장과 그 파라미터, URL의 경우 'null'로 저장함.
+            String sqlGeneral = "INSERT INTO Post(categoryIdx, userIdx, title, viewCount, likeCount, createAt, updateAt, url) VALUES (?,?,?,0,0,now(),now(),'null')";
+            Object[] paramGeneral = {
+                    categoryIdx, general.getUserIdx(), general.getTitle()
             };
-        }
+            // general 쿼리를 실행하는 부분
+            this.jdbcTemplate.update(sqlGeneral, paramGeneral);
+            // postIdx 값을 쉽게 사용하기 위해 정의함.
+            String lastInsertIdQuery = "select last_insert_id()";
+            int postIdx = this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class);
+            // 공동구매, 커뮤니티, 레시피 세 경우에 대해, 각 테이블에 정보를 저장하기 위해 sql문과 param을 정의함.
+            String sqlSpecific = "";
+            Object[] paramSpecific = null;
+            //커뮤니티
+            if (boardIdx == 1) {
+                CommunityPostingReq posting = new CommunityPostingReq(postIdx, (String) postingReq.get("contents"));
+                sqlSpecific = "INSERT INTO CommunityDetail(communityDetailIdx, postIdx, contents, heartCount) VALUES (" + postIdx + "," + postIdx + ",?, 0)";
+                paramSpecific = new Object[]{posting.getContents()};
+            }
+            //공동구매
+            else if (boardIdx == 2) {
+                GroupPurchasePostingReq posting = new GroupPurchasePostingReq(postIdx, postingReq);
+                sqlSpecific = "INSERT INTO GroupPurchaseDetail(groupPurchaseDetailIdx, postIdx, productName, productURL, singlePrice, deliveryFee, " +
+                        "members, deadline,hasExtension, calculated) VALUES (" + postIdx + "," + postIdx + ",?,?,?,?,?,?,false,false)";
 
-        //레시피
-        // 오류 처리
-        else {
-            System.out.println("잘못된 카테고리 이름입니다.");
+                paramSpecific = new Object[]{
+                        posting.getProductName(), posting.getProductURL(), posting.getSinglePrice(),
+                        posting.getDeliveryFee(), posting.getMembers(), posting.getDeadline()
+                };
+            }
+
+            //레시피
+            // 오류 처리
+            else {
+                System.out.println("잘못된 카테고리 이름입니다.");
+                return null;
+            }
+            // validation : 오류 처리
+            if (sqlSpecific.equals("") || paramSpecific == null) {
+                System.out.println("쿼리 또는 파라미터가 제대로 설정되지 않았습니다.");
+                return null;
+            }
+            // 공동구매, 커뮤니티, 레시피 sql과 param을 이용해 쿼리문 실행
+            this.jdbcTemplate.update(sqlSpecific, paramSpecific);
+            // 반환할 응답 생성
+            PostingRes postingRes = new PostingRes(postIdx, categoryIdx, general.getCategory(), general.getUserIdx(), general.getTitle(), "null");
+            // 응답 반환
+
+            //이미지 등록
+            //여기서 이미지 없을 때 예외처리 해야됨
+            postImage(postIdx, (List<String>) postingReq.get("paths"));
+
+            return postingRes;
+        } catch (Exception e){
             return null;
         }
-        // validation : 오류 처리
-        if (sqlSpecific.equals("") || paramSpecific == null) {
-            System.out.println("쿼리 또는 파라미터가 제대로 설정되지 않았습니다.");
-            return null;
-        }
-        // 공동구매, 커뮤니티, 레시피 sql과 param을 이용해 쿼리문 실행
-        this.jdbcTemplate.update(sqlSpecific, paramSpecific);
-        // 반환할 응답 생성
-        PostingRes postingRes = new PostingRes(postIdx, categoryIdx, general.getCategory(), general.getUserIdx(), general.getTitle(), "null");
-        // 응답 반환
-        
-        //이미지 등록
-        //여기서 이미지 없을 때 예외처리 해야됨
-        postImage(postIdx,(List<String>)postingReq.get("paths"));
-
-        return postingRes;
     }
 
     // 글보기
@@ -379,12 +384,12 @@ public class PostDao {
         boolean result = this.jdbcTemplate.queryForObject(sql,boolean.class);
         return result;
     }
-    public int _isExistPostIdx(int postIdx) {
+    public boolean _isExistPostIdx(int postIdx) {
         String sql = "SELECT postIdx FROM Post WHERE postIdx = "+postIdx;
         try{
-            return this.jdbcTemplate.queryForObject(sql,int.class);
+            return this.jdbcTemplate.queryForObject(sql,int.class) == 1 ? true:false;
         } catch (Exception e) {
-            return -1;
+            return false;
         }
     }
 
@@ -419,4 +424,10 @@ public class PostDao {
         String getUserRoleIdxSql = "SELECT role FROM User Where userIdx = "+userIdx;
         return this.jdbcTemplate.queryForObject(getUserRoleIdxSql,String.class);
     }
+
+    public int _getUserIdxByPostIdx(int postIdx){
+        String getUserIdxSql = "SELECT userIdx FROM Post WHERE postIdx = "+postIdx;
+        return this.jdbcTemplate.queryForObject(getUserIdxSql,int.class);
+    }
+
 }

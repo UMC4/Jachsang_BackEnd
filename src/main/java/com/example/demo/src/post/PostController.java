@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 @RequestMapping("/app/post")
 public class PostController {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private JwtService jwtService;
     @Autowired
     private final PostProvider postProvider;
     @Autowired
@@ -32,6 +32,7 @@ public class PostController {
     public PostController(PostProvider postProvider, PostService postService) {
         this.postService = postService;
         this.postProvider = postProvider;
+        this.jwtService = new JwtService();
     }
     //글쓰기
     @ResponseBody
@@ -49,10 +50,14 @@ public class PostController {
                     throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
                 }
             }
-           // if(this.postProvider._isExistPostIDx((int)req.get("postIdx")) == -1) throw new BaseException();
+            // postIdx가 존재하지 않을 때
+           if(!this.postProvider._isExistPostIdx((int)req.get("postIdx"))) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             int categoryIdx = CATEGORY.getNumber((String)req.get("category"));
+
             PostingRes postingRes = this.postService.posting(categoryIdx/10, categoryIdx, req);
-            return new BaseResponse<>(postingRes);
+            if(postingRes != null) return new BaseResponse<>(postingRes);
+            // 파라미터가 누락되었을 때
+            else throw new SQLIntegrityConstraintViolationException();
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }catch (SQLIntegrityConstraintViolationException e){
@@ -74,7 +79,8 @@ public class PostController {
     @GetMapping(value ="get")
     public BaseResponse<Object> getPost(@RequestBody GetPostReq getPostReq){
         try{
-
+            // 3000
+            if(!this.postService._isExistPostIdx(getPostReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
 
             int boardIdx = 10*this.postProvider._getBoardIdxOf(getPostReq.getPostIdx());
             if(boardIdx == 10){
@@ -99,8 +105,15 @@ public class PostController {
     @DeleteMapping(value = "delete")
     public BaseResponse<String> deletePost(@RequestBody DeleteReq deleteReq){
         try{
+            // 3000
+            if(!this.postService._isExistPostIdx(deleteReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
+            // 글쓴이와 삭제자가 다를 때
+            if(jwtService.getUserIdx() != this.postService._getUserIdxByPostIdx(deleteReq.getPostIdx())) {
+                // 관리자가 아니면 권한없음 예외처리
+                if(!this.postService._getUserRole(jwtService.getUserIdx()).toLowerCase().equals("admin")) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+                throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+            }
             if(this.postService.deletePost(deleteReq)) return new BaseResponse<>("성공했습니다.");
-            // 실패한 경우 예외처리
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
@@ -112,11 +125,21 @@ public class PostController {
     public BaseResponse<String> updatePost(@RequestBody Object updateReq){
         try{
             HashMap<String,Object> req = (LinkedHashMap)updateReq;
-            // if(this.postProvider._isExistPostIDx((int)req.get("postIdx")) == -1) throw new BaseException();
+            int userIdx = jwtService.getUserIdx();
+            if(userIdx != this.postService._getUserIdxByPostIdx((int)(req.get("postIdx")))){
+                return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
+            }
+            // 글자 길이 예외처리
+
+            if(this.postService._isExistPostIdx((int)req.get("postIdx"))) {
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_POST_IDX);
+            };
             if(this.postService.updatePost(req))
                 return new BaseResponse<>("성공했습니다.");
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
+        }catch (SQLIntegrityConstraintViolationException e){
+            return new BaseResponse<>(BaseResponseStatus.OMITTED_PARAMETER);
         }
         return new BaseResponse<>("실패입니다!");
     }
@@ -125,8 +148,9 @@ public class PostController {
     @PostMapping(value = "scrap")
     public BaseResponse<String> scrapPost(@RequestBody LikeReq likeReq){
         try{
+            if(jwtService.getUserIdx() != likeReq.getUserIdx()) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+            if(!this.postService._isExistPostIdx(likeReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             if(this.postService.scrapPost(likeReq)) return new BaseResponse<>("성공했습니다.");
-            // 실패한 경우 예외처리
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
