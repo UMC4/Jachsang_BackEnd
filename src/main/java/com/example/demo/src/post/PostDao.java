@@ -9,8 +9,11 @@ import com.example.demo.src.post.model.groupPurchase.GetGroupPurchasePostRes;
 import com.example.demo.src.post.model.groupPurchase.GroupPurchasePost;
 import com.example.demo.src.post.model.groupPurchase.GroupPurchasePostingReq;
 import com.example.demo.src.post.model.recipe.GetRecipePostRes;
+import com.example.demo.src.post.model.recipe.RecipeInsertReq;
 import com.example.demo.src.post.model.recipe.RecipePost;
 import com.example.demo.src.post.model.recipe.RecipePostingReq;
+import com.example.demo.src.recipeCrawl.Methods;
+import com.example.demo.src.recipeCrawl.model.RecipeReq;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -71,12 +74,8 @@ public class PostDao {
                     posting.getDeliveryFee(), posting.getMembers(), posting.getDeadline()
             };
         }
+
         //레시피
-        else if (boardIdx == 3) {
-            RecipePostingReq posting = mapper.convertValue(postingReq, RecipePostingReq.class);
-            sqlSpecific = "INSERT INTO RecipeDetail(recipeDetailIdx,postIdx, contents, tag) VALUES(" + postIdx + "," + postIdx + ",?,?)";
-            paramSpecific = new Object[]{(String)postingReq.get("contents"), (String)postingReq.get("tag")};
-        }
         // 오류 처리
         else {
             System.out.println("잘못된 카테고리 이름입니다.");
@@ -129,7 +128,7 @@ public class PostDao {
     // 글 삭제
     public boolean deletePost(DeleteReq deleteReq) {
         // 결과 확인용 변수 선언 - Post(general)와 Detail 각각 준비한다.
-        int general = 0, detail = 0, image = 0, like = 0, heart = 0;
+        int general = 0, detail = 0, image = 0, like = 0, heart = 0, comment = 0;
         // 유저 idx를 저장한다.
         int userIdx = deleteReq.getUserIdx();
         // 게시판 종류를 확인한다.
@@ -146,15 +145,21 @@ public class PostDao {
         // Image 내용을 삭제한다.
         String deleteImageSql = "DELETE FROM Image WHERE postIdx = "+postIdx;
         // LikedTable 내용을 삭제한다.
-        String deleteLikeSql = "DELETE FROM LikedPost WHERE postIdx = "+postIdx+" AND userIdx = " + userIdx;
+        String deleteLikeSql = "DELETE FROM LikedPost WHERE postIdx = "+postIdx;
         // HeartPost 내용을 삭제한다.
-        String deleteHeartSql = "DELETE FROM HeartPost WHERE postIdx = "+postIdx+" AND userIdx = "+userIdx;
+        String deleteHeartSql = "DELETE FROM HeartPost WHERE postIdx = "+postIdx;
+        // HeartComment 내용을 삭제한다.
+        String deleteHeartCommentSql = "DELETE FROM HeartComment WHERE commentIdx = (" +
+                "SELECT commentIdx FROM Comment WHERE postIdx = "+postIdx+")";
+        // Comment 내용을 삭제한다.
+        String deleteCommentSql = "DELETE FROM Comment WHERE postIdx = "+postIdx;
         // 마지막으로 Post 내용을 삭제한다.
         String deleteGeneralSql = "DELETE FROM Post WHERE postIdx = "+postIdx;
         // sql문 실행
         image = this.jdbcTemplate.update(deleteImageSql);
         like = this.jdbcTemplate.update(deleteLikeSql);
         heart = this.jdbcTemplate.update(deleteHeartSql);
+        comment = this.jdbcTemplate.update(deleteHeartCommentSql) * this.jdbcTemplate.update(deleteCommentSql);
         detail = this.jdbcTemplate.update(deleteDetailSql);
         general = this.jdbcTemplate.update(deleteGeneralSql);
 
@@ -197,13 +202,6 @@ public class PostDao {
                     (String)updateReq.get("productURL"), (int)updateReq.get("singlePrice"),
                     (int)updateReq.get("deliveryFee"), (int)updateReq.get("members"),
                     (String)updateReq.get("deadline")
-            };
-        }
-        //레시피
-        else if (boardIdx == 3) {
-            sqlSpecific = "UPDATE RecipeDetail SET contents =  ?, tag = ? WHERE postIdx = "+postIdx;
-            paramSpecific = new Object[]{
-                    (String)updateReq.get("contents"),(String)updateReq.get("tag")
             };
         }
         // 오류 처리
@@ -390,4 +388,30 @@ public class PostDao {
         }
     }
 
+    public void recipeTest(){
+        Methods m = new Methods();
+        List<RecipeInsertReq> list = m.getRecipe();
+        for(RecipeInsertReq r : list){
+            _insertRecipeData(r);
+        }
+    }
+    public int _insertRecipeData(RecipeInsertReq recipeInsertReq){
+        String insertOnPostSql = "INSERT INTO Post(categoryIdx,userIdx,title,url) VALUES(30,2,?,?)";
+        String insertOnRecipeSql = "INSERT INTO RecipeDetail(postIdx, ingredients,description,mainImageUrl,originUrl) VALUES(?,?,?,?,?)";
+        Object[] postParam = {
+                recipeInsertReq.getTitle(), recipeInsertReq.getUrl()
+        };
+        this.jdbcTemplate.update(insertOnPostSql ,postParam);
+        int postIdx = this.jdbcTemplate.queryForObject("" +
+                "SELECT postIdx FROM Post WHERE categoryIdx = 30 " + "AND userIdx = 2 "+
+                        "AND title = \""+ recipeInsertReq.getTitle()+"\"",
+                int.class
+        );
+
+        Object[] recipeParam = {
+                postIdx, recipeInsertReq.getIngredients(), recipeInsertReq.getDescription(),
+                recipeInsertReq.getMainImageUrl(), recipeInsertReq.getOriginUrl()
+        };
+        return this.jdbcTemplate.update(insertOnRecipeSql,recipeParam);
+    }
 }

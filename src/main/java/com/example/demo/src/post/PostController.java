@@ -45,6 +45,17 @@ public class PostController {
         }
     }
     @ResponseBody
+    @PostMapping(value = "recipeTest")
+    public BaseResponse<String> recipeTest(){
+        try{
+            this.postService.recipeTest();
+            return new BaseResponse<>("성공했습니다.");
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    @ResponseBody
     @GetMapping(value ="get")
     public BaseResponse<Object> getPost(@RequestBody GetPostReq getPostReq){
         try{

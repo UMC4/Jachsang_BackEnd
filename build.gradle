@@ -24,7 +24,7 @@ repositories {
 
 dependencies {
     implementation 'org.jetbrains:annotations:24.0.1'
-
+    implementation 'org.jsoup:jsoup:1.16.1'
     // Spring Boot Starter
     implementation('org.springframework.boot:spring-boot-starter')
     implementation('org.springframework.boot:spring-boot-starter-web')

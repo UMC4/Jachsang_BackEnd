@@ -48,5 +48,7 @@ public class PostService {
         return this.postDao.updatePost(updateReq);
     }
 
-
+    public void recipeTest()throws BaseException{
+        this.postDao.recipeTest();
+    }
 }
