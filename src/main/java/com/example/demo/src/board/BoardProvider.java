@@ -8,7 +8,10 @@ import com.example.demo.src.board.model.GetRecipeItemRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
+
+import static com.example.demo.config.BaseResponseStatus.REQUEST_ERROR;
 
 @Service
 public class BoardProvider {
@@ -81,7 +84,21 @@ public class BoardProvider {
         return boardDao.searchGroupPurchase(userIdx, query);
     }
 
-    public List<GetRecipeItemRes> getSearchedRecipeList(int userIdx, String query) {
-        return boardDao.searchRecipe(userIdx, query);
+    public List<GetRecipeItemRes> getSearchedRecipeList(int userIdx, String query) throws BaseException {
+        String[] keywords = query.split(" ");
+        // 검색어 유무 검사
+        if (keywords.length == 0) {
+            throw new BaseException(REQUEST_ERROR);
+        }
+
+        // 검색어가 ㅁ두
+        boolean firstIsTag = keywords[0].startsWith("#");
+        for (String keyword : keywords) {
+            if (keyword.startsWith("#") != firstIsTag) {
+                throw new BaseException(REQUEST_ERROR);
+            }
+        }
+
+        return boardDao.searchRecipe(userIdx, query, firstIsTag);
     }
 }

@@ -255,10 +255,9 @@ public class BoardDao {
     // 게시물 생성 시간을 기준으로 내림차순으로 정렬됩니다.
     public List<GetRecipeItemRes> sortRecipeByLatest(int userIdx, int limit) {
         String Query =
-                "SELECT P.postIdx, P.title, RD.tag, P.likeCount, imagePath, " +
+                "SELECT P.postIdx, P.title, P.likeCount, imagePath, " +
                         "IF(LP.postIdx IS NOT NULL, TRUE, FALSE) AS likestatus " +
                 "FROM Post P " +
-                    "JOIN RecipeDetail RD ON P.postIdx = RD.postIdx " +
                     "LEFT JOIN LikedPost LP ON P.postIdx = LP.postIdx AND LP.userIdx = ? " +
                     "LEFT JOIN ( " +
                         "SELECT postIdx, MIN(imageIdx) as minIdx, path as imagePath " +
@@ -271,7 +270,6 @@ public class BoardDao {
                 (rs,rowNum) -> new GetRecipeItemRes(
                         rs.getInt("postIdx"),
                         rs.getString("title"),
-                        rs.getString("tag"),
                         rs.getBoolean("likeStatus"),
                         rs.getInt("likeCount"),
                         rs.getString("imagePath")),
@@ -284,10 +282,9 @@ public class BoardDao {
     // 인기도 = (100*조회수 + 공감수)
     public List<GetRecipeItemRes> sortRecipeByPopularity(int userIdx, int limit) {
         String Query =
-                "SELECT P.postIdx, P.title, RD.tag, P.likeCount, imagePath, " +
+                "SELECT P.postIdx, P.title, P.likeCount, imagePath, " +
                     "IF(LP.postIdx IS NOT NULL, TRUE, FALSE) AS likestatus, P.likeCount " +
                 "FROM Post P " +
-                    "JOIN RecipeDetail RD ON P.postIdx = RD.postIdx " +
                     "LEFT JOIN LikedPost LP ON P.postIdx = LP.postIdx AND LP.userIdx = ? " +
                     "LEFT JOIN ( " +
                         "SELECT postIdx, MIN(imageIdx) as minIdx, path as imagePath " +
@@ -301,7 +298,6 @@ public class BoardDao {
                 (rs,rowNum) -> new GetRecipeItemRes(
                         rs.getInt("postIdx"),
                         rs.getString("title"),
-                        rs.getString("tag"),
                         rs.getBoolean("likeStatus"),
                         rs.getInt("likeCount"),
                         rs.getString("imagePath")),
@@ -376,29 +372,30 @@ public class BoardDao {
                 userIdx, query);
     }
 
-    public List<GetRecipeItemRes> searchRecipe(int userIdx, String query) {
-        String Query =
-                "SELECT P.postIdx, P.title, RD.tag, P.likeCount, imagePath, IF(LP.postIdx IS NOT NULL, TRUE, FALSE) AS likestatus " +
-                "FROM Post P " +
-                    "JOIN RecipeDetail RD ON P.postIdx = RD.postIdx " +
-                    "LEFT JOIN LikedPost LP ON P.postIdx = LP.postIdx AND LP.userIdx = ? " +
-                    "LEFT JOIN ( " +
+    public List<GetRecipeItemRes> searchRecipe(int userIdx, String query, boolean isTagSearch) {
+        String baseQuery =
+                "SELECT P.postIdx, P.title, P.likeCount, imagePath, IF(LP.postIdx IS NOT NULL, TRUE, FALSE) AS likestatus " +
+                        "FROM Post P " +
+                        "JOIN RecipeDetail RD ON P.postIdx = RD.postIdx " +
+                        "LEFT JOIN LikedPost LP ON P.postIdx = LP.postIdx AND LP.userIdx = ? " +
+                        "LEFT JOIN ( " +
                         "SELECT postIdx, MIN(imageIdx) as minIdx, path as imagePath " +
                         "FROM Image  " +
                         "GROUP BY postIdx  " +
-                    ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
-                "WHERE MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE)" +
-                    "OR MATCH(tag) AGAINST(? IN NATURAL LANGUAGE MODE)";
+                        ") MinIdImage ON P.postIdx = MinIdImage.postIdx ";
 
-        return this.jdbcTemplate.query(Query,
+        String matchCondition = isTagSearch ? "WHERE MATCH(RD.ingredients) AGAINST(? IN NATURAL LANGUAGE MODE)" : "WHERE MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE)";
+
+        String finalQuery = baseQuery + matchCondition;
+
+        return this.jdbcTemplate.query(finalQuery,
                 (rs,rowNum) -> new GetRecipeItemRes(
                         rs.getInt("postIdx"),
                         rs.getString("title"),
-                        rs.getString("tag"),
                         rs.getBoolean("likeStatus"),
                         rs.getInt("likeCount"),
                         rs.getString("imagePath")),
-                userIdx, query, query);
+                userIdx, query);
     }
 }
 

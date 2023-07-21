@@ -10,7 +10,6 @@ import lombok.Setter;
 public class GetRecipeItemRes {
     private int postIdx;
     private String title;
-    private String tag;
     private boolean likeStatus;
     private int likeCount;
     private String imagePath;
