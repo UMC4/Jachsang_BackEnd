@@ -129,4 +129,26 @@ public class CommentDao {
         String checkSql = "SELECT EXISTS (SELECT 1 FROM HeartComment WHERE commentIdx = "+commentIdx+" AND userIdx = "+userIdx+")";
         return this.jdbcTemplate.queryForObject(checkSql,int.class) == 1 ? true : false;
     }
+
+    public boolean _isExistPostIdx(int postIdx) {
+        String sql = "SELECT postIdx FROM Post WHERE postIdx = "+postIdx;
+        try{
+            return this.jdbcTemplate.queryForObject(sql,int.class) == 1 ? true:false;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    public boolean _isExistCommentIdx(int commentIdx) {
+        String sql = "SELECT commentIdx FROM Comment WHERE commentIdx = "+commentIdx;
+        try{
+            return this.jdbcTemplate.queryForObject(sql,int.class) == 1 ? true:false;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    public int _getUserIdxByCommentIdx(int commentIdx){
+        String getUserIdxSql = "SELECT userIdx FROM CommentIdx WHERE commentIdx = "+commentIdx;
+        return this.jdbcTemplate.queryForObject(getUserIdxSql,int.class);
+    }
+
 }

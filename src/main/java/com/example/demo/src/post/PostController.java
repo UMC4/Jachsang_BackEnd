@@ -95,10 +95,10 @@ public class PostController {
                 Object result = (GetRecipePostRes)this.postProvider.getPost(boardIdx,getPostReq);
                 return new BaseResponse<>(result);
             }
-            else return null; //TODO : 이 부분 예외처리하기
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
+        return new BaseResponse<>("실패했습니다.");
     }
 
     @ResponseBody
@@ -126,6 +126,7 @@ public class PostController {
         try{
             HashMap<String,Object> req = (LinkedHashMap)updateReq;
             int userIdx = jwtService.getUserIdx();
+            //3008
             if(userIdx != this.postService._getUserIdxByPostIdx((int)(req.get("postIdx")))){
                 return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
             }
@@ -148,7 +149,9 @@ public class PostController {
     @PostMapping(value = "scrap")
     public BaseResponse<String> scrapPost(@RequestBody LikeReq likeReq){
         try{
+            // 요청하는 유저와 당사자가 다른 경우
             if(jwtService.getUserIdx() != likeReq.getUserIdx()) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+            // 존재하지 않는 게시글인 경우
             if(!this.postService._isExistPostIdx(likeReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             if(this.postService.scrapPost(likeReq)) return new BaseResponse<>("성공했습니다.");
         }catch (BaseException e){
@@ -160,18 +163,23 @@ public class PostController {
     @PostMapping(value = "scrap/cancel")
     public BaseResponse<String> cancelScrapPost(@RequestBody LikeReq likeReq){
         try{
+            if(jwtService.getUserIdx() != likeReq.getUserIdx()) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+            // 존재하지 않는 게시글인 경우
+            if(!this.postService._isExistPostIdx(likeReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             if(this.postService.cancelScrapPost(likeReq)) return new BaseResponse<>("성공했습니다.");
-            // 실패한 경우 예외처리
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
         return new BaseResponse<>("실패했습니다.");
     }
-    //TODO : 게시글 하트 취소 API 작성해야함.
     @ResponseBody
     @PostMapping(value = "heart")
     public BaseResponse<String> heartPost(@RequestBody HeartPostReq heartPostReq){
         try{
+            if(jwtService.getUserIdx() != heartPostReq.getUserIdx()) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+            // 존재하지 않는 게시글인 경우
+            if(!this.postService._isExistPostIdx(heartPostReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
+
             if(this.postService.heartPost(heartPostReq)) return new BaseResponse<>("성공했습니다.");
             // 실패한 경우 예외처리
         }catch (BaseException e){
@@ -184,6 +192,10 @@ public class PostController {
     @PostMapping(value = "heart/cancel")
     public BaseResponse<String> cancelHeartPost(@RequestBody HeartPostReq heartPostReq){
         try{
+            if(jwtService.getUserIdx() != heartPostReq.getUserIdx()) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+            // 존재하지 않는 게시글인 경우
+            if(!this.postService._isExistPostIdx(heartPostReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
+
             if(this.postService.cancelHeartPost(heartPostReq)) return new BaseResponse<>("성공했습니다.");
             // 실패한 경우 예외처리
         }catch (BaseException e){
@@ -196,7 +208,10 @@ public class PostController {
     @GetMapping(value = "get/like")
     public BaseResponse<Integer> getLikeCount(@RequestParam("postIdx") int postIdx){
         try{
+            // 존재하지 않는 게시글인 경우
+            if(!this.postService._isExistPostIdx(postIdx)) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             int likeCount = this.postProvider.getLikeCount(postIdx);
+
             //if(likeCount == -1) TODO:예외처리하기
             return new BaseResponse<>(likeCount);
         }catch (BaseException e){

@@ -8,6 +8,8 @@ import com.example.demo.src.comment.model.ReplyReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+
 @Service
 public class CommentService {
     @Autowired
@@ -16,10 +18,10 @@ public class CommentService {
     public CommentService(CommentDao commentDao) {
         this.commentDao = commentDao;
     }
-    public int commenting (CommentingReq commentingReq) throws BaseException {
+    public int commenting (CommentingReq commentingReq) throws SQLIntegrityConstraintViolationException,BaseException {
         return this.commentDao.commenting(commentingReq);
     }
-    public int editComment(EditCommentReq editCommentReq) throws BaseException {
+    public int editComment(EditCommentReq editCommentReq) throws SQLIntegrityConstraintViolationException, BaseException {
         return this.commentDao.editComment(editCommentReq);
     }
 
@@ -35,5 +37,16 @@ public class CommentService {
     }
     public int replying(ReplyReq replyReq) throws BaseException {
         return this.commentDao.replying(replyReq);
+    }
+
+    public boolean _isExistPostIdx(int postIdx){
+        return this.commentDao._isExistPostIdx(postIdx);
+    }
+
+    public boolean _isExistCommentIdx(int commentIdx){
+        return this.commentDao._isExistCommentIdx(commentIdx);
+    }
+    public int _getUserIdxByCommentIdx(int commentIdx){
+        return this.commentDao._getUserIdxByCommentIdx(commentIdx);
     }
 }

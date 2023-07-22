@@ -18,6 +18,7 @@ public class ReportDao {
     }
 
     public int reporting(ReportReq reportReq){
+
         String createReportSql = "INSERT INTO Report(reportingUserIdx," +
                 "reportCategoryIdx, reportedContentsIdx,reportedUserIdx,reportingContents)" +
                 "VALUES (?,?,?,?,?)";
