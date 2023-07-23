@@ -48,7 +48,7 @@ public enum BaseResponseStatus {
     PASSWORD_ENCRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 암호화에 실패하였습니다."),
     PASSWORD_DECRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 복호화에 실패하였습니다."),
 
-    //게시글
+    //게시글 및 댓글
     NOT_EXIST_POST_IDX(false,3000,"존재하는 게시글idx가 아닙니다."),
     OVER_LENGTH(false, 3001, "내용이 정해진 길이를 초과했습니다."),
     WRONG_CATEGORY(false, 3002, "존재하지 않는 카테고리입니다."),
