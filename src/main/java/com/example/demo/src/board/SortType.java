@@ -24,6 +24,6 @@ public enum SortType {
                 return sortType;
             }
         }
-        throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+        throw new BaseException(BaseResponseStatus.NOT_EXIST_SORT);
     }
 }

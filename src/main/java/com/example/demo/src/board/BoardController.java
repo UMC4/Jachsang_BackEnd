@@ -29,7 +29,6 @@ public class BoardController {
         this.jwtService = jwtService;
     }
 
-
     /**
      * 커뮤니티 카테고리 필터링 조회 API
      * 필터링된 리스트 반환 (맛집이야기, 질문있어요, 대화해요, 공지)
@@ -46,39 +45,46 @@ public class BoardController {
     @GetMapping("/community")
     public BaseResponse<List<GetCommunityItemRes>> getCommunityList(@RequestParam(value = "category", required = false) String category,
                                                                     @RequestParam(value = "sort", required = false) String sort,
-                                                                    @RequestParam(value = "limit", required = false, defaultValue = "2147483647") int limit) {
+                                                                    @RequestParam(value = "limit", required = false, defaultValue = "2147483647") String limit) {
+        int intLimit;
+        // limit 최댓값을 초과한 경우
         try {
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            //int userIdxByJWT = 1; //일반 사용자
-            int userIdxByJWT = 2; //관리자
+            intLimit = Integer.parseInt(limit);
+        } catch (NumberFormatException e) {
+            // 에러 응답을 바로 반환
+            return new BaseResponse<>(BaseResponseStatus.EXCESS_LIMIT);
+        }
+
+        try {
+            int userIdxByJWT = jwtService.getUserIdx();
 
             List<GetCommunityItemRes> communityList;
 
             // category와 sort 중 하나만 사용할 수 있다.
             // 둘 다 사용하거나, 둘 다 사용하지 않으면 오류를 발생한다.
-            if ((category == null) == (sort == null)) {
-                throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+            if (category == null && sort == null) {
+                throw new BaseException(BaseResponseStatus.BOTH_CATEGORY_SORT_INPUT);
+            } else if (category != null && sort != null) {
+                throw new BaseException(BaseResponseStatus.NO_CATEGORY_SORT_INPUT);
             }
             // category가 입력된 경우 공동구매 리스트를 필터링해서 groupPurchaseList에 할당한다.
             else if (category != null) {
                 int categoryIdx = CATEGORY.getNumber(category);
                 if(categoryIdx == 0) {
-                    throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+                    throw new BaseException(BaseResponseStatus.NOT_EXIST_CATEGORY);
                 } else {
-                    communityList = boardProvider.getFilteredCommunityList(userIdxByJWT, categoryIdx, limit);
+                    communityList = boardProvider.getFilteredCommunityList(userIdxByJWT, categoryIdx, intLimit);
                 }
             }
             // sort가 입력된 경우 공동구매 리스트를 정렬해서 groupPurchaseList에 할당한다.
             else {
                 SortType sortType = SortType.fromName(sort);
-                communityList = boardProvider.getSortedCommunityList(userIdxByJWT, sortType, limit);
+                communityList = boardProvider.getSortedCommunityList(userIdxByJWT, sortType, intLimit);
             }
 
             return new BaseResponse<>(communityList);
         } catch (BaseException exception) {
-            return new BaseResponse<>((exception.getStatus()));
+            return new BaseResponse<>(exception.getStatus());
         }
     }
 
@@ -98,36 +104,42 @@ public class BoardController {
     @GetMapping("/grouppurchase")
     public BaseResponse<List<GetGroupPurchaseItemRes>> getGroupPurchaseList(@RequestParam(value = "category", required = false) String category,
                                                                             @RequestParam(value = "sort", required = false) String sort,
-                                                                            @RequestParam(value = "limit", required = false, defaultValue = "2147483647") int limit) {
+                                                                            @RequestParam(value = "limit", required = false, defaultValue = "2147483647") String limit) {
+        int intLimit;
+        // limit 최댓값을 초과한 경우
         try {
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            //int userIdxByJWT = 1; //일반 사용자
-            int userIdxByJWT = 2; //관리자
+            intLimit = Integer.parseInt(limit);
+        } catch (NumberFormatException e) {
+            // 에러 응답을 바로 반환
+            return new BaseResponse<>(BaseResponseStatus.EXCESS_LIMIT);
+        }
 
+        try {
+            //int userIdxByJWT = jwtService.getUserIdx();
+            int userIdxByJWT = 5;
             List<GetGroupPurchaseItemRes> groupPurchaseList;
 
             // category와 sort 중 하나만 사용할 수 있다.
             // 둘 다 사용하거나, 둘 다 사용하지 않으면 오류를 발생한다.
-            if ((category == null) == (sort == null)) {
-                throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+            if (category == null && sort == null) {
+                throw new BaseException(BaseResponseStatus.BOTH_CATEGORY_SORT_INPUT);
+            } else if (category != null && sort != null) {
+                throw new BaseException(BaseResponseStatus.NO_CATEGORY_SORT_INPUT);
             }
             // category가 입력된 경우 공동구매 리스트를 필터링해서 groupPurchaseList에 할당한다.
             else if (category != null) {
                 int categoryIdx = CATEGORY.getNumber(category);
                 if(categoryIdx == 0) {
-                    throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+                    throw new BaseException(BaseResponseStatus.NOT_EXIST_CATEGORY);
                 } else {
-                    groupPurchaseList = boardProvider.getFilteredGroupPurchaseList(userIdxByJWT, categoryIdx, limit);
+                    groupPurchaseList = boardProvider.getFilteredGroupPurchaseList(userIdxByJWT, categoryIdx, intLimit);
                 }
             }
             // sort가 입력된 경우 공동구매 리스트를 정렬해서 groupPurchaseList에 할당한다.
             else {
                 SortType sortType = SortType.fromName(sort);
-                groupPurchaseList = boardProvider.getSortedGroupPurchaseList(userIdxByJWT, sortType, limit);
+                groupPurchaseList = boardProvider.getSortedGroupPurchaseList(userIdxByJWT, sortType, intLimit);
             }
-
             return new BaseResponse<>(groupPurchaseList);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
@@ -145,22 +157,23 @@ public class BoardController {
     @ResponseBody
     @GetMapping("/recipe")
     public BaseResponse<List<GetRecipeItemRes>> getRecipeList(@RequestParam(value = "sort") String sort,
-                                                              @RequestParam(value = "limit", required = false, defaultValue = "2147483647") int limit) {
+                                                              @RequestParam(value = "limit", required = false, defaultValue = "2147483647") String limit) {
+        int intLimit;
+        // limit 최댓값을 초과한 경우
         try {
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            //int userIdxByJWT = 1; //일반 사용자
-            int userIdxByJWT = 2; //관리자
+            intLimit = Integer.parseInt(limit);
+        } catch (NumberFormatException e) {
+            // 에러 응답을 바로 반환
+            return new BaseResponse<>(BaseResponseStatus.EXCESS_LIMIT);
+        }
+
+        try {
+            int userIdxByJWT = jwtService.getUserIdx();
 
             List<GetRecipeItemRes> recipeList;
             // sort가 입력된 경우 공동구매 리스트를 정렬해서 groupPurchaseList에 할당한다.
-            if(sort == null || sort.equals("마감임박순")) {
-                throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
-            } else {
-                SortType sortType = SortType.fromName(sort);
-                recipeList = boardProvider.getSortedRecipeList(userIdxByJWT, sortType, limit);
-            }
+            SortType sortType = SortType.fromName(sort);
+            recipeList = boardProvider.getSortedRecipeList(userIdxByJWT, sortType, intLimit);
 
             return new BaseResponse<>(recipeList);
         } catch (BaseException exception) {
@@ -179,19 +192,13 @@ public class BoardController {
     @GetMapping("/community/search")
     public BaseResponse<List<GetCommunityItemRes>> searchCommunityList(@RequestParam("query") String query) {
         try {
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            //int userIdxByJWT = 1; //일반 사용자
-            int userIdxByJWT = 2; //관리자
+            int userIdxByJWT = jwtService.getUserIdx();
+
+            // 검색어의 유무나 길이 검사
+            validateQuery(query);
 
             List<GetCommunityItemRes> communityList;
-            //쿼리 값이 없으면 오류 발생시킨다.
-            if(query == null) {
-                throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
-            } else {
-                communityList = boardProvider.getSearchedCommunityList(userIdxByJWT, query);
-            }
+            communityList = boardProvider.getSearchedCommunityList(userIdxByJWT, query);
 
             return new BaseResponse<>(communityList);
         } catch (BaseException exception) {
@@ -210,20 +217,13 @@ public class BoardController {
     @GetMapping("/grouppurchase/search")
     public BaseResponse<List<GetGroupPurchaseItemRes>> searchGroupPurchaseList(@RequestParam("query") String query) {
         try {
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            //int userIdxByJWT = 1; //일반 사용자
-            int userIdxByJWT = 2; //관리자
+            int userIdxByJWT = jwtService.getUserIdx();
+
+            // 검색어의 유무나 길이 검사
+            validateQuery(query);
 
             List<GetGroupPurchaseItemRes> groupPurchaseList;
-
-            //쿼리 값이 없으면 오류 발생시킨다.
-            if(query == null) {
-                throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
-            } else {
-                groupPurchaseList = boardProvider.getSearchedGroupPurchaseList(userIdxByJWT, query);
-            }
+            groupPurchaseList = boardProvider.getSearchedGroupPurchaseList(userIdxByJWT, query);
 
             return new BaseResponse<>(groupPurchaseList);
         } catch (BaseException exception) {
@@ -242,24 +242,42 @@ public class BoardController {
     @GetMapping("/recipe/search")
     public BaseResponse<List<GetRecipeItemRes>> searchRecipeList(@RequestParam("query") String query) {
         try {
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            //int userIdxByJWT = 1; //일반 사용자
-            int userIdxByJWT = 2; //관리자
+            int userIdxByJWT = jwtService.getUserIdx();
+
+            // 검색어의 유무나 길이 검사
+            validateQuery(query);
+            // 검색어의 종류(제목/재료 검색) 분류
+            boolean firstIsTag = checkFirstIsTag(query);
 
             List<GetRecipeItemRes> recipeList;
-
-            //쿼리 값이 없으면 오류 발생시킨다.
-            if(query == null) {
-                throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
-            } else {
-                recipeList = boardProvider.getSearchedRecipeList(userIdxByJWT, query);
-            }
+            recipeList = boardProvider.getSearchedRecipeList(userIdxByJWT, query, firstIsTag);
 
             return new BaseResponse<>(recipeList);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
+    }
+
+    // 검색어의 유무나 길이에 관한 예외처리 함수
+    private void validateQuery(String query) throws BaseException {
+        if(query == null) {
+            throw new BaseException(BaseResponseStatus.NO_SEARCH_QUERY);
+        } else if (query.length() < 2) {
+            throw new BaseException(BaseResponseStatus.SHORT_SEARCH_QUERY);
+        }
+    }
+
+    // 검색어의 종류(제목/재료 검색) 분류 및 예외처리 함수
+    private boolean checkFirstIsTag(String query) throws BaseException {
+        String[] keywords = query.split(" ");
+        boolean firstIsTag = keywords[0].startsWith("#");
+
+        for (String keyword : keywords) {
+            if (keyword.startsWith("#") != firstIsTag) {
+                throw new BaseException(BaseResponseStatus.MIX_SEARCH_QUERY);
+            }
+        }
+
+        return firstIsTag;
     }
 }
