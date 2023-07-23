@@ -2,13 +2,14 @@ package com.example.demo.src.user.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class PostLoginRes {
-
-    private int userIdx;
-    private String jwt;
+@NoArgsConstructor
+public class PostChatRoomReq {
+    private GetPost getPost;
+    private GetUser getUser;
 }
