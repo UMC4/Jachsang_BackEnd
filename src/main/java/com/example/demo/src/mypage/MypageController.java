@@ -140,7 +140,7 @@ public class MypageController {
      * @return BaseResponse<List<GetGroupPurchaseActivityRes>>
      */
     @ResponseBody
-    @GetMapping("/grouppurchase/likes")
+    @GetMapping("/grouppurchase/participated")
     public BaseResponse<List<GetGroupPurchaseActivityRes>> getMyGroupPurchaseParticipated(@RequestParam(value = "limit", defaultValue = "2147483647") int limit) {
         //실전용
         //int userIdxByJWT = jwtService.getUserIdx();
