@@ -8,6 +8,7 @@ import com.example.demo.src.post.model.community.GetCommunityPostRes;
 import com.example.demo.src.post.model.generalModel.*;
 import com.example.demo.src.post.model.groupPurchase.GetGroupPurchasePostRes;
 import com.example.demo.src.post.model.recipe.GetRecipePostRes;
+import com.example.demo.src.privateMethod.Methods;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import java.util.LinkedHashMap;
 public class PostController {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
     private JwtService jwtService;
+    private Methods methods;
     @Autowired
     private final PostProvider postProvider;
     @Autowired
@@ -33,6 +35,7 @@ public class PostController {
         this.postService = postService;
         this.postProvider = postProvider;
         this.jwtService = new JwtService();
+        this.methods = this.postService._getMethods();
     }
     //글쓰기
     @ResponseBody
@@ -46,12 +49,12 @@ public class PostController {
             }
             //공지 작성 시 유저 권한이 없을 때
             if(((String)req.get("category")).equals("공지")){
-                if(!this.postService._getUserRole((int)req.get("userIdx")).equals("admin")){
+                if(!this.methods._getUserRole((int)req.get("userIdx")).equals("admin")){
                     throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
                 }
             }
             // postIdx가 존재하지 않을 때
-           if(!this.postProvider._isExistPostIdx((int)req.get("postIdx"))) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
+           if(!this.methods._isExistPostIdx((int)req.get("postIdx"))) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             int categoryIdx = CATEGORY.getNumber((String)req.get("category"));
 
             PostingRes postingRes = this.postService.posting(categoryIdx/10, categoryIdx, req);
@@ -68,7 +71,7 @@ public class PostController {
     @PostMapping(value = "recipeTest")
     public BaseResponse<String> recipeTest(){
         try{
-            this.postService.recipeTest();
+            this.methods.recipeTest();
             return new BaseResponse<>("성공했습니다.");
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
@@ -80,9 +83,9 @@ public class PostController {
     public BaseResponse<Object> getPost(@RequestBody GetPostReq getPostReq){
         try{
             // 3000
-            if(!this.postService._isExistPostIdx(getPostReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
+            if(!this.methods._isExistPostIdx(getPostReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
 
-            int boardIdx = 10*this.postProvider._getBoardIdxOf(getPostReq.getPostIdx());
+            int boardIdx = 10*this.methods._getBoardIdx(getPostReq.getPostIdx());
             if(boardIdx == 10){
                 Object result = (GetCommunityPostRes)this.postProvider.getPost(boardIdx,getPostReq);
                 return new BaseResponse<>(result);
@@ -106,11 +109,11 @@ public class PostController {
     public BaseResponse<String> deletePost(@RequestBody DeleteReq deleteReq){
         try{
             // 3000
-            if(!this.postService._isExistPostIdx(deleteReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
+            if(!this.methods._isExistPostIdx(deleteReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             // 글쓴이와 삭제자가 다를 때
-            if(jwtService.getUserIdx() != this.postService._getUserIdxByPostIdx(deleteReq.getPostIdx())) {
+            if(jwtService.getUserIdx() != this.methods._getUserIdxByPostIdx(deleteReq.getPostIdx())) {
                 // 관리자가 아니면 권한없음 예외처리
-                if(!this.postService._getUserRole(jwtService.getUserIdx()).toLowerCase().equals("admin")) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+                if(!this.methods._getUserRole(jwtService.getUserIdx()).toLowerCase().equals("admin")) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
                 throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
             }
             if(this.postService.deletePost(deleteReq)) return new BaseResponse<>("성공했습니다.");
@@ -127,12 +130,12 @@ public class PostController {
             HashMap<String,Object> req = (LinkedHashMap)updateReq;
             int userIdx = jwtService.getUserIdx();
             //3008
-            if(userIdx != this.postService._getUserIdxByPostIdx((int)(req.get("postIdx")))){
+            if(userIdx != this.methods._getUserIdxByPostIdx((int)(req.get("postIdx")))){
                 return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
             }
             // 글자 길이 예외처리
 
-            if(this.postService._isExistPostIdx((int)req.get("postIdx"))) {
+            if(this.methods._isExistPostIdx((int)req.get("postIdx"))) {
                 return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_POST_IDX);
             };
             if(this.postService.updatePost(req))
@@ -152,7 +155,7 @@ public class PostController {
             // 요청하는 유저와 당사자가 다른 경우
             if(jwtService.getUserIdx() != likeReq.getUserIdx()) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
             // 존재하지 않는 게시글인 경우
-            if(!this.postService._isExistPostIdx(likeReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
+            if(!this.methods._isExistPostIdx(likeReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             if(this.postService.scrapPost(likeReq)) return new BaseResponse<>("성공했습니다.");
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
@@ -165,7 +168,7 @@ public class PostController {
         try{
             if(jwtService.getUserIdx() != likeReq.getUserIdx()) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
             // 존재하지 않는 게시글인 경우
-            if(!this.postService._isExistPostIdx(likeReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
+            if(!this.methods._isExistPostIdx(likeReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             if(this.postService.cancelScrapPost(likeReq)) return new BaseResponse<>("성공했습니다.");
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
@@ -178,7 +181,7 @@ public class PostController {
         try{
             if(jwtService.getUserIdx() != heartPostReq.getUserIdx()) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
             // 존재하지 않는 게시글인 경우
-            if(!this.postService._isExistPostIdx(heartPostReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
+            if(!this.methods._isExistPostIdx(heartPostReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
 
             if(this.postService.heartPost(heartPostReq)) return new BaseResponse<>("성공했습니다.");
             // 실패한 경우 예외처리
@@ -194,7 +197,7 @@ public class PostController {
         try{
             if(jwtService.getUserIdx() != heartPostReq.getUserIdx()) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
             // 존재하지 않는 게시글인 경우
-            if(!this.postService._isExistPostIdx(heartPostReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
+            if(!this.methods._isExistPostIdx(heartPostReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
 
             if(this.postService.cancelHeartPost(heartPostReq)) return new BaseResponse<>("성공했습니다.");
             // 실패한 경우 예외처리
@@ -209,7 +212,7 @@ public class PostController {
     public BaseResponse<Integer> getLikeCount(@RequestParam("postIdx") int postIdx){
         try{
             // 존재하지 않는 게시글인 경우
-            if(!this.postService._isExistPostIdx(postIdx)) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
+            if(!this.methods._isExistPostIdx(postIdx)) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             int likeCount = this.postProvider.getLikeCount(postIdx);
 
             //if(likeCount == -1) TODO:예외처리하기

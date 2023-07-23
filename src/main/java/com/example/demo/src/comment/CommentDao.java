@@ -1,6 +1,7 @@
 package com.example.demo.src.comment;
 
 import com.example.demo.src.comment.model.*;
+import com.example.demo.src.privateMethod.Methods;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -11,9 +12,11 @@ import javax.sql.DataSource;
 public class CommentDao {
     // 댓글 달기
     private JdbcTemplate jdbcTemplate;
+    private Methods methods;
     @Autowired
     public CommentDao(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.methods = new Methods(dataSource);
     }
 
     // 댓글 작성하기 - parent = 0, originIdx = commentIdx;
@@ -94,7 +97,7 @@ public class CommentDao {
         String deleteLikeHistorySql = "DELETE FROM HeartComment WHERE commentIdx = "+commentIdx;
         this.jdbcTemplate.update(deleteLikeHistorySql);
         // 부모인덱스 추출, 원 댓글 : 0, 답글 : 원 댓글의 commentIdx
-        int originIdx = _getOriginIdxOf(commentIdx);
+        int originIdx = methods._getOriginIdxOf(commentIdx);
         // 자신을 제외한 모든 댓글이 지워졌는지 확인
         String checkAllDeletionSql = "SELECT NOT EXISTS(SELECT 1 FROM Comment WHERE originIdx = "+originIdx+"" +
                 " AND isDeleted = false AND commentIdx != "+commentIdx+")";
@@ -114,41 +117,8 @@ public class CommentDao {
     }
 
     ////////////////////////////// 내부 메서드 //////////////////////////////
-    public int _getOriginIdxOf(int commentIdx){
-        String getOriginIdxSql = "SELECT originIdx From Comment WHERE commentIdx = "+commentIdx;
-        return this.jdbcTemplate.queryForObject(getOriginIdxSql,int.class);
-    }
-    public int _getParentIdxOf(int commentIdx){
-        int originIdx = _getOriginIdxOf(commentIdx);
-        String getParentIdxSql = "SELECT commentIdx From Comment WHERE originIdx = "+originIdx +
-                "ORDER BY createAt DESC";
-        return this.jdbcTemplate.queryForObject(getParentIdxSql,int.class);
-    }
-
-    public boolean _isAlreadyLikeComment(int userIdx, int commentIdx){
-        String checkSql = "SELECT EXISTS (SELECT 1 FROM HeartComment WHERE commentIdx = "+commentIdx+" AND userIdx = "+userIdx+")";
-        return this.jdbcTemplate.queryForObject(checkSql,int.class) == 1 ? true : false;
-    }
-
-    public boolean _isExistPostIdx(int postIdx) {
-        String sql = "SELECT postIdx FROM Post WHERE postIdx = "+postIdx;
-        try{
-            return this.jdbcTemplate.queryForObject(sql,int.class) == 1 ? true:false;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-    public boolean _isExistCommentIdx(int commentIdx) {
-        String sql = "SELECT commentIdx FROM Comment WHERE commentIdx = "+commentIdx;
-        try{
-            return this.jdbcTemplate.queryForObject(sql,int.class) == 1 ? true:false;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-    public int _getUserIdxByCommentIdx(int commentIdx){
-        String getUserIdxSql = "SELECT userIdx FROM CommentIdx WHERE commentIdx = "+commentIdx;
-        return this.jdbcTemplate.queryForObject(getUserIdxSql,int.class);
+    public Methods _getMethods(){
+        return this.methods;
     }
 
 }

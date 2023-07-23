@@ -12,7 +12,7 @@ import com.example.demo.src.post.model.recipe.GetRecipePostRes;
 import com.example.demo.src.post.model.recipe.RecipeInsertReq;
 import com.example.demo.src.post.model.recipe.RecipePost;
 import com.example.demo.src.post.model.recipe.RecipePostingReq;
-import com.example.demo.src.recipeCrawl.Methods;
+import com.example.demo.src.privateMethod.Methods;
 import com.example.demo.src.recipeCrawl.model.RecipeReq;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +30,12 @@ public class PostDao {
 
     private JdbcTemplate jdbcTemplate;
     private ObjectMapper mapper;
-
+    private Methods methods;
     @Autowired
     public PostDao(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.mapper = new ObjectMapper();
+        methods = new Methods(dataSource);
     }
 
     // 글쓰기
@@ -108,8 +109,8 @@ public class PostDao {
     public Object getPost(int categoryIdx, GetPostReq getPostReq) {
         // 세 게시판의 글을 한번에 처리하기 위한 변수 설정
         // 기본정보와 detail 정보 불러오기
-        Object generalPost = _getPost(getPostReq.getPostIdx()),
-                detailPost = _getDetailPost(categoryIdx,getPostReq.getPostIdx());
+        Object generalPost = methods._getPost(getPostReq.getPostIdx()),
+                detailPost = methods._getDetailPost(categoryIdx,getPostReq.getPostIdx());
         // 조회수 1 증가시키기 위해 sql문 작성 및 실행
         String viewUpdateSql = "UPDATE Post set viewCount = viewCount+1 WHERE postIdx = "+getPostReq.getPostIdx();
         this.jdbcTemplate.update(viewUpdateSql);
@@ -138,7 +139,7 @@ public class PostDao {
         int userIdx = deleteReq.getUserIdx();
         // 게시판 종류를 확인한다.
         int postIdx = deleteReq.getPostIdx();
-        int boardIdx = 10*_getBoardIdx(postIdx);
+        int boardIdx = 10*methods._getBoardIdx(postIdx);
         // 게시판 종류를 저장한다.
         String board = boardIdx == 10 ? "Community" :
                 (boardIdx == 20 ? "GroupPurchase" :
@@ -177,8 +178,8 @@ public class PostDao {
         // 그 중에서 general information을 Post general에 담는 과정
         // postIdx, title을 저장
         int postIdx = (int)updateReq.get("postIdx");
-        int boardIdx = _getBoardIdx(postIdx);
-        int categoryIdx = _getCategoryIdx(postIdx);
+        int boardIdx = methods._getBoardIdx(postIdx);
+        int categoryIdx = methods._getCategoryIdx(postIdx);
         String title = (String)updateReq.get("title");
 
         // Post table에 insert 하는 sql 문장과 그 파라미터, URL의 경우 'null'로 저장함.
@@ -315,119 +316,7 @@ public class PostDao {
         return postImage(postIdx,paths);
     }
 
-    public Post _getPost(int postIdx){
-        String sql = "SELECT * FROM Post WHERE postIdx = " + postIdx;
-        return this.jdbcTemplate.queryForObject(sql, (rs,rowNum)-> new Post(
-                rs.getInt("postIdx"),
-                rs.getInt("categoryIdx"),
-                rs.getInt("userIdx"),
-                rs.getString("title"),
-                rs.getInt("viewCount"),
-                rs.getInt("likeCount"),
-                rs.getTimestamp("createAt"),
-                rs.getTimestamp("updateAt"),
-                rs.getString("url")));
+    public Methods _getMethods(){
+        return this.methods;
     }
-    public Object _getDetailPost(int boardIdx, int postIdx){
-        // 공동구매 detail 정보 불러오기
-        Object detailPost;
-        if(boardIdx == 20) {
-            String qry = "SELECT * FROM GroupPurchaseDetail WHERE postIdx = "+postIdx;
-            detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new GroupPurchasePost(
-                    rs.getInt("groupPurchaseDetailIdx"),
-                    rs.getString("productName"),
-                    rs.getString("productURL"),
-                    rs.getDouble("singlePrice"),
-                    rs.getDouble("deliveryFee"),
-                    rs.getInt("members"),
-                    rs.getTimestamp("deadline"),
-                    rs.getBoolean("hasExtension"),
-                    rs.getBoolean("calculated")
-            ));
-            return (GroupPurchasePost)detailPost;
-        }
-        // 커뮤니티 detail 정보 불러오기
-        else if (boardIdx == 10) {
-            String qry = "SELECT * FROM CommunityDetail WHERE postIdx = "+postIdx;
-            detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new CommunityPost(
-                    rs.getInt("communityDetailIdx"),
-                    rs.getString("contents")
-            ));
-            // Post와 detail의 정보를 합친 후 리턴하기
-            return (CommunityPost)detailPost;
-        }
-        // 레시피 detail 정보 불러오기
-        else if (boardIdx == 30) {
-            String qry = "SELECT * FROM RecipeDetail WHERE postIdx = " + postIdx;
-            detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new RecipePost(
-                    rs.getInt("recipeDetailIdx"),
-                    rs.getString("contents"),
-                    rs.getString("tag")
-            ));
-            return (RecipePost)detailPost;
-        }
-        else return null;
-    }
-    public int _getCategoryIdx(int postIdx){
-        String sql = "SELECT categoryIdx FROM Post WHERE postIdx = "+postIdx;
-        return this.jdbcTemplate.queryForObject(sql,int.class);
-    }
-    public int _getBoardIdx(int postIdx){
-        return this._getCategoryIdx(postIdx)/10;
-    }
-    public String _getBoardName(int categoryIdx) {
-        return categoryIdx == 1 ? "Community" : (categoryIdx == 2 ? "GroupPurchase" : "Recipe");
-    }
-
-    public boolean _isExtended(int postIdx){
-        String sql = "SELECT hasExtension FROM GroupPurchase WHERE postIdx = "+postIdx;
-        boolean result = this.jdbcTemplate.queryForObject(sql,boolean.class);
-        return result;
-    }
-    public boolean _isExistPostIdx(int postIdx) {
-        String sql = "SELECT postIdx FROM Post WHERE postIdx = "+postIdx;
-        try{
-            return this.jdbcTemplate.queryForObject(sql,int.class) == 1 ? true:false;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public void recipeTest(){
-        Methods m = new Methods();
-        List<RecipeInsertReq> list = m.getRecipe();
-        for(RecipeInsertReq r : list){
-            _insertRecipeData(r);
-        }
-    }
-    public int _insertRecipeData(RecipeInsertReq recipeInsertReq){
-        String insertOnPostSql = "INSERT INTO Post(categoryIdx,userIdx,title,url) VALUES(30,2,?,?)";
-        String insertOnRecipeSql = "INSERT INTO RecipeDetail(postIdx, ingredients,description,mainImageUrl,originUrl) VALUES(?,?,?,?,?)";
-        Object[] postParam = {
-                recipeInsertReq.getTitle(), recipeInsertReq.getUrl()
-        };
-        this.jdbcTemplate.update(insertOnPostSql ,postParam);
-        int postIdx = this.jdbcTemplate.queryForObject("" +
-                "SELECT postIdx FROM Post WHERE categoryIdx = 30 " + "AND userIdx = 2 "+
-                        "AND title = \""+ recipeInsertReq.getTitle()+"\"",
-                int.class
-        );
-
-        Object[] recipeParam = {
-                postIdx, recipeInsertReq.getIngredients(), recipeInsertReq.getDescription(),
-                recipeInsertReq.getMainImageUrl(), recipeInsertReq.getOriginUrl()
-        };
-        return this.jdbcTemplate.update(insertOnRecipeSql,recipeParam);
-    }
-
-    public String _getUserRole(int userIdx){
-        String getUserRoleIdxSql = "SELECT role FROM User Where userIdx = "+userIdx;
-        return this.jdbcTemplate.queryForObject(getUserRoleIdxSql,String.class);
-    }
-
-    public int _getUserIdxByPostIdx(int postIdx){
-        String getUserIdxSql = "SELECT userIdx FROM Post WHERE postIdx = "+postIdx;
-        return this.jdbcTemplate.queryForObject(getUserIdxSql,int.class);
-    }
-
 }

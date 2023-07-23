@@ -4,6 +4,7 @@ import com.example.demo.config.BaseException;
 import com.example.demo.src.comment.model.CommentingReq;
 import com.example.demo.src.comment.model.EditCommentReq;
 import com.example.demo.src.post.model.generalModel.*;
+import com.example.demo.src.privateMethod.Methods;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,19 +50,7 @@ public class PostService {
         return this.postDao.updatePost(updateReq);
     }
 
-    public void recipeTest()throws BaseException{
-        this.postDao.recipeTest();
-    }
-
-    public String _getUserRole(int userIdx){
-        return this.postDao._getUserRole(userIdx);
-    }
-
-    public int _getUserIdxByPostIdx(int postIdx){
-        return this.postDao._getUserIdxByPostIdx(postIdx);
-    }
-
-    public boolean _isExistPostIdx(int postIdx){
-        return this.postDao._isExistPostIdx(postIdx);
+    public Methods _getMethods(){
+        return this.postDao._getMethods();
     }
 }

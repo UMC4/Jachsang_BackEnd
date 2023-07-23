@@ -6,6 +6,7 @@ import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.comment.model.*;
 import com.example.demo.src.post.PostProvider;
 import com.example.demo.src.post.PostService;
+import com.example.demo.src.privateMethod.Methods;
 import com.example.demo.utils.JwtService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,14 @@ public class CommentController {
     private final CommentProvider commentProvider;
     @Autowired
     private final CommentService commentService;
+    private final Methods methods;
     private JwtService jwtService;
     @Autowired
     public CommentController(CommentProvider commentProvider, CommentService commentService){
         this.commentProvider = commentProvider;
         this.commentService = commentService;
         this.jwtService = new JwtService();
+        this.methods = commentService._getMethods();
     }
     @ResponseBody
     @PostMapping(value = "/create")
@@ -37,7 +40,7 @@ public class CommentController {
             int postIdx = commentingReq.getPostIdx();
             int userIdx = jwtService.getUserIdx();
             // 존재하는 게시글인지 (3000)
-            if(!this.commentService._isExistPostIdx(postIdx)) return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_POST_IDX);
+            if(!this.methods._isExistPostIdx(postIdx)) return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_POST_IDX);
             // 요청 보내는 유저 정보가 올바른지
             if(commentingReq.getUserIdx() != userIdx) return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
             int result = this.commentService.commenting(commentingReq);
@@ -55,10 +58,10 @@ public class CommentController {
     public BaseResponse<Integer> editComment(@RequestBody EditCommentReq editCommentReq) {
         try {
             // 유저가 다르다
-            if(this.commentService._getUserIdxByCommentIdx((editCommentReq.getCommentIdx())) != jwtService.getUserIdx()){
+            if(this.methods._getUserIdxByCommentIdx((editCommentReq.getCommentIdx())) != jwtService.getUserIdx()){
                 return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
             }
-            if(!this.commentService._isExistCommentIdx(editCommentReq.getCommentIdx())) {
+            if(!this.methods._isExistCommentIdx(editCommentReq.getCommentIdx())) {
                 return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_COMMENT_IDX);
             }
             int result = this.commentService.editComment(editCommentReq);
@@ -77,7 +80,7 @@ public class CommentController {
             if(jwtService.getUserIdx() != likeReq.getUserIdx()) {
                 return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
             }
-            if(!this.commentService._isExistCommentIdx(likeReq.getCommentIdx())){
+            if(!this.methods._isExistCommentIdx(likeReq.getCommentIdx())){
                 return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_COMMENT_IDX);
             }
             int result = this.commentService.likeComment(likeReq);
@@ -91,10 +94,10 @@ public class CommentController {
     @PostMapping(value = "/like/cancel")
     public BaseResponse<Integer> cancelLikeComment(@RequestBody LikeReq likeReq) {
         try {
-            if(this.commentService._getUserIdxByCommentIdx((likeReq.getCommentIdx())) != jwtService.getUserIdx()){
+            if(this.methods._getUserIdxByCommentIdx((likeReq.getCommentIdx())) != jwtService.getUserIdx()){
                 return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
             }
-            if(!this.commentService._isExistCommentIdx(likeReq.getCommentIdx())) {
+            if(!this.methods._isExistCommentIdx(likeReq.getCommentIdx())) {
                 return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_COMMENT_IDX);
             }
             int result = this.commentService.cancelLikeComment(likeReq);
@@ -123,7 +126,7 @@ public class CommentController {
             if(replyReq.getUserIdx() != jwtService.getUserIdx()){
                 return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
             }
-            if(!this.commentService._isExistCommentIdx(replyReq.getOriginIdx())) {
+            if(!this.methods._isExistCommentIdx(replyReq.getOriginIdx())) {
                 return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_COMMENT_IDX);
             }
             int result = this.commentService.replying(replyReq);
@@ -138,10 +141,10 @@ public class CommentController {
     @DeleteMapping(value = "/delete")
     public BaseResponse<Integer> deleteComment(@RequestParam("commentIdx") int commentIdx){
         try {
-            if(this.commentService._getUserIdxByCommentIdx(commentIdx) != jwtService.getUserIdx()){
+            if(this.methods._getUserIdxByCommentIdx(commentIdx) != jwtService.getUserIdx()){
                 return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
             }
-            if(!this.commentService._isExistCommentIdx(commentIdx)) {
+            if(!this.methods._isExistCommentIdx(commentIdx)) {
                 return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_COMMENT_IDX);
             }
             int result = this.commentService.deleteComment(commentIdx);

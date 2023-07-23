@@ -5,6 +5,7 @@ import com.example.demo.src.comment.model.CommentingReq;
 import com.example.demo.src.comment.model.EditCommentReq;
 import com.example.demo.src.comment.model.LikeReq;
 import com.example.demo.src.comment.model.ReplyReq;
+import com.example.demo.src.privateMethod.Methods;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,14 +40,7 @@ public class CommentService {
         return this.commentDao.replying(replyReq);
     }
 
-    public boolean _isExistPostIdx(int postIdx){
-        return this.commentDao._isExistPostIdx(postIdx);
-    }
-
-    public boolean _isExistCommentIdx(int commentIdx){
-        return this.commentDao._isExistCommentIdx(commentIdx);
-    }
-    public int _getUserIdxByCommentIdx(int commentIdx){
-        return this.commentDao._getUserIdxByCommentIdx(commentIdx);
+    public Methods _getMethods(){
+        return this.commentDao._getMethods();
     }
 }
