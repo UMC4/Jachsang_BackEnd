@@ -14,6 +14,8 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import sun.tools.jconsole.JConsole;
 
+import java.nio.channels.ScatteringByteChannel;
+
 import static com.example.demo.config.BaseResponseStatus.*;
 
 // Service Create, Update, Delete 의 로직 처리
@@ -73,6 +75,16 @@ public class UserService {
                 throw new BaseException(FOLLOW_USER_ERROR);
             }
         } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    public void deleteFollow(PostFollowReq postFollowReq) throws BaseException {
+        try {
+            int result = userDao.deleteFollowUser(postFollowReq);
+            if (result == 0) {
+                throw new BaseException(DELETE_USER_ERROR);
+            }
+        }catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
     }

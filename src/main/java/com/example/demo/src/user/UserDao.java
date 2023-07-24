@@ -28,7 +28,9 @@ public class UserDao {
                         rs.getString("userName"),
                         rs.getString("loginId"),
                         rs.getString("email"),
-                        rs.getString("password"))
+                        rs.getString("password"),
+                        rs.getString("userImage"),
+                        rs.getString("nickname"))
         );
     }
 
@@ -43,7 +45,14 @@ public class UserDao {
                 getUserChatParams);
 
     }
-
+    public List<GetFollowRes> getFollowRes(int userIdx){
+        String getUserFriendsQuery="select followingId from Follow where followerId=?";
+        int getUserFriendsParams=userIdx;
+        return this.jdbcTemplate.query(getUserFriendsQuery,
+                (rs, rowNum) -> new GetFollowRes(
+                        rs.getInt("followingId")),
+                getUserFriendsParams);
+    }
 
     public List<GetUserRes> getUsersByEmail(String email) {
         String getUsersByEmailQuery = "select * from User where email =?";
@@ -54,10 +63,11 @@ public class UserDao {
                         rs.getString("userName"),
                         rs.getString("loginId"),
                         rs.getString("email"),
-                        rs.getString("password")),
+                        rs.getString("password"),
+                        rs.getString("userImage"),
+                        rs.getString("nickname")),
                 getUsersByEmailParams);
     }
-
     public GetUserRes getUser(int userIdx) {
         String getUserQuery = "select * from User where userIdx = ?";
         int getUserParams = userIdx;
@@ -67,17 +77,23 @@ public class UserDao {
                         rs.getString("userName"),
                         rs.getString("loginId"),
                         rs.getString("email"),
-                        rs.getString("password")),
+                        rs.getString("password"),
+                        rs.getString("userImage"),
+                        rs.getString("nickname")),
                 getUserParams);
     }
 
     public int followUser(PostFollowReq postFollowReq) {
-        String followUserQuery = "insert into Follow (follower_id, following_id) VALUES(?,?);";
-        Object[] followUserParams = new Object[]{postFollowReq.getFollower_id(), postFollowReq.getFollowing_id()};
+        String followUserQuery = "insert into Follow (followerId, followingId) VALUES(?,?);";
+        Object[] followUserParams = new Object[]{postFollowReq.getFollowerId(), postFollowReq.getFollowingId()};
         return this.jdbcTemplate.update(followUserQuery, followUserParams);
 
     }
-
+    public int deleteFollowUser(PostFollowReq postFollowReq){
+        String deleteFollowQuery="delete from Follow where followerId= ? AND followingId= ?";
+        Object[] deleteFollowParams= new Object[]{postFollowReq.getFollowerId(),postFollowReq.getFollowingId()};
+        return this.jdbcTemplate.update(deleteFollowQuery,deleteFollowParams);
+    }
     public int createUser(PostUserReq postUserReq) {
         String createUserQuery = "insert into User (userName, loginId, password, email,nickname,phoneNumber,adPolicyAgreement,status) VALUES (?,?,?,?,?,?,?,1);";
         Object[] createUserParams = new Object[]{postUserReq.getUserName(), postUserReq.getLoginId(), postUserReq.getPassword(), postUserReq.getEmail(), postUserReq.getNickname(), postUserReq.getPhoneNumber(), postUserReq.getAdPolicyAgreement()};
@@ -88,8 +104,8 @@ public class UserDao {
 
 
     public int checkFollow(PostFollowReq postFollowReq) {
-        String checkFollowQuery = "select exists(select follower_id, following_id from Follow where follower_id= ? AND following_id= ?)";
-        Object[] checkFollowParams=new Object[]{postFollowReq.getFollower_id(),postFollowReq.getFollowing_id()};
+        String checkFollowQuery = "select exists(select followerId, followingId from Follow where followerId= ? AND followingId= ?)";
+        Object[] checkFollowParams=new Object[]{postFollowReq.getFollowerId(),postFollowReq.getFollowingId()};
         return this.jdbcTemplate.queryForObject(checkFollowQuery,int.class,checkFollowParams);
     }
 

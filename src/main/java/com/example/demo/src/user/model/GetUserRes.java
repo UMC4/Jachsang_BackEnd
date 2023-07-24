@@ -14,4 +14,6 @@ public class GetUserRes {
     private String loginId;
     private String email;
     private String password;
+    private String userImage;
+    private String nickname;
 }

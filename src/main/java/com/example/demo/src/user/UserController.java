@@ -1,5 +1,6 @@
 package com.example.demo.src.user;
 
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.example.demo.config.BaseException;
@@ -66,9 +67,8 @@ public class UserController {
     /**
      * 채팅 조회 API
      * [GET] /users/:userIdx/chatting
-     * @return BaseResponse<GetUserRes>
+     * @return BaseResponse<getUserChatRes>
      */
-
     @ResponseBody
     @GetMapping("/{userIdx}/chatting")
     public BaseResponse<List<GetUserChatRes>> getUserChat(@PathVariable("userIdx") int userIdx)
@@ -106,6 +106,24 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
         }
 
+    }
+
+    /**
+     * 친구 목록 조회 API
+     * [GET] /users/:userIdx/friends
+     * @return BaseResponse<GetFriendRes>
+     *
+     */
+    @ResponseBody
+    @GetMapping("/{userIdx}/friends")
+    public BaseResponse<List<GetFollowRes>> getUserFriends(@PathVariable("userIdx") int userIdx){
+        // Get User's friends
+        try {
+            List<GetFollowRes> getFollowRes=userProvider.getFollowResList(userIdx);
+            return new BaseResponse<>(getFollowRes);
+        } catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
     }
 
     /**
@@ -179,8 +197,25 @@ public class UserController {
         } catch (BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
-        }
+    }
 
+
+    /** 친구 삭제 API
+     * [DELETE] /user/follow
+     *  @return BaseResponse<String>
+     */
+    @ResponseBody
+    @DeleteMapping("/follow")
+    public BaseResponse<String> deleteFollowUser(@RequestBody PostFollowReq postFollowReq)
+    {
+        try {
+            userService.deleteFollow(postFollowReq);
+            String result=" ";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
     /**
      * 유저정보변경 API

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.BitSet;
 import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
@@ -61,7 +62,14 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
+    public List<GetFollowRes> getFollowResList(int userIdx) throws BaseException{
+        try {
+            List<GetFollowRes> getFollowRes=userDao.getFollowRes(userIdx);
+            return getFollowRes;
+        }catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
     public GetUserRes getUser(int userIdx) throws BaseException {
         try {
             GetUserRes getUserRes = userDao.getUser(userIdx);
