@@ -6,6 +6,7 @@ import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
 import com.example.demo.utils.SHA256;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,14 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
+    public List<GetUserChatRes> getUserChatList(int userIdx) throws BaseException{
+        try{
+            List<GetUserChatRes> getUserChatRes = userDao.getUserChatRes(userIdx);
+            return getUserChatRes;
+        }catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 
     public GetUserRes getUser(int userIdx) throws BaseException {
         try {
@@ -70,9 +78,30 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
+    public int checkFollowed(PostFollowReq postFollowReq) throws BaseException{
+        try{
+            return userDao.checkFollow(postFollowReq);
+        } catch (Exception exception){
+            throw new BaseException(ERRRRRRR);
+        }
+    }
+    public int checkId(String id) throws BaseException{
+        try {
+            return userDao.checkID(id);
+        }catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
     public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException{
-        User user = userDao.getPwd(postLoginReq);
+       //아이디 검증 여부(아이디 다를시 exception 처리)
+        try{
+            UserForPassword user = userDao.getPwd(postLoginReq);
+        }catch (Exception exception)
+        {
+            throw new BaseException(FAILED_TO_LOGIN);
+        }
+        //postLoginReq 정보 불러오기 및 비밀번호 검증
+        UserForPassword user = userDao.getPwd(postLoginReq);
         String encryptPwd;
         try {
             encryptPwd=new SHA256().encrypt(postLoginReq.getPassword());

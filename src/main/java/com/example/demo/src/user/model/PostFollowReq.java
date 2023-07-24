@@ -5,11 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostLoginReq {
-    private String loginId;
-    private String password;
+
+public class PostFollowReq {
+    private int follower_id;
+    private int following_id;
 }
+
+

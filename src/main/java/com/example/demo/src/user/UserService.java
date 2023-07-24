@@ -6,10 +6,13 @@ import com.example.demo.config.BaseException;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
 import com.example.demo.utils.SHA256;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import sun.tools.jconsole.JConsole;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
@@ -31,11 +34,16 @@ public class UserService {
 
     }
 
+//비즈니스 로직 처리
     //POST
     public PostUserRes createUser(PostUserReq postUserReq) throws BaseException {
-        //중복
+        // 이메일 중복
         if(userProvider.checkEmail(postUserReq.getEmail()) ==1){
             throw new BaseException(POST_USERS_EXISTS_EMAIL);
+        }
+        //아이디 중복
+        if(userProvider.checkId(postUserReq.getLoginId())==1){
+            throw new BaseException(POST_USERS_EXISTS_ID);
         }
 
         String pwd;
@@ -43,7 +51,6 @@ public class UserService {
             //암호화
             pwd = new SHA256().encrypt(postUserReq.getPassword());
             postUserReq.setPassword(pwd);
-
         } catch (Exception ignored) {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
@@ -57,9 +64,28 @@ public class UserService {
         }
     }
 
-    public void modifyUserName(PatchUserReq patchUserReq) throws BaseException {
+    public void followUser(PostFollowReq postFollowReq) throws BaseException{
+        if (userProvider.checkFollowed(postFollowReq)==1)
+            throw new BaseException(FOLLOW_USER_ALREADY);
         try{
-            int result = userDao.modifyUserName(patchUserReq);
+            int result=userDao.followUser(postFollowReq);
+            if(result==0) {
+                throw new BaseException(FOLLOW_USER_ERROR);
+            }
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    public void modifyUserInfo(PatchUserReq patchUserReq) throws BaseException {
+        String pwd;
+        try{
+            pwd=new SHA256().encrypt(patchUserReq.getPassword());
+            patchUserReq.setPassword(pwd);
+        }catch (Exception ignored){
+            throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
+        }
+        try{
+            int result = userDao.modifyUserInfo(patchUserReq);
             if(result == 0){
                 throw new BaseException(MODIFY_FAIL_USERNAME);
             }
