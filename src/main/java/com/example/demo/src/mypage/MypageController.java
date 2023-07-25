@@ -1,5 +1,6 @@
 package com.example.demo.src.mypage;
 
+import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.mypage.model.GetCommunityActivityRes;
 import com.example.demo.src.mypage.model.GetGroupPurchaseActivityRes;
@@ -34,14 +35,18 @@ public class MypageController {
     @ResponseBody
     @GetMapping("/community/posts")
     public BaseResponse<List<GetCommunityActivityRes>> getMyCommunityPosts() {
-        //실전용
-        //int userIdxByJWT = jwtService.getUserIdx();
-        //테스트용
-        int userIdxByJWT = 3; //일반 사용자
-        //int userIdxByJWT = 2; //관리자
+        try {
+            //실전용
+            //int userIdxByJWT = jwtService.getUserIdx();
+            //테스트용
+            int userIdxByJWT = 3; //일반 사용자
+            //int userIdxByJWT = 2; //관리자
 
-        List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityPosts(userIdxByJWT);
-        return new BaseResponse<>(communityList);
+            List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityPosts(userIdxByJWT);
+            return new BaseResponse<>(communityList);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
     }
 
     /**
@@ -52,14 +57,18 @@ public class MypageController {
     @ResponseBody
     @GetMapping("/community/comments")
     public BaseResponse<List<GetCommunityActivityRes>> getMyCommunityComments() {
-        //실전용
-        //int userIdxByJWT = jwtService.getUserIdx();
-        //테스트용
-        int userIdxByJWT = 3; //일반 사용자
-        //int userIdxByJWT = 2; //관리자
+        try {
+            //실전용
+            //int userIdxByJWT = jwtService.getUserIdx();
+            //테스트용
+            int userIdxByJWT = 3; //일반 사용자
+            //int userIdxByJWT = 2; //관리자
 
-        List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityComments(userIdxByJWT);
-        return new BaseResponse<>(communityList);
+            List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityComments(userIdxByJWT);
+            return new BaseResponse<>(communityList);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
     }
 
     /**
@@ -70,14 +79,18 @@ public class MypageController {
     @ResponseBody
     @GetMapping("/community/likes")
     public BaseResponse<List<GetCommunityActivityRes>> getMyCommunityLikes() {
-        //실전용
-        //int userIdxByJWT = jwtService.getUserIdx();
-        //테스트용
-        int userIdxByJWT = 1; //일반 사용자
-        //int userIdxByJWT = 2; //관리자
+        try {
+            //실전용
+            //int userIdxByJWT = jwtService.getUserIdx();
+            //테스트용
+            int userIdxByJWT = 3; //일반 사용자
+            //int userIdxByJWT = 2; //관리자
 
-        List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityLikes(userIdxByJWT);
-        return new BaseResponse<>(communityList);
+            List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityLikes(userIdxByJWT);
+            return new BaseResponse<>(communityList);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
     }
 
     /**
@@ -88,14 +101,18 @@ public class MypageController {
     @ResponseBody
     @GetMapping("/community/hearts")
     public BaseResponse<List<GetCommunityActivityRes>> getMyCommunityHearts() {
-        //실전용
-        //int userIdxByJWT = jwtService.getUserIdx();
-        //테스트용
-        int userIdxByJWT = 3; //일반 사용자
-        //int userIdxByJWT = 2; //관리자
+        try {
+            //실전용
+            //int userIdxByJWT = jwtService.getUserIdx();
+            //테스트용
+            int userIdxByJWT = 3; //일반 사용자
+            //int userIdxByJWT = 2; //관리자
 
-        List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityHearts(userIdxByJWT);
-        return new BaseResponse<>(communityList);
+            List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityHearts(userIdxByJWT);
+            return new BaseResponse<>(communityList);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
     }
 
     /**
@@ -106,14 +123,18 @@ public class MypageController {
     @ResponseBody
     @GetMapping("/grouppurchase/posts")
     public BaseResponse<List<GetGroupPurchaseActivityRes>> getMyGroupPurchasePosts() {
-        //실전용
-        //int userIdxByJWT = jwtService.getUserIdx();
-        //테스트용
-        int userIdxByJWT = 3; //일반 사용자
-        //int userIdxByJWT = 2; //관리자
+        try {
+            //실전용
+            //int userIdxByJWT = jwtService.getUserIdx();
+            //테스트용
+            int userIdxByJWT = 3; //일반 사용자
+            //int userIdxByJWT = 2; //관리자
 
-        List<GetGroupPurchaseActivityRes> groupPurchaseList = mypageProvider.getMyGroupPurchasePosts(userIdxByJWT);
-        return new BaseResponse<>(groupPurchaseList);
+            List<GetGroupPurchaseActivityRes> groupPurchaseList = mypageProvider.getMyGroupPurchasePosts(userIdxByJWT);
+            return new BaseResponse<>(groupPurchaseList);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
     }
 
     /**
@@ -124,14 +145,18 @@ public class MypageController {
     @ResponseBody
     @GetMapping("/grouppurchase/likes")
     public BaseResponse<List<GetGroupPurchaseActivityRes>> getMyGroupPurchaseLikes() {
-        //실전용
-        //int userIdxByJWT = jwtService.getUserIdx();
-        //테스트용
-        int userIdxByJWT = 3; //일반 사용자
-        //int userIdxByJWT = 2; //관리자
+        try {
+            //실전용
+            //int userIdxByJWT = jwtService.getUserIdx();
+            //테스트용
+            int userIdxByJWT = 3; //일반 사용자
+            //int userIdxByJWT = 2; //관리자
 
-        List<GetGroupPurchaseActivityRes> groupPurchaseList = mypageProvider.getMyGroupPurchaseLikes(userIdxByJWT);
-        return new BaseResponse<>(groupPurchaseList);
+            List<GetGroupPurchaseActivityRes> groupPurchaseList = mypageProvider.getMyGroupPurchaseLikes(userIdxByJWT);
+            return new BaseResponse<>(groupPurchaseList);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
     }
 
     /**
@@ -141,14 +166,18 @@ public class MypageController {
      */
     @ResponseBody
     @GetMapping("/grouppurchase/participated")
-    public BaseResponse<List<GetGroupPurchaseActivityRes>> getMyGroupPurchaseParticipated(@RequestParam(value = "limit", defaultValue = "2147483647") int limit) {
-        //실전용
-        //int userIdxByJWT = jwtService.getUserIdx();
-        //테스트용
-        int userIdxByJWT = 3; //일반 사용자
-        //int userIdxByJWT = 2; //관리자
+    public BaseResponse<List<GetGroupPurchaseActivityRes>> getMyGroupPurchaseParticipated() {
+        try {
+            //실전용
+            //int userIdxByJWT = jwtService.getUserIdx();
+            //테스트용
+            int userIdxByJWT = 3; //일반 사용자
+            //int userIdxByJWT = 2; //관리자
 
-        List<GetGroupPurchaseActivityRes> groupPurchaseList = mypageProvider.getMyGroupPurchaseParticipated(userIdxByJWT, limit);
-        return new BaseResponse<>(groupPurchaseList);
+            List<GetGroupPurchaseActivityRes> groupPurchaseList = mypageProvider.getMyGroupPurchaseParticipated(userIdxByJWT);
+            return new BaseResponse<>(groupPurchaseList);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
     }
 }

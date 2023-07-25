@@ -60,6 +60,7 @@ public enum BaseResponseStatus {
     SHORT_SEARCH_QUERY(false, 2031, "검색어의 길이가 짧습니다."),
     LONG_SEARCH_QUERY(false, 2032, "검색어의 길이가 깁니다."),
     MIX_SEARCH_QUERY(false, 2033, "제목 검색과 재료 검색을 혼용할 수 없습니다."),
+
     //게시글 및 댓글
     NOT_EXIST_POST_IDX(false,3000,"존재하는 게시글idx가 아닙니다."),
     OVER_LENGTH(false, 3001, "내용이 정해진 길이를 초과했습니다."),
@@ -68,7 +69,10 @@ public enum BaseResponseStatus {
     OMITTED_PARAMETER(false,3004,"파라미터가 누락되었습니다."),
     ALREADY_CALCULATED(false,3005,"이미 정산 완료된 공동구매입니다."),
     NOT_EXIST_COMMENT_IDX(false,3006,"존재하지 않는 댓글 idx입니다."),
-    SELF_REPORT(false,3007,"자기 자신을 신고할 수 없습니다.");
+    SELF_REPORT(false,3007,"자기 자신을 신고할 수 없습니다."),
+
+    //상대프로필
+    NOT_EXIST_USER(false,5000,"존재하는 유저가 아닙니다.");
 
     private final boolean isSuccess;
     private final int code;

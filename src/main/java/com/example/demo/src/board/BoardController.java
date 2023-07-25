@@ -50,6 +50,9 @@ public class BoardController {
         // limit 최댓값을 초과한 경우
         try {
             intLimit = Integer.parseInt(limit);
+            if (intLimit < 0) {
+                return new BaseResponse<>(BaseResponseStatus.NEGATIVE_LIMIT);
+            }
         } catch (NumberFormatException e) {
             // 에러 응답을 바로 반환
             return new BaseResponse<>(BaseResponseStatus.EXCESS_LIMIT);
@@ -109,6 +112,9 @@ public class BoardController {
         // limit 최댓값을 초과한 경우
         try {
             intLimit = Integer.parseInt(limit);
+            if (intLimit < 0) {
+                return new BaseResponse<>(BaseResponseStatus.NEGATIVE_LIMIT);
+            }
         } catch (NumberFormatException e) {
             // 에러 응답을 바로 반환
             return new BaseResponse<>(BaseResponseStatus.EXCESS_LIMIT);
@@ -162,6 +168,9 @@ public class BoardController {
         // limit 최댓값을 초과한 경우
         try {
             intLimit = Integer.parseInt(limit);
+            if (intLimit < 0) {
+                return new BaseResponse<>(BaseResponseStatus.NEGATIVE_LIMIT);
+            }
         } catch (NumberFormatException e) {
             // 에러 응답을 바로 반환
             return new BaseResponse<>(BaseResponseStatus.EXCESS_LIMIT);

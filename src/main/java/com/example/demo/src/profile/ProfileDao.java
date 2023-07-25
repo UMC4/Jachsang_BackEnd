@@ -1,8 +1,11 @@
 package com.example.demo.src.profile;
 
+import com.example.demo.config.BaseException;
+import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.board.model.GetGroupPurchaseItemRes;
 import com.example.demo.src.profile.model.GetProfileRes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +23,7 @@ public class ProfileDao {
     }
 
 
-    public GetProfileRes getProfile(int profileUserIdx, int userIdx) {
+    public GetProfileRes getProfile(int profileUserIdx, int userIdx) throws BaseException {
         String Query =
                 "SELECT profileU.nickname, profileU.longitude, profileU.latitude, " +
                     "ST_DISTANCE_SPHERE(POINT(profileU.longitude, profileU.latitude), POINT(U.longitude, U.latitude)) AS distance, " +
@@ -34,19 +37,23 @@ public class ProfileDao {
                     "LEFT JOIN Report R ON profileU.userIdx = R.reportedUserIdx " +
                 "WHERE profileU.userIdx = ?";
 
-        return this.jdbcTemplate.queryForObject(Query,
-                (rs,rowNum) -> new GetProfileRes(
-                        rs.getString("nickname"),
-                        rs.getDouble("longitude"),
-                        rs.getDouble("latitude"),
-                        rs.getInt("distance"),
-                        rs.getInt("communityPostCount"),
-                        rs.getInt("commentCount"),
-                        rs.getInt("reportedCount")),
-                userIdx, profileUserIdx);
+        try {
+            return this.jdbcTemplate.queryForObject(Query,
+                    (rs,rowNum) -> new GetProfileRes(
+                            rs.getString("nickname"),
+                            rs.getDouble("longitude"),
+                            rs.getDouble("latitude"),
+                            rs.getInt("distance"),
+                            rs.getInt("communityPostCount"),
+                            rs.getInt("commentCount"),
+                            rs.getInt("reportedCount")),
+                    userIdx, profileUserIdx);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw new BaseException(BaseResponseStatus.NOT_EXIST_USER);
+        }
     }
 
-    public List<GetGroupPurchaseItemRes> getGroupPurchaseList(int userIdx, int profileUserIdx) {
+    public List<GetGroupPurchaseItemRes> getGroupPurchaseList(int userIdx, int profileUserIdx, int limit) {
         String Query =
                 "SELECT P.postIdx, P.categoryIdx, PC.category, P.title, GPD.productName, profileU.nickname, P.createAt, " +
                     "TIMESTAMPDIFF(DAY, CURRENT_TIMESTAMP, GPD.deadline) as remainDay, imagePath,  " +
@@ -61,7 +68,8 @@ public class ProfileDao {
                         "GROUP BY postIdx  " +
                         ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
                     "JOIN User U ON U.userIdx = ? " +
-                "WHERE FLOOR(P.categoryIdx / 10) = 2 AND profileU.userIdx = ?";
+                "WHERE FLOOR(P.categoryIdx / 10) = 2 AND profileU.userIdx = ? " +
+                "LIMIT ?";
 
         return this.jdbcTemplate.query(Query,
                 (rs,rowNum) -> new GetGroupPurchaseItemRes(
@@ -74,6 +82,6 @@ public class ProfileDao {
                         rs.getInt("distance"),
                         rs.getInt("remainDay"),
                         rs.getString("imagePath")),
-                userIdx, profileUserIdx);
+                userIdx, profileUserIdx, limit);
     }
 }

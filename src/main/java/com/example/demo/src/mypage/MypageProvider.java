@@ -1,5 +1,7 @@
 package com.example.demo.src.mypage;
 
+import com.example.demo.config.BaseException;
+import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.mypage.model.GetCommunityActivityRes;
 import com.example.demo.src.mypage.model.GetGroupPurchaseActivityRes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,38 +17,73 @@ public class MypageProvider {
     @Autowired
     public MypageProvider(MypageDao mypageDao) { this.mypageDao = mypageDao; }
 
-    public List<GetCommunityActivityRes> getMyCommunityPosts(int userIdx) {
+    public List<GetCommunityActivityRes> getMyCommunityPosts(int userIdx) throws BaseException{
         List<GetCommunityActivityRes> getCommunityActivityList = mypageDao.getMyCommunityPosts(userIdx);
-        return getCommunityActivityList;
+        // 조회 결과가 없는 경우 예외 처리
+        if (getCommunityActivityList.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.NO_POSTS_FOUND);
+        } else {
+            return getCommunityActivityList;
+        }
     }
 
-    public List<GetCommunityActivityRes> getMyCommunityComments(int userIdx) {
+    public List<GetCommunityActivityRes> getMyCommunityComments(int userIdx) throws BaseException{
         List<GetCommunityActivityRes> getCommunityActivityList = mypageDao.getMyCommunityComments(userIdx);
-        return getCommunityActivityList;
+        // 조회 결과가 없는 경우 예외 처리
+        if (getCommunityActivityList.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.NO_POSTS_FOUND);
+        } else {
+            return getCommunityActivityList;
+        }
     }
 
-    public List<GetCommunityActivityRes> getMyCommunityLikes(int userIdx) {
+    public List<GetCommunityActivityRes> getMyCommunityLikes(int userIdx) throws BaseException{
         List<GetCommunityActivityRes> getCommunityActivityList = mypageDao.getMyCommunityLikes(userIdx);
-        return getCommunityActivityList;
+        // 조회 결과가 없는 경우 예외 처리
+        if (getCommunityActivityList.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.NO_POSTS_FOUND);
+        } else {
+            return getCommunityActivityList;
+        }
     }
 
-    public List<GetCommunityActivityRes> getMyCommunityHearts(int userIdx) {
+    public List<GetCommunityActivityRes> getMyCommunityHearts(int userIdx) throws BaseException{
         List<GetCommunityActivityRes> getCommunityActivityList = mypageDao.getMyCommunityHearts(userIdx);
-        return getCommunityActivityList;
+        // 조회 결과가 없는 경우 예외 처리
+        if (getCommunityActivityList.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.NO_POSTS_FOUND);
+        } else {
+            return getCommunityActivityList;
+        }
     }
 
-    public List<GetGroupPurchaseActivityRes> getMyGroupPurchasePosts(int userIdx) {
+    public List<GetGroupPurchaseActivityRes> getMyGroupPurchasePosts(int userIdx) throws BaseException{
         List<GetGroupPurchaseActivityRes> getGroupPurchaseActivityList = mypageDao.getMyGroupPurchasePosts(userIdx);
-        return getGroupPurchaseActivityList;
+        // 조회 결과가 없는 경우 예외 처리
+        if (getGroupPurchaseActivityList.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.NO_POSTS_FOUND);
+        } else {
+            return getGroupPurchaseActivityList;
+        }
     }
 
-    public List<GetGroupPurchaseActivityRes> getMyGroupPurchaseLikes(int userIdx) {
+    public List<GetGroupPurchaseActivityRes> getMyGroupPurchaseLikes(int userIdx) throws BaseException{
         List<GetGroupPurchaseActivityRes> getGroupPurchaseActivityList = mypageDao.getMyGroupPurchaseLikes(userIdx);
-        return getGroupPurchaseActivityList;
+        // 조회 결과가 없는 경우 예외 처리
+        if (getGroupPurchaseActivityList.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.NO_POSTS_FOUND);
+        } else {
+            return getGroupPurchaseActivityList;
+        }
     }
 
-    public List<GetGroupPurchaseActivityRes> getMyGroupPurchaseParticipated(int userIdx, int limit) {
-        List<GetGroupPurchaseActivityRes> getGroupPurchaseActivityList = mypageDao.getMyGroupPurchaseParticipated(userIdx, limit);
-        return getGroupPurchaseActivityList;
+    public List<GetGroupPurchaseActivityRes> getMyGroupPurchaseParticipated(int userIdx) throws BaseException{
+        List<GetGroupPurchaseActivityRes> getGroupPurchaseActivityList = mypageDao.getMyGroupPurchaseParticipated(userIdx);
+        // 조회 결과가 없는 경우 예외 처리
+        if (getGroupPurchaseActivityList.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.NO_POSTS_FOUND);
+        } else {
+            return getGroupPurchaseActivityList;
+        }
     }
 }

@@ -165,7 +165,7 @@ public class MypageDao {
                 userIdx);
     }
 
-    public List<GetGroupPurchaseActivityRes> getMyGroupPurchaseParticipated(int userIdx, int limit) {
+    public List<GetGroupPurchaseActivityRes> getMyGroupPurchaseParticipated(int userIdx) {
         String Query =
                 "SELECT P.postIdx, P.categoryIdx, PC.category, P.title, GPD.productName, Author.nickname, P.createAt, " +
                     "COUNT(C.commentIdx) as commentCount, " +
@@ -179,7 +179,7 @@ public class MypageDao {
                     "LEFT JOIN Comment C ON P.postIdx = C.postIdx " +
                 "WHERE FLOOR(P.categoryIdx/10) = 2 AND CU.userIdx = ? " +
                 "GROUP BY P.postIdx, P.categoryIdx, PC.category, P.title, GPD.productName, Author.nickname, P.createAt " +
-                "ORDER BY P.createAt LIMIT ?";
+                "ORDER BY P.createAt";
 
         return this.jdbcTemplate.query(Query,
                 (rs,rowNum) -> new GetGroupPurchaseActivityRes(
@@ -191,6 +191,6 @@ public class MypageDao {
                         rs.getString("createAt"),
                         rs.getInt("commentCount"),
                         rs.getInt("remainDay")),
-                userIdx, limit);
+                userIdx);
     }
 }
