@@ -47,6 +47,7 @@ public class MypageDao {
                     "JOIN PostCategory PC ON P.categoryIdx = PC.categoryIdx " +
                     "JOIN User Author ON P.userIdx = Author.userIdx " +
                     "LEFT JOIN Comment C ON P.postIdx = C.postIdx " +
+                "WHERE FLOOR(P.categoryIdx/10) = 1 AND C.userIdx = ? " +
                 "GROUP BY P.postIdx, P.categoryIdx, PC.category, P.title, Author.nickname, P.createAt " +
                 "ORDER BY P.createAt";
 
