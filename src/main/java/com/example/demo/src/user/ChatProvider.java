@@ -7,8 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
 
@@ -26,7 +25,20 @@ public class ChatProvider {
             Long userIdx = getUser.getUserIdx();
             List<Object> getChatRoom = chatDao.getChatRooms(userIdx, category);
             getChatRoom.removeIf(chatRoom -> Objects.equals(((GetChatRooms) chatRoom).getUserIdx(), userIdx));
-            return getChatRoom;
+
+            Set<Long> uniqueChatRoomIdx = new HashSet<>();
+            List<Object> filteredChatRooms = new ArrayList<>();
+
+            for (Object chatRoom : getChatRoom) {
+                GetChatRooms chatRoomObj = (GetChatRooms) chatRoom;
+                Long chatRoomIdx = chatRoomObj.getChatRoomIdx();
+
+                if (!uniqueChatRoomIdx.contains(chatRoomIdx)) {
+                    uniqueChatRoomIdx.add(chatRoomIdx);
+                    filteredChatRooms.add(chatRoom);
+                }
+            }
+            return filteredChatRooms;
         }
         catch (Exception exception) {
             // Logger를 이용하여 에러를 로그에 기록한다
@@ -57,6 +69,19 @@ public class ChatProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public List<String> getChatRoomUsers(Long chatRoomIdx) throws BaseException {
+        try {
+            List<String> getChatRoomUsers = chatDao.getChatRoomUsers(chatRoomIdx);
+            return getChatRoomUsers;
+        } catch (Exception exception) {
+            // Logger를 이용하여 에러를 로그에 기록한다
+            logger.error("Error!", exception);
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
 
     public int getChatRoomMembers(Long chatRoomIdx) throws BaseException {
         try {

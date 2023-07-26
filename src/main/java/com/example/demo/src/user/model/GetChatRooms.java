@@ -17,4 +17,5 @@ public class GetChatRooms {
     private String title;
     private int unreads;
     private Timestamp updateTime;
+    private String contents;
 }

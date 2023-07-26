@@ -77,7 +77,13 @@ public class ChatService {
     }
 
     public Object deleteChatRoom(Long chatRoomIdx) throws BaseException {
-        return chatDao.deleteChatRoom(chatRoomIdx);
+        int groupPurchaseMembers = chatDao.getGroupPurchaseMembers(chatRoomIdx);
+
+        if (groupPurchaseMembers == 0) {
+            return chatDao.deleteChatRoom(chatRoomIdx);
+        } else {
+            return "정산이 완료되지 않았습니다.";
+        }
     }
 
 

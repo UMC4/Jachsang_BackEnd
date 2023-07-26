@@ -14,7 +14,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/chat")
+@RequestMapping("/app/chat")
 public class ChatController {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -75,7 +75,7 @@ public class ChatController {
     // 채팅방 1개 조회 - 공동구매
     @ResponseBody
     @GetMapping("/grouppurchase/{chatRoomIdx}")
-    public BaseResponse<GetChatRoom> getChatComment2(@PathVariable("chatRoomIdx") Long chatRoomIdx) {
+    public BaseResponse<GetChatRoom> getChatCommentAndRoom2(@PathVariable("chatRoomIdx") Long chatRoomIdx) {
         try {
             Object getChatRoom = chatProvider.getChatRoom(chatRoomIdx);
             List<GetChatComment> getChatComment = chatProvider.getChatComment(chatRoomIdx);
@@ -85,6 +85,31 @@ public class ChatController {
             chatResponse.setGetChatComment(getChatComment);
 
             return new BaseResponse<>(chatResponse);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+
+    // 채팅방 유저 목록 조회 - 커뮤니티
+    @ResponseBody
+    @GetMapping("/community/{chatRoomIdx}/users")
+    public BaseResponse<List<String>> getChatRoomUsers(@PathVariable("chatRoomIdx") Long chatRoomIdx) {
+        try {
+            List<String> getChatRoomUsers = chatProvider.getChatRoomUsers(chatRoomIdx);
+            return new BaseResponse<>(getChatRoomUsers);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    // 채팅방 유저 목록 조회 - 공동구매
+    @ResponseBody
+    @GetMapping("/grouppurchase/{chatRoomIdx}/users")
+    public BaseResponse<List<String>> getChatRoomUsers2(@PathVariable("chatRoomIdx") Long chatRoomIdx) {
+        try {
+            List<String> getChatRoomUsers = chatProvider.getChatRoomUsers(chatRoomIdx);
+            return new BaseResponse<>(getChatRoomUsers);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
@@ -110,6 +135,15 @@ public class ChatController {
         return chatService.postChatRoom(getPost, getUser);
     }
 
+
+
+
+    // 정산하기
+    @ResponseBody
+    @GetMapping("/grouppurchase/settlement")
+    public BaseResponse<String> setAmount(@RequestParam(value = "chatRoomIdx") Long chatRoomIdx) {
+        return new BaseResponse<>("setAmount");
+    }
 
 
     // 정산하기 - N
@@ -144,9 +178,17 @@ public class ChatController {
         }
     }
 
-
+    // 정산하기 - 정산 요청
     @ResponseBody
-    @PostMapping("/grouppurchase/{chatRoomIdx}/request-settlement")
+    @GetMapping("/grouppurchase/settlement/require")
+    public BaseResponse<Object> setAmountRequire(@RequestParam(value = "chatRoomIdx")Long chatRoomIdx) {
+        return new BaseResponse<>("정산 요청 버튼 눌렀을 때");
+    }
+
+
+    // 거래 완료
+    @ResponseBody
+    @PostMapping("/grouppurchase/{chatRoomIdx}/complete-deal")
     public BaseResponse<Object> requestSettlement(@PathVariable("chatRoomIdx")Long chatRoomIdx, @RequestBody GetChatUser getChatUser) {
         try {
             Object x = chatService.requestSettlement(chatRoomIdx, getChatUser);
@@ -155,11 +197,25 @@ public class ChatController {
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
-
     }
 
+//    // 정산 완료
+//    @ResponseBody
+//    @PostMapping("/grouppurchase/{chatRoomIdx}/complete-settlement")
+//    public BaseResponse<Object> completeSettlement(@PathVariable("chatRoomIdx")Long chatRoomIdx, @RequestBody GetChatUser getChatUser) {
+//        try {
+//            Object x = chatService.completeSettlement();
+//            return new BaseResponse<>(x);
+//
+//        } catch (BaseException exception) {
+//            return new BaseResponse<>((exception.getStatus()));
+//        }
+//    }
+
+
+    // 모든거래완료
     @ResponseBody
-    @PostMapping("/grouppurchase/{chatRoomIdx}/finalize-settlement")
+    @DeleteMapping("/grouppurchase/{chatRoomIdx}/finalize-settlement")
     public BaseResponse<Object> finalizeSettlement(@PathVariable("chatRoomIdx") Long chatRoomIdx) {
         try {
             Object x = chatService.deleteChatRoom(chatRoomIdx);

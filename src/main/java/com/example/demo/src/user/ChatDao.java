@@ -30,19 +30,21 @@ public class ChatDao {
 
         String getChatRoomsQuery = null;
         if (category.equals("community")) {
-            getChatRoomsQuery = "SELECT cr.chatRoomIdx, cu.userIdx, p.title, cr.unreads, cr.updateTime " +
+            getChatRoomsQuery = "SELECT cr.chatRoomIdx, cu.userIdx, p.title, cr.unreads, cc.createTime, cc.contents " +
                     "FROM Post p " +
                     "JOIN ChatRoom cr On p.postIdx = cr.postIdx " +
                     "JOIN ChatUser cu on cr.chatRoomIdx = cu.chatRoomIdx " +
-                    "WHERE p.categoryIdx BETWEEN 10 AND 19 AND cu.chatRoomIdx In (?) " +
-                    "ORDER BY cr.updateTime DESC";
+                    "JOIN ChatComment cc on cu.chatUserIdx = cc.chatUserIdx " +
+                    "WHERE p.categoryIdx BETWEEN 10 AND 19 AND cu.chatRoomIdx IN (?)" +
+                    "ORDER BY cc.createTime DESC ";
         } else if (category.equals("grouppurchase")) {
-            getChatRoomsQuery = "SELECT cr.chatRoomIdx, cu.userIdx, p.title, cr.unreads, cr.updateTime " +
+            getChatRoomsQuery = "SELECT cr.chatRoomIdx, cu.userIdx, p.title, cr.unreads, cc.createTime, cc.contents " +
                     "FROM Post p " +
                     "JOIN ChatRoom cr On p.postIdx = cr.postIdx " +
                     "JOIN ChatUser cu on cr.chatRoomIdx = cu.chatRoomIdx " +
+                    "JOIN ChatComment cc on cu.chatUserIdx = cc.chatUserIdx " +
                     "WHERE p.categoryIdx BETWEEN 20 AND 29 AND cu.chatRoomIdx In (?) " +
-                    "ORDER BY cr.updateTime DESC";
+                    "ORDER BY cc.createTime DESC";
         }
         if (getChatRoomsQuery == null)
             return null;
@@ -56,7 +58,8 @@ public class ChatDao {
                         rs.getLong("userIdx"),
                         rs.getString("title"),
                         rs.getInt("unreads"),
-                        rs.getTimestamp("updateTime")
+                        rs.getTimestamp("createTime"),
+                        rs.getString("contents")
                 )
         );
 
@@ -108,7 +111,7 @@ public class ChatDao {
                 (rs, rowNum) -> new GetChatComment(
                         rs.getLong("chatCommentIdx"),
                         rs.getLong("chatRoomIdx"),
-                        rs.getLong("userIdx"),
+                        rs.getLong("chatUserIdx"),
                         rs.getString("contents"),
                         rs.getString("kind"),
                         rs.getInt("unread"),
@@ -116,6 +119,23 @@ public class ChatDao {
                         rs.getString("contentType"))
         );
     }
+
+    public List<String> getChatRoomUsers(Long chatRoomIdx) {
+        String getChatRoomUsersQuery = "SELECT u.nickname " +
+                "FROM ChatRoom cr " +
+                "JOIN ChatUser cu ON cr.chatRoomIdx = cu.chatRoomIdx " +
+                "JOIN User u ON u.userIdx = cu.userIdx " +
+                "WHERE cr.chatRoomIdx = ?";
+
+        List<String> getChatRoomUsers = this.jdbcTemplate.queryForList(
+                getChatRoomUsersQuery,
+                new Object[]{chatRoomIdx},
+                String.class
+        );
+        return getChatRoomUsers;
+    }
+
+
 
     public int getChatRoomMembers(Long chatRoomIdx) {
         String getChatRoomMembersQuery = "SELECT members FROM ChatRoom WHERE chatRoomIdx = ?";
@@ -147,7 +167,8 @@ public class ChatDao {
 
         String selectGroupPurchaseMembersQuery = "SELECT groupPurchaseMembers FROM ChatRoom WHERE chatRoomIdx = ?";
 
-        int groupPurchaseMembers = this.jdbcTemplate.queryForObject(selectGroupPurchaseMembersQuery, new Object[]{chatRoomIdx}, Integer.class);
+        int groupPurchaseMembers = this.jdbcTemplate.queryForObject(selectGroupPurchaseMembersQuery,
+                new Object[]{chatRoomIdx}, Integer.class);
         groupPurchaseMembers = groupPurchaseMembers - 1;
 
         String updateGroupPurchaseMembersQuery = "UPDATE ChatRoom SET groupPurchaseMembers = ? " +
@@ -155,6 +176,15 @@ public class ChatDao {
 
         this.jdbcTemplate.update(updateGroupPurchaseMembersQuery, groupPurchaseMembers, chatRoomIdx);
 
+        return groupPurchaseMembers;
+    }
+
+
+    public int getGroupPurchaseMembers(Long chatRoomIdx) {
+        String getGroupPurchaseMembersQuery = "SELECT groupPurchaseMembers FROM ChatRoom WHERE chatRoomIdx = ?";
+
+        int groupPurchaseMembers = this.jdbcTemplate.queryForObject(getGroupPurchaseMembersQuery,
+                new Object[]{chatRoomIdx}, Integer.class);
         return groupPurchaseMembers;
     }
 
