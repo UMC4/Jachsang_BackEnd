@@ -121,8 +121,7 @@ public class BoardController {
         }
 
         try {
-            //int userIdxByJWT = jwtService.getUserIdx();
-            int userIdxByJWT = 5;
+            int userIdxByJWT = jwtService.getUserIdx();
             List<GetGroupPurchaseItemRes> groupPurchaseList;
 
             // category와 sort 중 하나만 사용할 수 있다.

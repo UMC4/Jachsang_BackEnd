@@ -36,11 +36,7 @@ public class ProfileController {
     @GetMapping("info")
     public BaseResponse<GetProfileRes> getProfile(@PathVariable("userIdx") int profileUserIdx) {
         try{
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            int userIdxByJWT = 3; //일반 사용자
-            //int userIdxByJWT = 2; //관리자
+            int userIdxByJWT = jwtService.getUserIdx();
 
             GetProfileRes getProfileRes = profileProvider.getProfile(userIdxByJWT, profileUserIdx);
             return new BaseResponse<>(getProfileRes);
@@ -71,11 +67,7 @@ public class ProfileController {
         }
 
         try {
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            int userIdxByJWT = 3; //일반 사용자
-            //int userIdxByJWT = 2; //관리자
+            int userIdxByJWT = jwtService.getUserIdx();
 
             List<GetGroupPurchaseItemRes> getGroupPurchaseList = profileProvider.getGroupPurchaseList(userIdxByJWT, profileUserIdx, intLimit);
             return new BaseResponse<>(getGroupPurchaseList);

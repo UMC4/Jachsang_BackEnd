@@ -36,11 +36,7 @@ public class MypageController {
     @GetMapping("/community/posts")
     public BaseResponse<List<GetCommunityActivityRes>> getMyCommunityPosts() {
         try {
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            int userIdxByJWT = 3; //일반 사용자
-            //int userIdxByJWT = 2; //관리자
+            int userIdxByJWT = jwtService.getUserIdx();
 
             List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityPosts(userIdxByJWT);
             return new BaseResponse<>(communityList);
@@ -58,11 +54,7 @@ public class MypageController {
     @GetMapping("/community/comments")
     public BaseResponse<List<GetCommunityActivityRes>> getMyCommunityComments() {
         try {
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            int userIdxByJWT = 3; //일반 사용자
-            //int userIdxByJWT = 2; //관리자
+            int userIdxByJWT = jwtService.getUserIdx();
 
             List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityComments(userIdxByJWT);
             return new BaseResponse<>(communityList);
@@ -80,11 +72,7 @@ public class MypageController {
     @GetMapping("/community/likes")
     public BaseResponse<List<GetCommunityActivityRes>> getMyCommunityLikes() {
         try {
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            int userIdxByJWT = 3; //일반 사용자
-            //int userIdxByJWT = 2; //관리자
+            int userIdxByJWT = jwtService.getUserIdx();
 
             List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityLikes(userIdxByJWT);
             return new BaseResponse<>(communityList);
@@ -102,11 +90,7 @@ public class MypageController {
     @GetMapping("/community/hearts")
     public BaseResponse<List<GetCommunityActivityRes>> getMyCommunityHearts() {
         try {
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            int userIdxByJWT = 3; //일반 사용자
-            //int userIdxByJWT = 2; //관리자
+            int userIdxByJWT = jwtService.getUserIdx();
 
             List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityHearts(userIdxByJWT);
             return new BaseResponse<>(communityList);
@@ -124,11 +108,7 @@ public class MypageController {
     @GetMapping("/grouppurchase/posts")
     public BaseResponse<List<GetGroupPurchaseActivityRes>> getMyGroupPurchasePosts() {
         try {
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            int userIdxByJWT = 3; //일반 사용자
-            //int userIdxByJWT = 2; //관리자
+            int userIdxByJWT = jwtService.getUserIdx();
 
             List<GetGroupPurchaseActivityRes> groupPurchaseList = mypageProvider.getMyGroupPurchasePosts(userIdxByJWT);
             return new BaseResponse<>(groupPurchaseList);
@@ -146,11 +126,7 @@ public class MypageController {
     @GetMapping("/grouppurchase/likes")
     public BaseResponse<List<GetGroupPurchaseActivityRes>> getMyGroupPurchaseLikes() {
         try {
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            int userIdxByJWT = 3; //일반 사용자
-            //int userIdxByJWT = 2; //관리자
+            int userIdxByJWT = jwtService.getUserIdx();
 
             List<GetGroupPurchaseActivityRes> groupPurchaseList = mypageProvider.getMyGroupPurchaseLikes(userIdxByJWT);
             return new BaseResponse<>(groupPurchaseList);
@@ -168,11 +144,7 @@ public class MypageController {
     @GetMapping("/grouppurchase/participated")
     public BaseResponse<List<GetGroupPurchaseActivityRes>> getMyGroupPurchaseParticipated() {
         try {
-            //실전용
-            //int userIdxByJWT = jwtService.getUserIdx();
-            //테스트용
-            int userIdxByJWT = 3; //일반 사용자
-            //int userIdxByJWT = 2; //관리자
+            int userIdxByJWT = jwtService.getUserIdx();
 
             List<GetGroupPurchaseActivityRes> groupPurchaseList = mypageProvider.getMyGroupPurchaseParticipated(userIdxByJWT);
             return new BaseResponse<>(groupPurchaseList);
