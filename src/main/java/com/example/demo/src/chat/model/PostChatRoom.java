@@ -30,7 +30,7 @@ public class PostChatRoom {
     public void handlerActions(WebSocketSession session, PostChatComment postChatComment, ChatService chatService) {
         if (postChatComment.getContentType().equals("ENTER")) {
             sessions.add(session);
-            postChatComment.setContents(postChatComment.getUserIdx() + "님이 입장했습니다.");
+            postChatComment.setContents(postChatComment.getChatUserIdx() + "님이 입장했습니다.");
         }
         sendMessage(postChatComment, chatService);
     }

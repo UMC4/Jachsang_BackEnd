@@ -61,6 +61,11 @@ public class ChatService {
         }
     }
 
+    public void saveChatComment(PostChatComment postChatComment) {
+        chatDao.saveChatComment(postChatComment);
+    }
+
+
 
     public Object requestSettlement(Long chatRoomIdx, GetChatUser getChatUser) throws BaseException {
         boolean groupPurchaseCheck = chatDao.getGroupPurchaseCheck(chatRoomIdx, getChatUser);

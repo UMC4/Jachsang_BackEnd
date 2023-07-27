@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 public class PostChatComment {
     private Long chatCommentIdx;
     private Long chatRoomIdx;
-    private Long userIdx;
+    private Long chatUserIdx;
     private String contents;
     private String kind;
     private int read;

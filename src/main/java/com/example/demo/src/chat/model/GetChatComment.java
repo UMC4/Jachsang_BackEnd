@@ -14,7 +14,7 @@ public class GetChatComment {
 
     private Long chatCommentIdx;
     private Long chatRoomIdx;
-    private Long userIdx;
+    private Long chatUserIdx;
     private String contents;
     private String kind;
     private int unread;

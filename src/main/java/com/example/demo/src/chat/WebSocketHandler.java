@@ -24,9 +24,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         PostChatComment postChatComment = objectMapper.readValue(payload, PostChatComment.class);
 
+        chatService.saveChatComment(postChatComment);
+
         PostChatRoom postChatRoom = chatService.findRoomByChatRoomIdx(postChatComment.getChatRoomIdx());
-        System.out.println(postChatRoom);
-        System.out.println(postChatRoom.getChatRoomIdx());
         postChatRoom.handlerActions(session, postChatComment, chatService);
 
     }
