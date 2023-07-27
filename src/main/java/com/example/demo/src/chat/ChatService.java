@@ -1,7 +1,7 @@
-package com.example.demo.src.user;
+package com.example.demo.src.chat;
 
 import com.example.demo.config.BaseException;
-import com.example.demo.src.user.model.*;
+import com.example.demo.src.chat.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

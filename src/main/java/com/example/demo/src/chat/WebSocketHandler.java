@@ -1,7 +1,7 @@
-package com.example.demo.src.user;
+package com.example.demo.src.chat;
 
-import com.example.demo.src.user.model.PostChatComment;
-import com.example.demo.src.user.model.PostChatRoom;
+import com.example.demo.src.chat.model.PostChatComment;
+import com.example.demo.src.chat.model.PostChatRoom;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

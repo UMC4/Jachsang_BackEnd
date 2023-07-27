@@ -1,6 +1,6 @@
-package com.example.demo.src.user.model;
+package com.example.demo.src.chat.model;
 
-import com.example.demo.src.user.ChatService;
+import com.example.demo.src.chat.ChatService;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.socket.WebSocketSession;

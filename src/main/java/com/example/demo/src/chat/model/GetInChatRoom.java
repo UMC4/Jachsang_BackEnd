@@ -1,4 +1,4 @@
-package com.example.demo.src.user.model;
+package com.example.demo.src.chat.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetUser {
-    private Long userIdx;
+public class GetInChatRoom {
+    private String category;
+    private String title;
 }
