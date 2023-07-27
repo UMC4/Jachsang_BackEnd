@@ -2,7 +2,6 @@ package com.example.demo.config;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * 에러 코드 관리
@@ -47,6 +46,20 @@ public enum BaseResponseStatus {
 
     PASSWORD_ENCRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 암호화에 실패하였습니다."),
     PASSWORD_DECRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 복호화에 실패하였습니다."),
+<<<<<<< HEAD
+=======
+
+    //게시글
+    NOT_EXIST_POST_IDX(false,3000,"존재하는 게시글idx가 아닙니다."),
+    OVER_LENGTH(false, 3001, "내용이 정해진 길이를 초과했습니다."),
+    WRONG_CATEGORY(false, 3002, "존재하지 않는 카테고리입니다."),
+    PERMISSION_DENIED(false, 3003, "작업 권한이 없는 유저입니다."),
+    OMITTED_PARAMETER(false,3004,"파라미터가 누락되었습니다."),
+    ALREADY_CALCULATED(false,3005,"이미 정산 완료된 공동구매입니다."),
+    NOT_EXIST_COMMENT_IDX(false,3006,"존재하지 않는 댓글 idx입니다."),
+    SELF_REPORT(false,3007,"자기 자신을 신고할 수 없습니다.");
+
+>>>>>>> 29726a6d7f0d16b4060425766139da834fd068bb
 
     //게시판
     BOTH_CATEGORY_SORT_INPUT(false, 2000, "카테고리와 정렬 조건 중 하나만 입력되어야 합니다."),
@@ -78,7 +91,7 @@ public enum BaseResponseStatus {
     private final int code;
     private final String message;
 
-    private BaseResponseStatus(boolean isSuccess, int code, String message) {
+    BaseResponseStatus(boolean isSuccess, int code, String message) {
         this.isSuccess = isSuccess;
         this.code = code;
         this.message = message;
