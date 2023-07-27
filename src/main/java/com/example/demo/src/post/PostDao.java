@@ -164,7 +164,8 @@ public class PostDao {
         image = this.jdbcTemplate.update(deleteImageSql);
         like = this.jdbcTemplate.update(deleteLikeSql);
         heart = this.jdbcTemplate.update(deleteHeartSql);
-        comment = this.jdbcTemplate.update(deleteHeartCommentSql) * this.jdbcTemplate.update(deleteCommentSql);
+        comment = this.jdbcTemplate.update(deleteHeartCommentSql);
+        this.jdbcTemplate.update(deleteCommentSql);
         detail = this.jdbcTemplate.update(deleteDetailSql);
         general = this.jdbcTemplate.update(deleteGeneralSql);
 

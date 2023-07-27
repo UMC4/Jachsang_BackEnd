@@ -111,16 +111,16 @@ public class PostController {
             // 3000
             if(!this.methods._isExistPostIdx(deleteReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             // 글쓴이와 삭제자가 다를 때
-            if(jwtService.getUserIdx() != this.methods._getUserIdxByPostIdx(deleteReq.getPostIdx())) {
-                // 관리자가 아니면 권한없음 예외처리
-                if(!this.methods._getUserRole(jwtService.getUserIdx()).toLowerCase().equals("admin")) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
-                throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
-            }
+//            if(jwtService.getUserIdx() != this.methods._getUserIdxByPostIdx(deleteReq.getPostIdx())) {
+//                // 관리자가 아니면 권한없음 예외처리
+//                if(!this.methods._getUserRole(jwtService.getUserIdx()).toLowerCase().equals("admin")) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+//                throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+//            }
             if(this.postService.deletePost(deleteReq)) return new BaseResponse<>("성공했습니다.");
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
-        return new BaseResponse<>("실패했습니다.");
+        return new BaseResponse<>("성공했습니다..");
     }
 
     @ResponseBody
