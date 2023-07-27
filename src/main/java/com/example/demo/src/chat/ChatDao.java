@@ -202,6 +202,15 @@ public class ChatDao {
     }
 
 
+    public boolean hostCheck(Long chatRoomIdx, GetChatUser getChatUser) {
+        String hostCheckQuery = "SELECT host FROM ChatRoom WHERE chatRoomIdx = ?";
+        int hostCheck = this.jdbcTemplate.queryForObject(hostCheckQuery,
+                new Object[]{chatRoomIdx}, Integer.class);
+
+        return hostCheck == getChatUser.getUserIdx();
+    }
+
+
     public Object deleteChatRoom(Long chatRoomIdx) {
         String deleteChatCommentQuery = "DELETE FROM ChatComment WHERE chatRoomIdx = " + chatRoomIdx;
         this.jdbcTemplate.update(deleteChatCommentQuery);

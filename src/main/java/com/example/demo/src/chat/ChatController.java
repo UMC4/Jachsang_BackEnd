@@ -199,18 +199,18 @@ public class ChatController {
         }
     }
 
-//    // 정산 완료
-//    @ResponseBody
-//    @PostMapping("/grouppurchase/{chatRoomIdx}/complete-settlement")
-//    public BaseResponse<Object> completeSettlement(@PathVariable("chatRoomIdx")Long chatRoomIdx, @RequestBody GetChatUser getChatUser) {
-//        try {
-//            Object x = chatService.completeSettlement();
-//            return new BaseResponse<>(x);
-//
-//        } catch (BaseException exception) {
-//            return new BaseResponse<>((exception.getStatus()));
-//        }
-//    }
+    // 정산 완료
+    @ResponseBody
+    @PostMapping("/grouppurchase/{chatRoomIdx}/complete-settlement")
+    public BaseResponse<Object> completeSettlement(@PathVariable("chatRoomIdx")Long chatRoomIdx, @RequestBody GetChatUser getChatUser) {
+        try {
+            Object x = chatService.completeSettlement(chatRoomIdx, getChatUser);
+            return new BaseResponse<>(x);
+
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
 
     // 모든거래완료

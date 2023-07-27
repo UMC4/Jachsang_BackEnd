@@ -81,6 +81,20 @@ public class ChatService {
             return 2; // 한사람이 공동구매 2번 누름
     }
 
+    public Object completeSettlement(Long chatRoomIdx, GetChatUser getChatUser) throws BaseException {
+        int groupPurchaseMembers = chatDao.getGroupPurchaseMembers(chatRoomIdx);
+
+        boolean hostCheck = chatDao.hostCheck(chatRoomIdx, getChatUser);
+
+        if (groupPurchaseMembers == 0 && hostCheck) {
+            return "정산이 완료되었습니다.";
+        } else {
+            return "정산이 완료되지 않았습니다.";
+        }
+    }
+
+
+
     public Object deleteChatRoom(Long chatRoomIdx) throws BaseException {
         int groupPurchaseMembers = chatDao.getGroupPurchaseMembers(chatRoomIdx);
 
