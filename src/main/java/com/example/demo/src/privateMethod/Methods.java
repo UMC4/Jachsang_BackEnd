@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -103,14 +104,16 @@ public class Methods {
                 recipeInsertReq.getTitle(), recipeInsertReq.getUrl()
         };
         this.jdbcTemplate.update(insertOnPostSql ,postParam);
-        int postIdx = this.jdbcTemplate.queryForObject("" +
+        List<Integer> postIdx = this.jdbcTemplate.query(
                         "SELECT postIdx FROM Post WHERE categoryIdx = 30 " + "AND userIdx = 2 "+
                         "AND title = \""+ recipeInsertReq.getTitle()+"\"",
-                int.class
+                (rs,rowNum) -> new Integer(
+                        rs.getInt("postIdx")
+                )
         );
 
         Object[] recipeParam = {
-                postIdx, recipeInsertReq.getIngredients(), recipeInsertReq.getDescription(),
+                postIdx.get(0), recipeInsertReq.getIngredients(), recipeInsertReq.getDescription(),
                 recipeInsertReq.getMainImageUrl(), recipeInsertReq.getOriginUrl()
         };
         return this.jdbcTemplate.update(insertOnRecipeSql,recipeParam);

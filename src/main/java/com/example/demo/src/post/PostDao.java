@@ -78,7 +78,6 @@ public class PostDao {
                 };
             }
 
-            //레시피
             // 오류 처리
             else {
                 System.out.println("잘못된 카테고리 이름입니다.");

@@ -3,14 +3,19 @@ package com.example.demo.src.recipeCrawl;
 import com.example.demo.src.post.model.recipe.RecipeInsertReq;
 import com.example.demo.src.recipeCrawl.model.Post;
 import com.example.demo.src.recipeCrawl.model.RecipeReq;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 public class Methods {
 
@@ -27,12 +32,13 @@ public class Methods {
             if(origin.charAt(i)=='\n' || origin.charAt(i)=='\r') {
                 if(temp.equals("")) continue;
                 temp = temp.substring(1);
-                title.add(temp);
+                title.add(temp.replace("\"","").replace("\'","").replace("&amp;","").replace(";",""));
                 temp = "";
                 continue;
             }
             temp += origin.charAt(i);
         }
+        System.out.println(title+" 작업 중");
         return title;
     }
 
@@ -82,43 +88,25 @@ public class Methods {
     }
 
     public ArrayList<String> getIngredients(Elements e){
-        String temp = "";
-        String origin = e.select("a").text().replace(" 구매 ", ",").replace(" 구매","").replace("[재료] ","").replace(" ","");
-        origin += ",";
         ArrayList<String> result = new ArrayList<>();
-        for(int i = 0; i<origin.length(); i++) {
-            if(origin.charAt(i)==',') {
-                result.add(temp.replace(",",""));
-                temp = "";
-                continue;
+        try {
+            for(int i = 0; ; i++) {
+                String ingredient = e.select("a").select("li").get(i).toString();
+                String dose = e.select("a").select("li").select("span").get(i).text().replace("\"","").replace("\'","");
+                ingredient = ingredient.substring(4,ingredient.indexOf(" <img")).replace("\"","").replace("\'","");
+                result.add(ingredient+" "+dose);
             }
-            temp += origin.charAt(i);
+        } catch (IndexOutOfBoundsException E) {
+            return result;
         }
-        return result;
     }
-
-    public ArrayList<String> getDose(Elements e){
-        String temp = "";
-        String origin = e.select("span").toString().replace("<span class=\"ingre_unit\">","").replace("</span>","").replace("\n",",");
-        origin += ",";
-        ArrayList<String> result = new ArrayList<>();
-        for(int i = 0; i<origin.length(); i++) {
-            if(origin.charAt(i)==',') {
-                result.add(temp.replace(",",""));
-                temp = "";
-            }
-            temp += origin.charAt(i);
-        }
-        return result;
-    }
-
     public ArrayList<String> getDescription(Document doc){
         ArrayList<String> result = new ArrayList<>();
 
         for(int i = 1;;i++) {
             Elements e = doc.getElementsByClass("view_step_cont media step"+i);
             if(e.text().equals("") || e.text().equals("\n") || e.text().equals("\r")) return result;
-            result.add(e.text());
+            result.add(e.text().replace("\"","").replace("\'",""));
         }
 
     }
@@ -148,18 +136,20 @@ public class Methods {
     
     //페이지 전체 긁어와서 RecipeReq 형태로 저장하는 메서드
     public List<RecipeInsertReq> getRecipe(){
-        System.setProperty("https.protocols","TLSv1.2");
         ArrayList<RecipeInsertReq> recipe = new ArrayList<>();
-        for (int page = 1;page<2;page++) {
-
-            String URL = "https://www.10000recipe.com/recipe/list.html?q=%EC%A7%91%EB%B0%A5%EB%B0%B1%EC%84%A0%EC%83%9D&order=reco&page="+page;
-
-            Document doc;
-            List<String> thumbnail;
-            List<String> title;
-            List<String> url;
-            List<Post> post = new ArrayList<>();
+        for (int page = 1;page<495;page++) {
             try {
+                System.out.println("" + page + " 페이지 작업중...");
+                System.setProperty("https.protocols", "TLSv1.2");
+
+                String URL = "https://www.10000recipe.com/recipe/list.html?q=%EC%A7%91%EB%B0%A5%EB%B0%B1%EC%84%A0%EC%83%9D&order=reco&page=" + page;
+
+                Document doc;
+                List<String> thumbnail;
+                List<String> title;
+                List<String> url;
+                List<Post> post = new ArrayList<>();
+
                 doc = Jsoup.connect(URL).get();
 
                 //제목 수집하기
@@ -171,35 +161,35 @@ public class Methods {
                 //url 수집하기 common_sp_link
                 url = getURL(doc.getElementsByClass("common_sp_link"));
 
-
-
-
                 //글 내부
 
                 String postUrl = "";
-                for(int j = 0; j<url.size(); j++) {
+                for (int j = 0; j < url.size(); j++) {
                     postUrl = url.get(j);
                     doc = Jsoup.connect(postUrl).get();
                     Post p = new Post(
                             getMainThumbnail(doc.getElementsByClass("centeredcrop")),
                             _array2String(getIngredients(doc.getElementsByClass("ready_ingre3"))),
-                            _array2String(getDose(doc.getElementsByClass("ready_ingre3"))),
                             _array2String(getDescription(doc))
                     );
-                    p.combine();
                     post.add(p);
                 }
 
-                for(int i = 0; i<title.size()-1;i++) {
+                for (int i = 0; i < title.size() - 1; i++) {
                     recipe.add(new RecipeInsertReq(
-                            title.get(i),"null",thumbnail.get(i),post.get(i).getIngredients(),post.get(i).getDescription(),
-                            post.get(i).getFoodImage(),url.get(i)
+                            title.get(i), "null", thumbnail.get(i), post.get(i).getIngredients(), post.get(i).getDescription(),
+                            post.get(i).getFoodImage(), url.get(i)
                     ));
                 }
-
             } catch (IOException e) {
-                e.printStackTrace();
+
+            } catch (NullPointerException e) {
+                System.out.println("" + page + " 페이지에서 작업을 종료합니다.");
+                return recipe;
+            } catch (IndexOutOfBoundsException e) {
+                e.toString();
             }
+
         }
         return recipe;
     }
