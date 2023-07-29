@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -141,22 +140,26 @@ public class ChatController {
     // 정산하기
     @ResponseBody
     @GetMapping("/grouppurchase/settlement")
-    public BaseResponse<String> setAmount(@RequestParam(value = "chatRoomIdx") Long chatRoomIdx) {
-        return new BaseResponse<>("setAmount");
+    public BaseResponse<List<String>> setAmount(@RequestParam(value = "chatRoomIdx") Long chatRoomIdx) {
+        try {
+            List<String> getChatRoomUsers = chatProvider.getChatRoomUsers(chatRoomIdx);
+            return new BaseResponse<>(getChatRoomUsers);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
     }
 
 
     // 정산하기 - N
     @ResponseBody
     @GetMapping("/grouppurchase/settlement/top-amount")
-    public BaseResponse<ResponseEntity<ChatProvider.SettlementRoom>> setTopAmount(@RequestParam(value = "chatRoomIdx") Long chatRoomIdx, @RequestParam(value = "amount") int amount) {
+    public BaseResponse<ChatProvider.SettlementRoom> setTopAmount(@RequestParam(value = "chatRoomIdx") Long chatRoomIdx, @RequestParam(value = "amount") int amount) {
         try {
             int members = chatProvider.getChatRoomMembers(chatRoomIdx);
             ChatProvider.SettlementRoom room = new ChatProvider.SettlementRoom(members);
             room.setTopAmount(amount);
 
-            ResponseEntity<ChatProvider.SettlementRoom> responseEntity = ResponseEntity.ok(room);
-            return new BaseResponse<>(responseEntity);
+            return new BaseResponse<>(room);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
@@ -165,14 +168,13 @@ public class ChatController {
     // 정산하기 - x,y,z
     @ResponseBody
     @GetMapping("/grouppurchase/settlement/individual-amounts")
-    public BaseResponse<ResponseEntity<ChatProvider.SettlementRoom>> setIndividualAmounts(@RequestParam(value = "chatRoomIdx") Long chatRoomIdx, @RequestBody int[] amounts) {
+    public BaseResponse<ChatProvider.SettlementRoom> setIndividualAmounts(@RequestParam(value = "chatRoomIdx") Long chatRoomIdx, @RequestBody int[] amounts) {
         try {
             int members = chatProvider.getChatRoomMembers(chatRoomIdx);
             ChatProvider.SettlementRoom room = new ChatProvider.SettlementRoom(members);
             room.setIndividualAmounts(amounts);
 
-            ResponseEntity<ChatProvider.SettlementRoom> responseEntity = ResponseEntity.ok(room);
-            return new BaseResponse<>(responseEntity);
+            return new BaseResponse<>(room);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }

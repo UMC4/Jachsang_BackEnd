@@ -99,16 +99,13 @@ public class ChatProvider {
         private int totalMembers;
         private int totalAmount;
         private int[] individualAmounts;
-        private int topAmount;
 
         public SettlementRoom(int totalMembers) {
             this.totalMembers = totalMembers;
             this.individualAmounts = new int[totalMembers];
-            this.topAmount = 0;
         }
 
         public void setTopAmount(int amount) {
-            this.topAmount = amount;
             this.totalAmount = amount;
             int individualShare = amount / totalMembers;
             int remainingAmount = amount % totalMembers;
@@ -140,17 +137,11 @@ public class ChatProvider {
         public int getTotalMembers() {
             return totalMembers;
         }
-
         public int getTotalAmount() {
             return totalAmount;
         }
-
         public int[] getIndividualAmounts() {
             return individualAmounts;
-        }
-
-        public int getTopAmount() {
-            return topAmount;
         }
     }
 

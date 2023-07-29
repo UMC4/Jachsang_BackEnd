@@ -12,9 +12,9 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetPost {
-    private int postIdx;
-    private int categoryIdx;
-    private int userIdx;
+    private Long postIdx;
+    private Long categoryIdx;
+    private Long userIdx;
     private String title;
     private int viewCount;
     private int likeCount;

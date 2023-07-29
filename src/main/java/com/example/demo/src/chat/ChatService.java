@@ -21,8 +21,8 @@ public class ChatService {
     private final ObjectMapper objectMapper;
     private Map<Long, PostChatRoom> chatRooms;
 
-    private Long chatRoomIdx = 10L;
-    private Long chatUserIdx = 10L;
+    private Long chatRoomIdx = 20L;
+    private Long chatUserIdx = 20L;
     private final ChatDao chatDao;
 
     @PostConstruct
@@ -47,9 +47,11 @@ public class ChatService {
                 .build();
         chatRooms.put(chatRoomIdx, postChatRoom);
         PostChatRoom returnPostChatRoom = chatDao.postChatRoom(postChatRoom, getPost);
-        PostChatUser postChatUser = chatDao.postChatUser(chatUserIdx, getUser, chatRoomIdx);
-        chatRoomIdx ++;
+        PostChatUser postChatUser1 = chatDao.postChatUser(chatUserIdx, getPost.getUserIdx(), chatRoomIdx);
         chatUserIdx ++;
+        PostChatUser postChatUser2 = chatDao.postChatUser(chatUserIdx, getUser.getUserIdx() ,chatRoomIdx);
+        chatUserIdx ++;
+        chatRoomIdx ++;
         return returnPostChatRoom;
     }
 

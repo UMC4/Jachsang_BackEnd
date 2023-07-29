@@ -79,16 +79,16 @@ public class ChatDao {
     }
 
 
-    public PostChatUser postChatUser(Long chatUserIdx, GetUser getUser, Long chatRoomIdx) {
+    public PostChatUser postChatUser(Long chatUserIdx, Long userIdx, Long chatRoomIdx) {
 
         String postChatUserQuery = "INSERT INTO ChatUser(chatUserIdx, userIdx, createTime, chatRoomIdx) " +
                 "VALUES(?, ?, now(), ?)";
 
-        Object[] params = {chatUserIdx, getUser.getUserIdx(), chatRoomIdx};
+        Object[] params = {chatUserIdx, userIdx, chatRoomIdx};
 
         this.jdbcTemplate.update(postChatUserQuery, params);
 
-        return new PostChatUser(chatUserIdx, getUser.getUserIdx(), new Timestamp(System.currentTimeMillis()), chatRoomIdx);
+        return new PostChatUser(chatUserIdx, userIdx, new Timestamp(System.currentTimeMillis()), chatRoomIdx);
     }
 
     public PostChatRoom postChatRoom(PostChatRoom postChatRoom, GetPost getPost) {
