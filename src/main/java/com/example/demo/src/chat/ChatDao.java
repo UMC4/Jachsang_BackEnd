@@ -192,6 +192,15 @@ public class ChatDao {
         return groupPurchaseMembers;
     }
 
+    public void deleteChatUser(GetChatUser getChatUser) {
+        String deleteChatCommentQuery = "DELETE FROM ChatComment WHERE chatUserIdx = " + getChatUser.getChatUserIdx();
+        this.jdbcTemplate.update(deleteChatCommentQuery);
+
+        String deleteChatUserQuery = "DELETE FROM ChatUser WHERE chatUserIdx = " + getChatUser.getChatUserIdx();
+        this.jdbcTemplate.update(deleteChatUserQuery);
+    }
+
+
 
     public int getGroupPurchaseMembers(Long chatRoomIdx) {
         String getGroupPurchaseMembersQuery = "SELECT groupPurchaseMembers FROM ChatRoom WHERE chatRoomIdx = ?";

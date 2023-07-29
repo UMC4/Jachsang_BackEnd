@@ -73,14 +73,15 @@ public class ChatService {
         boolean groupPurchaseCheck = chatDao.getGroupPurchaseCheck(chatRoomIdx, getChatUser);
         if (!groupPurchaseCheck) {
             int groupPurchaseMembers = chatDao.updateGroupPurchaseCheck(chatRoomIdx, getChatUser);
+            chatDao.deleteChatUser(getChatUser);
 
             if (groupPurchaseMembers == 0)
-                return 0; // 전부다 공동구매 누름
+                return 0; // 전부다 구매완료 누름
             else
-                return 1; // 몇명은 공동구매 안누름
+                return 1; // 몇명은 구매완료 안누름
         }
         else
-            return 2; // 한사람이 공동구매 2번 누름
+            return 2; // 한사람이 구매완료 2번 누름
     }
 
     public Object completeSettlement(Long chatRoomIdx, GetChatUser getChatUser) throws BaseException {
