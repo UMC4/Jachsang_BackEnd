@@ -2,6 +2,7 @@ package com.example.demo.src.chat;
 
 import com.example.demo.src.chat.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -76,6 +77,26 @@ public class ChatDao {
                         rs.getString("category"),
                         rs.getString("title"))
         );
+    }
+
+
+    public Long getChatRoomByPostIdx(Long postIdx) {
+        String getChatRoomQuery = "SELECT chatRoomIdx FROM ChatRoom WHERE postIdx = ?";
+        try {
+            Long existingChatRoomIdx = this.jdbcTemplate.queryForObject(getChatRoomQuery, new Object[]{postIdx}, Long.class);
+            return existingChatRoomIdx;
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    public void addUserToChatRoom(Long chatUserIdx, Long chatRoomIdx, Long userIdx) {
+        String addUserToChatRoomQuery = "INSERT INTO ChatUser(chatUserIdx, userIdx, createTime, chatRoomIdx) " +
+                "VALUES(?, ?, now(), ?)";
+
+        Object[] params = {chatUserIdx, userIdx, chatRoomIdx};
+
+        this.jdbcTemplate.update(addUserToChatRoomQuery, params);
     }
 
 

@@ -36,6 +36,25 @@ public class ChatService {
     }
 
 
+    public Long getChatRoomByPostIdx(Long postIdx) {
+        return chatDao.getChatRoomByPostIdx(postIdx);
+    }
+
+    public PostChatRoom addUserToChatRoom(Long chatRoomIdx, Long userIdx, GetPost getPost) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        PostChatRoom postChatRoom = PostChatRoom.builder()
+                .chatRoomIdx(chatRoomIdx)
+                .userIdx(userIdx)
+                .title(getPost.getTitle())
+                .unreads(0)
+                .updateTime(timestamp)
+                .build();
+        chatDao.addUserToChatRoom(chatUserIdx, chatRoomIdx, userIdx);
+        chatUserIdx ++;
+        return postChatRoom;
+    }
+
+
     public PostChatRoom postChatRoom(GetPost getPost, GetUser getUser) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         PostChatRoom postChatRoom = PostChatRoom.builder()

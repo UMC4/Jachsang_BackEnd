@@ -131,7 +131,17 @@ public class ChatController {
     public PostChatRoom createChatRoom2(@RequestBody PostChatRoomReq postChatRoomReq) {
         GetPost getPost = postChatRoomReq.getGetPost();
         GetUser getUser = postChatRoomReq.getGetUser();
-        return chatService.postChatRoom(getPost, getUser);
+        Long postIdx = getPost.getPostIdx();
+
+        Long existingChatRoomIdx = chatService.getChatRoomByPostIdx(postIdx);
+
+        if (existingChatRoomIdx != null) {
+            // Add the user to the existing chat room and return it
+            return chatService.addUserToChatRoom(existingChatRoomIdx, getUser.getUserIdx(), getPost);
+        } else {
+            // Create a new chat room and add the user to it
+            return chatService.postChatRoom(getPost, getUser);
+        }
     }
 
 
