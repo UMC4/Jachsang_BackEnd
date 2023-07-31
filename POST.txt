@@ -1,0 +1,40 @@
+POST 
+입력 예시
+
+127.0.0.1:9000/app/users
+회원가입
+{
+    "userName": "logintest",
+    "loginId": "logintest",
+    "password": "1111",
+    "email": "rla@naver.com",
+    "nickname": "sdsd",
+    "phoneNumber": "010-0000-0000",
+    "adPolicyAgreement": 0
+}
+
+
+127.0.0.1:9000/app/users/logIn
+로그인시 data:
+
+{
+    "loginId": "logintest",
+    "password": "1111"
+}
+
+회원정보 수정 data:
+{
+    "nickname":"patchtest",
+    "phoneNumber":"010-0000-0000",
+    "password":"123456789123456789",
+    "email":"rla@naver.com"
+}
+
+친구 추가 data:
+{
+    "followerId":1,
+    "followingId":3
+}
+
+
+
