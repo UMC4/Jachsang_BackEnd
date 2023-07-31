@@ -67,16 +67,6 @@ public class PostController {
             return new BaseResponse<>(BaseResponseStatus.OMITTED_PARAMETER);
         }
     }
-    @ResponseBody
-    @PostMapping(value = "recipeTest")
-    public BaseResponse<String> recipeTest(){
-        try{
-            this.methods.recipeTest();
-            return new BaseResponse<>("성공했습니다.");
-        }catch (BaseException e) {
-            return new BaseResponse<>(e.getStatus());
-        }
-    }
 
     @ResponseBody
     @GetMapping(value ="get")

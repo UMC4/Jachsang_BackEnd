@@ -17,13 +17,10 @@ public class MypageController {
     @Autowired
     private final MypageProvider mypageProvider;
     @Autowired
-    private final MypageService mypageService;
-    @Autowired
     private final JwtService jwtService;
 
-    public MypageController(MypageProvider mypageProvider, MypageService mypageService, JwtService jwtService) {
+    public MypageController(MypageProvider mypageProvider, JwtService jwtService) {
         this.mypageProvider = mypageProvider;
-        this.mypageService = mypageService;
         this.jwtService = jwtService;
     }
 
