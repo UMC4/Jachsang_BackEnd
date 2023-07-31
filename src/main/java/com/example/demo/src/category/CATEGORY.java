@@ -27,9 +27,15 @@ public enum CATEGORY {
         return name;
     }
 
+    public static String getName(int number){
+        for(CATEGORY c : CATEGORY.values()){
+            if(c.number == number) return c.name;
+        }
+        return null;
+    }
     public static int getNumber(String name) {
         for(CATEGORY c : CATEGORY.values()) {
-            if(c.getName().equals(name)) return c.number;
+            if(c.name.equals(name)) return c.number;
         }
         return 0;
     }
