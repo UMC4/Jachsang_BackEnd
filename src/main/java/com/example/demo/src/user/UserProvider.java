@@ -41,7 +41,7 @@ public class UserProvider {
         catch (Exception exception) {
             // Logger를 이용하여 에러를 로그에 기록한다
             logger.error("Error!", exception);
-            throw new BaseException(NEEDED_EMIAL_INPUT);
+            throw new BaseException(DATABASE_ERROR);
         }
     }
 
@@ -90,7 +90,7 @@ public class UserProvider {
         try{
             return userDao.checkFollow(postFollowReq);
         } catch (Exception exception){
-            throw new BaseException(ERRRRRRR);
+            throw new BaseException(DATABASE_ERROR);
         }
     }
     public int checkId(String id) throws BaseException{
