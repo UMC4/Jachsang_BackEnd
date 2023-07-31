@@ -41,7 +41,7 @@ public class UserProvider {
         catch (Exception exception) {
             // Logger를 이용하여 에러를 로그에 기록한다
             logger.error("Error!", exception);
-            throw new BaseException(DATABASE_ERROR);
+            throw new BaseException(NEEDED_EMIAL_INPUT);
         }
     }
 

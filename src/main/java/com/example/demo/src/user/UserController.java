@@ -183,7 +183,7 @@ public class UserController {
     }
 
     /** 친구 추가 API
-     * [POST] /user/follow
+     * [POST] /users/follow
      * @return BaseResponse<String>
      */
     @ResponseBody
@@ -198,7 +198,6 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-
 
     /** 친구 삭제 API
      * [DELETE] /user/follow

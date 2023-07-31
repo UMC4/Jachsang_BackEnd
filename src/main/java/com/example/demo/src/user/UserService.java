@@ -7,13 +7,14 @@ import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
 import com.example.demo.utils.SHA256;
 import com.fasterxml.jackson.databind.ser.Serializers;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import sun.tools.jconsole.JConsole;
-
+import org.springframework.mail.javamail.*;
 import java.nio.channels.ScatteringByteChannel;
 
 import static com.example.demo.config.BaseResponseStatus.*;

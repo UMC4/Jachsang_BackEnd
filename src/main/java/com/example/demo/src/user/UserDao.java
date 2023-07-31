@@ -40,8 +40,8 @@ public class UserDao {
         return this.jdbcTemplate.query(getUserChatQuery,
                 (rs, rowNum) -> new GetUserChatRes(
                         rs.getInt("chatUserIdx"),
-                        rs.getInt("userIdx"),
-                        rs.getInt("chatRoomIdx")),
+                        rs.getInt("chatRoomIdx"),
+                        rs.getInt("userIdx")),
                 getUserChatParams);
 
     }
