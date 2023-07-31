@@ -27,9 +27,6 @@ public class UserController {
     @Autowired
     private final JwtService jwtService;
 
-
-
-
     public UserController(UserProvider userProvider, UserService userService, JwtService jwtService){
         this.userProvider = userProvider;
         this.userService = userService;
@@ -78,7 +75,6 @@ public class UserController {
         }
 
     }
-
     /**
      * 회원가입 API
      * [POST] /users
