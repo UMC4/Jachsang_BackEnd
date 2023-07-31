@@ -1,3 +1,15 @@
+<<<<<<< HEAD
+02:27:28.202 ERROR [File:UserProvider.java] [Func:getUsers] [Line:41] [Message:Error!]- Error!
+org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [select * from UserInfo]; nested exception is java.sql.SQLSyntaxErrorException: Table 'JachsangDB.UserInfo' doesn't exist
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:239)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:70)
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1541)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:393)
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:465)
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:475)
+	at com.example.demo.src.user.UserDao.getUsers(UserDao.java:24)
+	at com.example.demo.src.user.UserDao$$FastClassBySpringCGLIB$$fe6217c8.invoke(<generated>)
+=======
 14:20:01.919 ERROR [File:ChatProvider.java] [Func:getChatRooms] [Line:33] [Message:Error!]- Error!
 org.springframework.jdbc.UncategorizedSQLException: PreparedStatementCallback; uncategorized SQLException for SQL [SELECT cr.chatRoomIdx, cu.userIdx, p.title, cr.unreads, cc.createTime, cc.contents FROM Post p JOIN ChatRoom cr On p.postIdx = cr.postIdx JOIN ChatUser cu on cr.chatRoomIdx = cu.chatRoomIdx JOIN ChatComment cc on cu.chatUserIdx = cc.chatUserIdx WHERE p.categoryIdx BETWEEN 10 AND 19 AND cu.chatRoomIdx IN (?,?,?)ORDER BY cc.createTime DESC LIMIT 1]; SQL state [S0022]; error code [0]; Column 'updateTime' not found.; nested exception is java.sql.SQLException: Column 'updateTime' not found.
 	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1542)
@@ -8,6 +20,7 @@ org.springframework.jdbc.UncategorizedSQLException: PreparedStatementCallback; u
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:810)
 	at com.example.demo.src.chat.ChatDao.getChatRooms(ChatDao.java:57)
 	at com.example.demo.src.chat.ChatDao$$FastClassBySpringCGLIB$$3335291b.invoke(<generated>)
+>>>>>>> 7130bb5f63f8b15a02d00cbd75fe6c3f1791faa5
 	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)
 	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:793)
 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
@@ -16,6 +29,15 @@ org.springframework.jdbc.UncategorizedSQLException: PreparedStatementCallback; u
 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
 	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:763)
 	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708)
+<<<<<<< HEAD
+	at com.example.demo.src.user.UserDao$$EnhancerBySpringCGLIB$$cfd414fd.getUsers(<generated>)
+	at com.example.demo.src.user.UserProvider.getUsers(UserProvider.java:36)
+	at com.example.demo.src.user.UserController.getUsers(UserController.java:52)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+=======
 	at com.example.demo.src.chat.ChatDao$$EnhancerBySpringCGLIB$$362b1f58.getChatRooms(<generated>)
 	at com.example.demo.src.chat.ChatProvider.getChatRooms(ChatProvider.java:27)
 	at com.example.demo.src.chat.ChatController.getChatRoom(ChatController.java:33)
@@ -23,6 +45,7 @@ org.springframework.jdbc.UncategorizedSQLException: PreparedStatementCallback; u
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+>>>>>>> 7130bb5f63f8b15a02d00cbd75fe6c3f1791faa5
 	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)
 	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150)
 	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
@@ -98,6 +121,16 @@ org.springframework.jdbc.UncategorizedSQLException: PreparedStatementCallback; u
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+<<<<<<< HEAD
+	at java.base/java.lang.Thread.run(Thread.java:833)
+Caused by: java.sql.SQLSyntaxErrorException: Table 'JachsangDB.UserInfo' doesn't exist
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122)
+	at com.mysql.cj.jdbc.StatementImpl.executeQuery(StatementImpl.java:1200)
+	at com.zaxxer.hikari.pool.ProxyStatement.executeQuery(ProxyStatement.java:110)
+	at com.zaxxer.hikari.pool.HikariProxyStatement.executeQuery(HikariProxyStatement.java)
+	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:452)
+=======
 	at java.base/java.lang.Thread.run(Thread.java:839)
 Caused by: java.sql.SQLException: Column 'updateTime' not found.
 	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:130)
@@ -339,5 +372,6 @@ Caused by: java.sql.SQLException: Column 'userIdx' not found.
 	at org.springframework.jdbc.core.RowMapperResultSetExtractor.extractData(RowMapperResultSetExtractor.java:94)
 	at org.springframework.jdbc.core.RowMapperResultSetExtractor.extractData(RowMapperResultSetExtractor.java:61)
 	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:453)
+>>>>>>> 7130bb5f63f8b15a02d00cbd75fe6c3f1791faa5
 	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:381)
 	... 95 common frames omitted
