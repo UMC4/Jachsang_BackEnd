@@ -6,6 +6,7 @@ import com.example.demo.src.post.model.generalModel.Post;
 import com.example.demo.src.post.model.groupPurchase.GroupPurchasePost;
 import com.example.demo.src.post.model.recipe.RecipeInsertReq;
 import com.example.demo.src.post.model.recipe.RecipePost;
+import com.example.demo.src.report.model.CheckReportReq;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 
@@ -114,5 +115,19 @@ public class Methods {
         String getUserIdxSql = "SELECT userIdx FROM CommentIdx WHERE commentIdx = "+commentIdx;
         return this.jdbcTemplate.queryForObject(getUserIdxSql,int.class);
     }
-
+    public boolean _isExistReport(CheckReportReq checkReportReq){
+        String checkSql = "";
+        if(checkReportReq.getKind() == 40) {
+            checkSql = "SELECT reportReq FROM Report WHERE reportingUserIdx = "+checkReportReq.getUserIdx()+", contentsKind = 40";
+        }
+        else if (checkReportReq.getKind() != 40){
+            checkSql = "SELECT reportReq FROM Report WHERE reportingUserIdx = " +
+                    checkReportReq.getUserIdx() +
+                    ", contentsKind = " +
+                    checkReportReq.getKind() +
+                    ", reportedContentsIdx = " +
+                    checkReportReq.getContentsIdx();
+        }
+        return this.jdbcTemplate.queryForObject(checkSql,int.class) > 0 ? true : false;
+    }
 }
