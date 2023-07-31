@@ -13,7 +13,6 @@ import com.example.demo.src.post.model.recipe.RecipeInsertReq;
 import com.example.demo.src.post.model.recipe.RecipePost;
 import com.example.demo.src.post.model.recipe.RecipePostingReq;
 import com.example.demo.src.privateMethod.Methods;
-import com.example.demo.src.recipeCrawl.model.RecipeReq;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

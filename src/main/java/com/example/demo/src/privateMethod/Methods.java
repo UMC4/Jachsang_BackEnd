@@ -90,34 +90,6 @@ public class Methods {
             return false;
         }
     }
-    public void recipeTest() throws BaseException {
-        com.example.demo.src.recipeCrawl.Methods m = new com.example.demo.src.recipeCrawl.Methods();
-        List<RecipeInsertReq> list = m.getRecipe();
-        for(RecipeInsertReq r : list){
-            _insertRecipeData(r);
-        }
-    }
-    public int _insertRecipeData(RecipeInsertReq recipeInsertReq){
-        String insertOnPostSql = "INSERT INTO Post(categoryIdx,userIdx,title,url) VALUES(30,2,?,?)";
-        String insertOnRecipeSql = "INSERT INTO RecipeDetail(postIdx, ingredients,description,mainImageUrl,originUrl) VALUES(?,?,?,?,?)";
-        Object[] postParam = {
-                recipeInsertReq.getTitle(), recipeInsertReq.getUrl()
-        };
-        this.jdbcTemplate.update(insertOnPostSql ,postParam);
-        List<Integer> postIdx = this.jdbcTemplate.query(
-                        "SELECT postIdx FROM Post WHERE categoryIdx = 30 " + "AND userIdx = 2 "+
-                        "AND title = \""+ recipeInsertReq.getTitle()+"\"",
-                (rs,rowNum) -> new Integer(
-                        rs.getInt("postIdx")
-                )
-        );
-
-        Object[] recipeParam = {
-                postIdx.get(0), recipeInsertReq.getIngredients(), recipeInsertReq.getDescription(),
-                recipeInsertReq.getMainImageUrl(), recipeInsertReq.getOriginUrl()
-        };
-        return this.jdbcTemplate.update(insertOnRecipeSql,recipeParam);
-    }
     public String _getUserRole(int userIdx){
         String getUserRoleIdxSql = "SELECT role FROM User Where userIdx = "+userIdx;
         return this.jdbcTemplate.queryForObject(getUserRoleIdxSql,String.class);
