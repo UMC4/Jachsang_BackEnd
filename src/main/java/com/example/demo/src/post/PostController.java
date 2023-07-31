@@ -38,6 +38,7 @@ public class PostController {
         this.methods = this.postService._getMethods();
     }
     //글쓰기
+    ///
     @ResponseBody
     @PostMapping(value = "create")
     public BaseResponse<PostingRes> createPost(@RequestBody Object postingReq){
