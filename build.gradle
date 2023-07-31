@@ -47,6 +47,17 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-security')
     implementation(group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0')
     implementation('io.jsonwebtoken:jjwt:0.9.0')
+
+    // Email Authentication
+    implementation('org.springframework.boot:spring-boot-starter-mail')
+    implementation('org.springframework.boot:spring-boot-starter-validation')
+    implementation('org.springframework.boot:spring-boot-configuration-processor')
+   // implementation group: 'org.springframework.boot', name:'spring-boot-starter-mail', version:'2.6.3'
+
+    //SpringTemplateEngine
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+
 }
 
 test {

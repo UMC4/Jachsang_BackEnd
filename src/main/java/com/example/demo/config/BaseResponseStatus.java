@@ -27,26 +27,43 @@ public enum BaseResponseStatus {
 
     // users
     USERS_EMPTY_USER_ID(false, HttpStatus.BAD_REQUEST.value(), "유저 아이디 값을 확인해주세요."),
+    POST_USERS_EXISTS_ID(false,HttpStatus.BAD_REQUEST.value(),"중복된 아이디입니다"),
 
     // [POST] /users
     POST_USERS_EMPTY_EMAIL(false, HttpStatus.BAD_REQUEST.value(), "이메일을 입력해주세요."),
     POST_USERS_INVALID_EMAIL(false, HttpStatus.BAD_REQUEST.value(), "이메일 형식을 확인해주세요."),
     POST_USERS_EXISTS_EMAIL(false,HttpStatus.BAD_REQUEST.value(),"중복된 이메일입니다."),
     FAILED_TO_LOGIN(false,HttpStatus.NOT_FOUND.value(),"없는 아이디거나 비밀번호가 틀렸습니다."),
+    FOLLOW_USER_ERROR(false,HttpStatus.BAD_REQUEST.value(),"유저 팔로우에 실패하였습니다."),
+    FOLLOW_USER_ALREADY(false,HttpStatus.BAD_REQUEST.value(),"이미 팔로우 하셨습니다."),
 
-
+    //[DELETE]
+    DELETE_USER_ERROR(false, HttpStatus.BAD_REQUEST.value(), "팔로우 취소가 실패하였습니다."),
 
     /**
      * 50 : Database, Server 오류
      */
     DATABASE_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "데이터베이스 연결에 실패하였습니다."),
     SERVER_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버와의 연결에 실패하였습니다."),
-
+    ERRRRRRR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "데이터베이스 연결에 실패하였습니다."),
     //[PATCH] /users/{userIdx}
     MODIFY_FAIL_USERNAME(false,HttpStatus.INTERNAL_SERVER_ERROR.value(),"유저네임 수정 실패"),
 
     PASSWORD_ENCRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 암호화에 실패하였습니다."),
-    PASSWORD_DECRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 복호화에 실패하였습니다.");
+    PASSWORD_DECRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 복호화에 실패하였습니다."),
+
+    /**
+     * 1000: 유저 관련 오류
+     */
+    NEEDED_EMIAL_INPUT(false,1000, "이메일을 입력해주세요."),
+
+
+
+
+
+
+    ;
+
 
 
     private final boolean isSuccess;
