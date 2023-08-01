@@ -136,7 +136,8 @@ public class ChatDao {
                         rs.getString("kind"),
                         rs.getInt("unread"),
                         rs.getTimestamp("createTime"),
-                        rs.getString("contentType"))
+                        rs.getString("contentType"),
+                        rs.getInt("reported"))
         );
     }
 
