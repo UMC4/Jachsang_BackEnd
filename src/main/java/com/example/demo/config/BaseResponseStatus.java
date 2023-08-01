@@ -50,7 +50,7 @@ public enum BaseResponseStatus {
 
     PASSWORD_ENCRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 암호화에 실패하였습니다."),
     PASSWORD_DECRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 복호화에 실패하였습니다."),
-<<<<<<< HEAD
+//<<<<<<< HEAD
 
     /**
      * 1000: 유저 관련 오류
@@ -62,10 +62,10 @@ public enum BaseResponseStatus {
 
 
 
-    ;
 
-=======
->>>>>>> 7130bb5f63f8b15a02d00cbd75fe6c3f1791faa5
+
+//=======
+//>>>>>>> 7130bb5f63f8b15a02d00cbd75fe6c3f1791faa5
 
     //게시판
     BOTH_CATEGORY_SORT_INPUT(false, 2000, "카테고리와 정렬 조건 중 하나만 입력되어야 합니다."),
