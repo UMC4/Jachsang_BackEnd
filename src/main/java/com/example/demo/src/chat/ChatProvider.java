@@ -62,7 +62,6 @@ public class ChatProvider {
     public List<GetChatComment> getChatComment(Long chatRoomIdx) throws BaseException {
         try {
             List<GetChatComment> getChatComment = chatDao.getChatComment(chatRoomIdx);
-
             getChatComment.removeIf(comment -> comment.getReported() > 0);
 
             return getChatComment;
