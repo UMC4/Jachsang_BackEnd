@@ -30,9 +30,6 @@ public class UserController {
     @Autowired
     private final JwtService jwtService;
 
-
-
-
     public UserController(UserProvider userProvider, UserService userService, JwtService jwtService){
         this.userProvider = userProvider;
         this.userService = userService;
@@ -122,7 +119,6 @@ public class UserController {
         }
 
     }
-
     /**
      * 친구 목록 조회 API
      * [GET] /users/:userIdx/friends
