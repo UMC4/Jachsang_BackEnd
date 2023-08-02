@@ -12,11 +12,17 @@ public class MailServiceRestController {
 
     //127.0.0.1:8080/ROOT/api/mail/confirm.json?email
     @PostMapping("/mailValidation")
-    public String mailConfirm(@RequestBody PostMailReq postMailReq) throws Exception{
-        String code = registerMail.sendSimpleMessage(postMailReq.getEmail());
+    public String mailConfirm(@RequestParam(name = "email") String email) throws Exception{
+        String code = registerMail.sendSimpleMessage(email);
         System.out.println("사용자에게 발송한 인증코드 ==> " + code);
 
         return code;
     }
+    @PostMapping("/getPwd")
+    public String mailgetpwd(@RequestParam(name = "email") String email) throws Exception{
+        String code = registerMail.sendSimpleMessage(email);
+        System.out.println("사용자에게 발송한 인증코드 ==> " + code);
 
+        return code;
+    }
 }

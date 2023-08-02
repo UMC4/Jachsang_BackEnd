@@ -10,6 +10,8 @@ import javax.mail.internet.MimeMessage.RecipientType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import java.security.SecureRandom;
+
 @Service
 public class RegisterMail implements MailServiceInter {
 
@@ -17,6 +19,7 @@ public class RegisterMail implements MailServiceInter {
     JavaMailSender emailSender; // MailConfig에서 등록해둔 Bean을 autowired하여 사용하기
 
     private String ePw; // 사용자가 메일로 받을 인증번호
+
 
     // 메일 내용 작성
     @Override
@@ -70,6 +73,7 @@ public class RegisterMail implements MailServiceInter {
         System.out.println("생성된 랜덤 인증코드"+ key);
         return key;
     }
+
 
     // 메일 발송
     // sendSimpleMessage 의 매개변수 to는 이메일 주소가 되고,

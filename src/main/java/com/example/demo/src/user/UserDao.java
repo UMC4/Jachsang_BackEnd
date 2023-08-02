@@ -55,7 +55,7 @@ public class UserDao {
     }
 
     public List<GetUserRes> getUsersByEmail(String email) {
-        String getUsersByEmailQuery = "select * from User where email =?";
+        String getUsersByEmailQuery = "select password from User where email =?";
         String getUsersByEmailParams = email;
         return this.jdbcTemplate.query(getUsersByEmailQuery,
                 (rs, rowNum) -> new GetUserRes(
