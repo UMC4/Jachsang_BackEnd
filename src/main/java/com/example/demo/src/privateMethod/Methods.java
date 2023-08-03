@@ -106,7 +106,7 @@ public class Methods {
     public boolean _isExistCommentIdx(int commentIdx) {
         String sql = "SELECT commentIdx FROM Comment WHERE commentIdx = "+commentIdx;
         try{
-            return this.jdbcTemplate.queryForObject(sql,int.class) == 1 ? true:false;
+            return this.jdbcTemplate.queryForObject(sql,int.class) == commentIdx ? true:false;
         } catch (Exception e) {
             return false;
         }
