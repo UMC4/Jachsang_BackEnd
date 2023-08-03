@@ -101,15 +101,21 @@ public class UserProvider {
         }
     }
     public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException{
-       //아이디 검증 여부(아이디 다를시 exception 처리)
+        UserForPassword user;
+
+        //아이디 검증 여부(아이디 다를시 exception 처리)
         try{
-            UserForPassword user = userDao.getPwd(postLoginReq);
-        }catch (Exception exception)
-        {
+            user = userDao.getPwd(postLoginReq);
+        } catch (Exception exception) {
             throw new BaseException(FAILED_TO_LOGIN);
         }
+
+        //영구정지회원 검증(status가 -1일 경우 영구정지회원으로 판단함
+        if(user.getStatus() == -1) {
+            throw new BaseException(PERMANENT_BANNED_USER);
+        }
+
         //postLoginReq 정보 불러오기 및 비밀번호 검증
-        UserForPassword user = userDao.getPwd(postLoginReq);
         String encryptPwd;
         try {
             encryptPwd=new SHA256().encrypt(postLoginReq.getPassword());
@@ -121,8 +127,7 @@ public class UserProvider {
             int userIdx = user.getUserIdx();
             String jwt = jwtService.createJwt(userIdx);
             return new PostLoginRes(userIdx,jwt);
-        }
-        else{
+        } else{
             throw new BaseException(FAILED_TO_LOGIN);
         }
 

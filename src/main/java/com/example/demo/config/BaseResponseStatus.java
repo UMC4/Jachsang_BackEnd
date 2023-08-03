@@ -48,6 +48,7 @@ public enum BaseResponseStatus {
 
     //유저
     NEEDED_EMAIL_INPUT(false,1000, "이메일을 입력해주세요."),
+    PERMANENT_BANNED_USER(false, 1001, "영구정지된 회원입니다."),
 
     //게시글
     NOT_EXIST_POST_IDX(false,3000,"존재하는 게시글idx가 아닙니다."),
@@ -75,6 +76,7 @@ public enum BaseResponseStatus {
 
     //상대프로필
     NOT_EXIST_USER(false,5000,"존재하는 유저가 아닙니다.");
+
 
     private final boolean isSuccess;
     private final int code;

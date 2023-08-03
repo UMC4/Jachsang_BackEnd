@@ -14,4 +14,5 @@ public class UserForPassword {
     private String userName;
     private String password;
     private String email;
+    private int status;
 }
