@@ -59,7 +59,22 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+    /**
+     *  비밀번호 조회 API
+     *  [GET] /users/getPwd?Email=
+     */
 
+    @ResponseBody
+    @GetMapping("/getPwd") // (GET) 127.0.0.1:9000/app/users
+    public BaseResponse<GetUserRes> getUserPwd(@RequestParam(required = false) String Email) {
+        try{
+            // Get Users
+            List<GetUserRes> getUsersRes = userProvider.getUsersByEmail(Email);
+            return new BaseResponse(getUsersRes);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
     /**
      * 채팅 조회 API
@@ -146,18 +161,6 @@ public class UserController {
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
-
-        /**
-         //이메일 인증 (인증코드 )
-         @GetMapping("/mailCheck")
-         @ResponseBody
-         public String mailCheck(String email) {
-         System.out.println("이메일 인증 요청이 들어옴!");
-         System.out.println("이메일 인증 이메일 : " + email);
-         }
-
-         */
-
 
     }
     /**
