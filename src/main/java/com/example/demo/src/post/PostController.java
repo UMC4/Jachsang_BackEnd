@@ -54,8 +54,6 @@ public class PostController {
                     throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
                 }
             }
-            // postIdx가 존재하지 않을 때
-           if(!this.methods._isExistPostIdx((int)req.get("postIdx"))) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             int categoryIdx = CATEGORY.getNumber((String)req.get("category"));
 
             PostingRes postingRes = this.postService.posting(categoryIdx/10, categoryIdx, req);
@@ -102,11 +100,11 @@ public class PostController {
             // 3000
             if(!this.methods._isExistPostIdx(deleteReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             // 글쓴이와 삭제자가 다를 때
-//            if(jwtService.getUserIdx() != this.methods._getUserIdxByPostIdx(deleteReq.getPostIdx())) {
-//                // 관리자가 아니면 권한없음 예외처리
-//                if(!this.methods._getUserRole(jwtService.getUserIdx()).toLowerCase().equals("admin")) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
-//                throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
-//            }
+            if(jwtService.getUserIdx() != this.methods._getUserIdxByPostIdx(deleteReq.getPostIdx())) {
+                // 관리자가 아니면 권한없음 예외처리
+                if(!this.methods._getUserRole(jwtService.getUserIdx()).toLowerCase().equals("admin")) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+                throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+            }
             if(this.postService.deletePost(deleteReq)) return new BaseResponse<>("성공했습니다.");
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());

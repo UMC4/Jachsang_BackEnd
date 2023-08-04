@@ -60,11 +60,6 @@ public enum BaseResponseStatus {
     NEEDED_EMAIL_INPUT(false,1000, "이메일을 입력해주세요."),
     PERMANENT_BANNED_USER(false, 1001, "영구정지된 회원입니다."),
 
-
-
-//=======
-//>>>>>>> 7130bb5f63f8b15a02d00cbd75fe6c3f1791faa5
-
     //게시글
     NOT_EXIST_POST_IDX(false,3000,"존재하는 게시글idx가 아닙니다."),
     OVER_LENGTH(false, 3001, "내용이 정해진 길이를 초과했습니다."),
@@ -74,7 +69,8 @@ public enum BaseResponseStatus {
     ALREADY_CALCULATED(false,3005,"이미 정산 완료된 공동구매입니다."),
     NOT_EXIST_COMMENT_IDX(false,3006,"존재하지 않는 댓글 idx입니다."),
     SELF_REPORT(false,3007,"자기 자신을 신고할 수 없습니다."),
-    
+    REPORT_COUNT_OVER(false,3009,"이미 신고한 대상입니다."),
+
     //게시판
     BOTH_CATEGORY_SORT_INPUT(false, 2000, "카테고리와 정렬 조건 중 하나만 입력되어야 합니다."),
     NO_CATEGORY_SORT_INPUT(false, 2001, "카테고리나 정렬 조건이 입력되어야 합니다."),

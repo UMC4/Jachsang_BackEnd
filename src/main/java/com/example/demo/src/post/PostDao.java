@@ -152,9 +152,14 @@ public class PostDao {
         String deleteLikeSql = "DELETE FROM LikedPost WHERE postIdx = "+postIdx;
         // HeartPost 내용을 삭제한다.
         String deleteHeartSql = "DELETE FROM HeartPost WHERE postIdx = "+postIdx;
+
         // HeartComment 내용을 삭제한다.
-        String deleteHeartCommentSql = "DELETE FROM HeartComment WHERE commentIdx = (" +
-                "SELECT commentIdx FROM Comment WHERE postIdx = "+postIdx+")";
+        String getPostIdxSql = "SELECT commentIdx FROM Comment WHERE postIdx = "+postIdx;
+        List<Integer> comIdxs = this.jdbcTemplate.queryForList(getPostIdxSql,int.class);
+        for(int i : comIdxs){
+            String deleteHeartCommentSql = "DELETE FROM HeartComment WHERE commentIdx = "+i;
+            this.jdbcTemplate.update(deleteHeartCommentSql);
+        }
         // Comment 내용을 삭제한다.
         String deleteCommentSql = "DELETE FROM Comment WHERE postIdx = "+postIdx;
         // 마지막으로 Post 내용을 삭제한다.
@@ -163,7 +168,6 @@ public class PostDao {
         image = this.jdbcTemplate.update(deleteImageSql);
         like = this.jdbcTemplate.update(deleteLikeSql);
         heart = this.jdbcTemplate.update(deleteHeartSql);
-        comment = this.jdbcTemplate.update(deleteHeartCommentSql);
         this.jdbcTemplate.update(deleteCommentSql);
         detail = this.jdbcTemplate.update(deleteDetailSql);
         general = this.jdbcTemplate.update(deleteGeneralSql);
