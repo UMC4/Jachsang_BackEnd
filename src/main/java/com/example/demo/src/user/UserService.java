@@ -47,7 +47,7 @@ public class UserService {
         }
         //아이디 중복
         if(userProvider.checkId(postUserReq.getLoginId())==1){
-            throw new BaseException(POST_USERS_EXISTS_ID);
+            throw new BaseException(DATABASE_ERROR);
         }
 
         String pwd;
@@ -70,11 +70,11 @@ public class UserService {
 
     public void followUser(PostFollowReq postFollowReq) throws BaseException{
         if (userProvider.checkFollowed(postFollowReq)==1)
-            throw new BaseException(FOLLOW_USER_ALREADY);
+            throw new BaseException(DATABASE_ERROR);
         try{
             int result=userDao.followUser(postFollowReq);
             if(result==0) {
-                throw new BaseException(FOLLOW_USER_ERROR);
+                throw new BaseException(DATABASE_ERROR);
             }
         } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
@@ -84,7 +84,7 @@ public class UserService {
         try {
             int result = userDao.deleteFollowUser(postFollowReq);
             if (result == 0) {
-                throw new BaseException(DELETE_USER_ERROR);
+                throw new BaseException(DATABASE_ERROR);
             }
         }catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);

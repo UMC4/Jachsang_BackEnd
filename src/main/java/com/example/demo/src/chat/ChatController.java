@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -55,8 +56,14 @@ public class ChatController {
     // 채팅방 1개 조회 - 커뮤니티
     @ResponseBody
     @GetMapping("/community/{chatRoomIdx}")
-    public BaseResponse<GetChatRoom> getChatCommentAndRoom(@PathVariable("chatRoomIdx") Long chatRoomIdx) {
+    public BaseResponse<Object> getChatCommentAndRoom(@PathVariable("chatRoomIdx") Long chatRoomIdx, @RequestBody GetUser getUser) {
         try {
+
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            if (!now.after(getUser.getChatRestrictTime())) {
+                return new BaseResponse<>("You are not allowed to enter the chat room");
+            }
+
             Object getChatRoom = chatProvider.getChatRoom(chatRoomIdx);
             List<GetChatComment> getChatComment = chatProvider.getChatComment(chatRoomIdx);
 
@@ -74,8 +81,14 @@ public class ChatController {
     // 채팅방 1개 조회 - 공동구매
     @ResponseBody
     @GetMapping("/grouppurchase/{chatRoomIdx}")
-    public BaseResponse<GetChatRoom> getChatCommentAndRoom2(@PathVariable("chatRoomIdx") Long chatRoomIdx) {
+    public BaseResponse<Object> getChatCommentAndRoom2(@PathVariable("chatRoomIdx") Long chatRoomIdx, @RequestBody GetUser getUser) {
         try {
+
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            if (!now.after(getUser.getChatRestrictTime())) {
+                return new BaseResponse<>("You are not allowed to enter the chat room");
+            }
+
             Object getChatRoom = chatProvider.getChatRoom(chatRoomIdx);
             List<GetChatComment> getChatComment = chatProvider.getChatComment(chatRoomIdx);
 
@@ -119,18 +132,30 @@ public class ChatController {
     // 채팅방 만들기 - 커뮤니티
     @ResponseBody
     @PostMapping("/community")
-    public PostChatRoom createChatRoom(@RequestBody PostChatRoomReq postChatRoomReq) {
+    public Object createChatRoom(@RequestBody PostChatRoomReq postChatRoomReq) {
         GetPost getPost = postChatRoomReq.getGetPost();
         GetUser getUser = postChatRoomReq.getGetUser();
+
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        if (!now.after(getUser.getChatRestrictTime())) {
+            return "You are not allowed to enter the chat room";
+        }
+
         return chatService.postChatRoom(getPost, getUser);
     }
 
     // 채팅방 만들기 - 공동구매
     @ResponseBody
     @PostMapping("/grouppurchase")
-    public PostChatRoom createChatRoom2(@RequestBody PostChatRoomReq postChatRoomReq) {
+    public Object createChatRoom2(@RequestBody PostChatRoomReq postChatRoomReq) {
         GetPost getPost = postChatRoomReq.getGetPost();
         GetUser getUser = postChatRoomReq.getGetUser();
+
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        if (!now.after(getUser.getChatRestrictTime())) {
+            return "You are not allowed to enter the chat room";
+        }
+
         Long postIdx = getPost.getPostIdx();
 
         Long existingChatRoomIdx = chatService.getChatRoomByPostIdx(postIdx);
