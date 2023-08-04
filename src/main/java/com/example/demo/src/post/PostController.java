@@ -54,8 +54,6 @@ public class PostController {
                     throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
                 }
             }
-            // postIdx가 존재하지 않을 때
-           if(!this.methods._isExistPostIdx((int)req.get("postIdx"))) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             int categoryIdx = CATEGORY.getNumber((String)req.get("category"));
 
             PostingRes postingRes = this.postService.posting(categoryIdx/10, categoryIdx, req);
