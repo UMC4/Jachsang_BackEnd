@@ -112,7 +112,7 @@ public class Methods {
         }
     }
     public int _getUserIdxByCommentIdx(int commentIdx){
-        String getUserIdxSql = "SELECT userIdx FROM CommentIdx WHERE commentIdx = "+commentIdx;
+        String getUserIdxSql = "SELECT userIdx FROM Comment WHERE commentIdx = "+commentIdx;
         return this.jdbcTemplate.queryForObject(getUserIdxSql,int.class);
     }
     public boolean _isExistReport(CheckReportReq checkReportReq){
