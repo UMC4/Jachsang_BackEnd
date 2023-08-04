@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import sun.security.provider.SHA;
 import sun.tools.jconsole.JConsole;
 import org.springframework.mail.javamail.*;
 import java.nio.channels.ScatteringByteChannel;
@@ -99,6 +100,23 @@ public class UserService {
         }
         try{
             int result = userDao.modifyUserInfo(patchUserReq);
+            if(result == 0){
+                throw new BaseException(MODIFY_FAIL_USERNAME);
+            }
+        } catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    public void modifyUserNewPwd(PatchUserPwdReq patchUserPwdReq) throws  BaseException{
+        String pwd;
+        try{
+            pwd=new SHA256().encrypt(patchUserPwdReq.getPassword());
+            patchUserPwdReq.setPassword(pwd);
+        }catch (Exception ignored){
+            throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
+        }
+        try{
+            int result = userDao.modifyUserNewPwd(patchUserPwdReq);
             if(result == 0){
                 throw new BaseException(MODIFY_FAIL_USERNAME);
             }

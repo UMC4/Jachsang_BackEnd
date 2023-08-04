@@ -56,7 +56,7 @@ public enum BaseResponseStatus {
      * 1000: 유저 관련 오류
      */
     NEEDED_EMIAL_INPUT(false,1000, "이메일을 입력해주세요."),
-
+    MODIFY_FAIL_PWD(false,1001,"비밀번호 재설정에 실패하였습니다."),
 
 
 
