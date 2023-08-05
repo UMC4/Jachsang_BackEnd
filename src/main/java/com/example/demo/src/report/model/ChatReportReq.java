@@ -12,6 +12,6 @@ import lombok.Setter;
 public class ChatReportReq {
     private int userIdx;
     private int reportedUserIdx;
-    private int commentIdx;
+    private int chatRoomIdx;
     private int reportCategory;
 }

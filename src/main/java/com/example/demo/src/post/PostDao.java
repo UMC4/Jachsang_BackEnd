@@ -205,9 +205,10 @@ public class PostDao {
         }
         //공동구매
         else if (boardIdx == 2) {
-            sqlSpecific = "UPDATE GroupPurchaseDetail SET productURL =  ?, singlePrice = ?, deliveryFee = ?," +
+            sqlSpecific = "UPDATE GroupPurchaseDetail SET productName = ?, productURL =  ?, singlePrice = ?, deliveryFee = ?," +
                     " members = ?, deadline = ? WHERE postIdx = "+postIdx;
             paramSpecific = new Object[]{
+                    (String)updateReq.get("productName"),
                     (String)updateReq.get("productURL"), (int)updateReq.get("singlePrice"),
                     (int)updateReq.get("deliveryFee"), (int)updateReq.get("members"),
                     (String)updateReq.get("deadline")

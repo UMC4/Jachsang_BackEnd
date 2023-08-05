@@ -264,6 +264,7 @@ public class BoardDao {
                         "FROM Image  " +
                         "GROUP BY postIdx  " +
                         ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
+                "WHERE FLOOR(P.categoryIdx / 10) = 3 " +
                 "ORDER BY P.createAt DESC LIMIT ?";
 
         return this.jdbcTemplate.query(Query,
@@ -291,6 +292,7 @@ public class BoardDao {
                         "FROM Image  " +
                         "GROUP BY postIdx  " +
                     ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
+                "WHERE FLOOR(P.categoryIdx / 10) = 3 " +
                 "ORDER BY IF(P.createAt >= TIMESTAMPADD(DAY, -7, CURRENT_TIMESTAMP), 1, 0)," +
                     "(100*P.likeCount+P.viewCount) DESC LIMIT ?";
 
@@ -375,16 +377,16 @@ public class BoardDao {
     public List<GetRecipeItemRes> searchRecipe(int userIdx, String query, boolean isTagSearch) {
         String baseQuery =
                 "SELECT P.postIdx, P.title, P.likeCount, imagePath, IF(LP.postIdx IS NOT NULL, TRUE, FALSE) AS likestatus " +
-                        "FROM Post P " +
-                        "JOIN RecipeDetail RD ON P.postIdx = RD.postIdx " +
-                        "LEFT JOIN LikedPost LP ON P.postIdx = LP.postIdx AND LP.userIdx = ? " +
-                        "LEFT JOIN ( " +
+                "FROM Post P " +
+                    "JOIN RecipeDetail RD ON P.postIdx = RD.postIdx " +
+                    "LEFT JOIN LikedPost LP ON P.postIdx = LP.postIdx AND LP.userIdx = ? " +
+                    "LEFT JOIN ( " +
                         "SELECT postIdx, MIN(imageIdx) as minIdx, path as imagePath " +
                         "FROM Image  " +
                         "GROUP BY postIdx  " +
-                        ") MinIdImage ON P.postIdx = MinIdImage.postIdx ";
-
-        String matchCondition = isTagSearch ? "WHERE MATCH(RD.ingredients) AGAINST(? IN NATURAL LANGUAGE MODE)" : "WHERE MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE)";
+                    ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
+                "WHERE FLOOR(P.categoryIdx/10) = 3 AND ";
+        String matchCondition = isTagSearch ? "MATCH(RD.ingredients) AGAINST(? IN NATURAL LANGUAGE MODE)" : "WHERE MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE)";
 
         String finalQuery = baseQuery + matchCondition;
 
