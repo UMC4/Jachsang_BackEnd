@@ -16,7 +16,7 @@ public enum REPORT {
         this.number = number;
         this.contents = contents;
     }
-    String getReportContents(int number){
+    static public String getReportContents(int number){
         for(REPORT r : REPORT.values()){
             if(number == r.number) return r.contents;
         }
