@@ -32,18 +32,21 @@ public class JwtService {
                 .setHeaderParam("type","jwt")
                 .claim("userIdx",userIdx)
                 .setIssuedAt(now)
-                .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24*365)))
+                .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24*365))) //token 유효기간이 24시간 365일 되는걸로 설정함
                 .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
                 .compact();
     }
-
-    public string createRefreshToken(int userIdx){
+    
+    //리프레쉬 token 생성
+    public String createRefreshToken(int userIdx){
         Date now=new Date();
         return Jwts.builder()
                 .setHeaderParam("type","jwt")
                 .claim("userIdx",userIdx)
                 .setIssuedAt(now)
-                .setExpiration(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24*365)))
+                .signWith(SignatureAlgorithm.HS256,Secret.REFRESH_SECRET_KEY)
+                .compact();
     }
     /*
     Header에서 X-ACCESS-TOKEN 으로 JWT 추출
