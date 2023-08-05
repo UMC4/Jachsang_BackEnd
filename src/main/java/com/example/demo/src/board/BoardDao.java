@@ -218,7 +218,8 @@ public class BoardDao {
     public List<GetGroupPurchaseItemRes> sortGroupPurchaseByRemainTime(int userIdx, int limit) {
         String Query =
                 "WITH cte AS ( " +
-                    "SELECT P.postIdx, P.categoryIdx, PC.category, P.title, GPD.productName, Author.nickname, P.createAt, TIMESTAMPDIFF(DAY, CURRENT_TIMESTAMP, GPD.deadline) as remainDay, imagePath,  " +
+                    "SELECT P.postIdx, P.categoryIdx, PC.category, P.title, GPD.productName, Author.nickname, P.createAt, GPD.deadline, imagePath, " +
+                        "TIMESTAMPDIFF(DAY, CURRENT_TIMESTAMP, GPD.deadline) as remainDay,  " +
                         "IF(U.role = 1 OR Author.role = 1, NULL, ST_DISTANCE_SPHERE(POINT(Author.longitude, Author.latitude), POINT(U.longitude, U.latitude))) AS distance " +
                     "FROM Post P  " +
                         "JOIN PostCategory PC ON P.categoryIdx = PC.categoryIdx  " +
@@ -232,10 +233,12 @@ public class BoardDao {
                     "JOIN User U ON U.userIdx = ? " +
                     "WHERE FLOOR(P.categoryIdx/10) = 2" +
                 ") " +
-                "SELECT postIdx, categoryIdx, category, title, productName, nickname, distance, createAt, remainDay, imagePath  " +
+                "SELECT postIdx, categoryIdx, category, title, productName, nickname, distance, createAt, deadline, remainDay, imagePath  " +
                 "FROM cte  " +
                 "WHERE distance IS NULL OR distance <= 3000  " +
-                "ORDER BY remainDay LIMIT ?";
+                "ORDER BY (remainDay < 0), " +
+                        "CASE WHEN remainDay >= 0 THEN deadline END DESC, " +
+                        "CASE WHEN remainDay < 0 THEN deadline END ASC";
 
         return this.jdbcTemplate.query(Query,
                 (rs,rowNum) -> new GetGroupPurchaseItemRes(

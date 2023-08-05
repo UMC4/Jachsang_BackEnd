@@ -82,7 +82,10 @@ public class HomeDao {
             "SELECT postIdx, categoryIdx, category, title, productName, nickname, distance, createAt, remainDay, imagePath  " +
             "FROM cte  " +
             "WHERE distance IS NULL OR distance <= 3000  " +
-            "ORDER BY remainDay LIMIT 3";
+            "ORDER BY (remainDay < 0), " +
+                "CASE WHEN remainDay >= 0 THEN deadline END DESC, " +
+                "CASE WHEN remainDay < 0 THEN deadline END ASC " +
+            "LIMIT 3";
 
         return this.jdbcTemplate.query(Query,
                 (rs,rowNum) -> new GetGroupPurchaseItemRes(
