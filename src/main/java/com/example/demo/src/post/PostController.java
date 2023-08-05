@@ -123,8 +123,8 @@ public class PostController {
                 return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
             }
             // 글자 길이 예외처리
-
-            if(this.methods._isExistPostIdx((int)req.get("postIdx"))) {
+            // 존재하는 pidx인가
+            if(!this.methods._isExistPostIdx((int)req.get("postIdx"))) {
                 return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_POST_IDX);
             };
             if(this.postService.updatePost(req))

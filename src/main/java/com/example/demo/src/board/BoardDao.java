@@ -384,9 +384,9 @@ public class BoardDao {
                         "SELECT postIdx, MIN(imageIdx) as minIdx, path as imagePath " +
                         "FROM Image  " +
                         "GROUP BY postIdx  " +
-                    ") MinIdImage ON P.postIdx = MinIdImage.postIdx ";
-
-        String matchCondition = isTagSearch ? "WHERE MATCH(RD.ingredients) AGAINST(? IN NATURAL LANGUAGE MODE)" : "WHERE MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE)";
+                    ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
+                "WHERE FLOOR(P.categoryIdx/10) = 3 AND ";
+        String matchCondition = isTagSearch ? "MATCH(RD.ingredients) AGAINST(? IN NATURAL LANGUAGE MODE)" : "WHERE MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE)";
 
         String finalQuery = baseQuery + matchCondition;
 
