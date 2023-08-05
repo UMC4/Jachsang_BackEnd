@@ -38,10 +38,6 @@ public class ReportService {
     public int deleteContents(CommunityReportReq communityReportReq){
         return this.reportDao.deleteContents(communityReportReq);
     }
-
-    public int deleteComment(ChatReportReq chatReportReq){
-        return this.reportDao.deleteContents(chatReportReq);
-    }
     public Methods _getMethods(){
         return this.reportDao._getMethods();
     }

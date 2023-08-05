@@ -10,9 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommunityReportReq {
+    private int reportCategory;
     private int reportingUserIdx;
-    private int reportCategoryIdx;
-
     private int contentsKind;
     private int reportedContentsIdx;
     private int reportedUserIdx;
