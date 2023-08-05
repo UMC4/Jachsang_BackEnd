@@ -30,12 +30,8 @@ public class UserController {
     @Autowired
     private final JwtService jwtService;
 
-<<<<<<< HEAD
 
     public UserController(UserProvider userProvider, UserService userService, JwtService jwtService) {
-=======
-    public UserController(UserProvider userProvider, UserService userService, JwtService jwtService){
->>>>>>> 81ba423c6baaa4cedcc3f3c9a73bc26898d7202d
         this.userProvider = userProvider;
         this.userService = userService;
         this.jwtService = jwtService;
