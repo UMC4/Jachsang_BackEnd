@@ -14,8 +14,10 @@ public enum CATEGORY {
     HOUSEHOLDS(22,"생활용품"),
     ETC(23,"기타"),
     //레시피(3)
-    RECIPE(30,"레시피");
-
+    RECIPE(30,"레시피"),
+    //댓글
+    COMMENT(40,"댓글"),
+    CHAT(50,"채팅");
     private final int number;
     private final String name;
 
