@@ -54,18 +54,12 @@ public class UserDao {
                 getUserFriendsParams);
     }
 
-    public List<GetUserRes> getUsersByEmail(String email) {
-        String getUsersByEmailQuery = "select password from User where email =?";
-        String getUsersByEmailParams = email;
-        return this.jdbcTemplate.query(getUsersByEmailQuery,
-                (rs, rowNum) -> new GetUserRes(
-                        rs.getInt("userIdx"),
-                        rs.getString("userName"),
-                        rs.getString("loginId"),
-                        rs.getString("email"),
-                        rs.getString("password"),
-                        rs.getString("userImage"),
-                        rs.getString("nickname")),
+    public GetUserIdRes getUsersByEmail(String Email) {
+        String getUsersByEmailQuery = "select loginId from User where email = ?";
+        String getUsersByEmailParams = Email;
+        return this.jdbcTemplate.queryForObject(getUsersByEmailQuery,
+                (rs, rowNum) -> new GetUserIdRes(
+                        rs.getString("loginId")),
                 getUsersByEmailParams);
     }
     public GetUserRes getUser(int userIdx) {
@@ -133,6 +127,12 @@ public class UserDao {
         String modifyUserNameQuery = "update User set nickname=?,phoneNumber=?,password=?,email=?  where userIdx = ? ";
         Object[] modifyUserNameParams = new Object[]{patchUserReq.getNickname(),patchUserReq.getPhoneNumber(),patchUserReq.getPassword(),patchUserReq.getEmail(),patchUserReq.getUserIdx()};
         return this.jdbcTemplate.update(modifyUserNameQuery,modifyUserNameParams);
+    }
+
+    public int modifyUserNewPwd(PatchUserPwdReq patchUserPwdReq){
+        String modifyUserNewPwdQuery="update User set password =? where email= ?";
+        Object[] modifyUserNewParams=new Object[]{patchUserPwdReq.getPassword(),patchUserPwdReq.getEmail()};
+        return this.jdbcTemplate.update(modifyUserNewPwdQuery,modifyUserNewParams);
     }
 
     public UserForPassword getPwd(PostLoginReq postLoginReq){

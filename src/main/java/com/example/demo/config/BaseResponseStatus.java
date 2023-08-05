@@ -45,9 +45,17 @@ public enum BaseResponseStatus {
     PASSWORD_ENCRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 암호화에 실패하였습니다."),
     PASSWORD_DECRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 복호화에 실패하였습니다."),
 
+//<<<<<<< HEAD
+
+    /**
+     * 1000: 유저 관련 오류
+     */
+
+
     //유저
     NEEDED_EMAIL_INPUT(false,1000, "이메일을 입력해주세요."),
     PERMANENT_BANNED_USER(false, 1001, "영구정지된 회원입니다."),
+    MODIFY_FAIL_PWD(false,100,"비밀번호 재설정에 실패하였습니다."),
 
     //게시글
     NOT_EXIST_POST_IDX(false,3000,"존재하는 게시글idx가 아닙니다."),

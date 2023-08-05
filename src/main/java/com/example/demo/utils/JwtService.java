@@ -10,8 +10,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import sun.nio.cs.DoubleByte;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Base64;
 import java.util.Date;
 
 import static com.example.demo.config.BaseResponseStatus.*;
@@ -35,6 +37,14 @@ public class JwtService {
                 .compact();
     }
 
+    public string createRefreshToken(int userIdx){
+        Date now=new Date();
+        return Jwts.builder()
+                .setHeaderParam("type","jwt")
+                .claim("userIdx",userIdx)
+                .setIssuedAt(now)
+                .setExpiration(new Date(System.currentTimeMillis()))
+    }
     /*
     Header에서 X-ACCESS-TOKEN 으로 JWT 추출
     @return String
