@@ -264,6 +264,7 @@ public class BoardDao {
                         "FROM Image  " +
                         "GROUP BY postIdx  " +
                         ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
+                "WHERE FLOOR(P.categoryIdx/10) = 1 " +
                 "ORDER BY P.createAt DESC LIMIT ?";
 
         return this.jdbcTemplate.query(Query,
@@ -291,6 +292,7 @@ public class BoardDao {
                         "FROM Image  " +
                         "GROUP BY postIdx  " +
                     ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
+                "WHERE FLOOR(P.categoryIdx/10) = 1 " +
                 "ORDER BY IF(P.createAt >= TIMESTAMPADD(DAY, -7, CURRENT_TIMESTAMP), 1, 0)," +
                     "(100*P.likeCount+P.viewCount) DESC LIMIT ?";
 

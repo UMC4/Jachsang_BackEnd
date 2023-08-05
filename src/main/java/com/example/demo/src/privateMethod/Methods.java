@@ -106,13 +106,13 @@ public class Methods {
     public boolean _isExistCommentIdx(int commentIdx) {
         String sql = "SELECT commentIdx FROM Comment WHERE commentIdx = "+commentIdx;
         try{
-            return this.jdbcTemplate.queryForObject(sql,int.class) == 1 ? true:false;
+            return this.jdbcTemplate.queryForObject(sql,int.class) == commentIdx ? true:false;
         } catch (Exception e) {
             return false;
         }
     }
     public int _getUserIdxByCommentIdx(int commentIdx){
-        String getUserIdxSql = "SELECT userIdx FROM CommentIdx WHERE commentIdx = "+commentIdx;
+        String getUserIdxSql = "SELECT userIdx FROM Comment WHERE commentIdx = "+commentIdx;
         return this.jdbcTemplate.queryForObject(getUserIdxSql,int.class);
     }
     public boolean _isExistReport(CheckReportReq checkReportReq){

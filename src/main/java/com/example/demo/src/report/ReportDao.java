@@ -29,13 +29,13 @@ public class ReportDao {
     public int reporting(CommunityReportReq communityReportReq){
         // 신고 게시판에 내용 저장한다.
         String createReportSql = "INSERT INTO Report(reportingUserIdx," +
-                "reportCategoryIdx, contentsKind, reportedContentsIdx,reportedUserIdx)" +
+                " contentsKind, reportedContentsIdx,reportedUserIdx)" +
                 "VALUES (?,?,?,?,?)";
         int kind = 0;
 
         Object[] param = {
-                communityReportReq.getReportingUserIdx(), communityReportReq.getReportCategoryIdx(),
-                communityReportReq.getReportedContentsIdx(), communityReportReq.getReportedUserIdx(),
+                communityReportReq.getReportingUserIdx(), communityReportReq.getContentsKind(),
+                communityReportReq.getReportedContentsIdx(), communityReportReq.getReportedUserIdx()
         };
 
         // 신고 횟수를 하나 늘린다.
@@ -59,8 +59,8 @@ public class ReportDao {
                 "reportCategoryIdx, reportedContentsIdx,reportedUserIdx,reportingContents)" +
                 "VALUES (?,?,?,?,?)";
         Object[] param = {
-                userReportReq.getUserIdx(), 0,
-                0, userReportReq.getReportedUserIdx(), "유저신고"
+                userReportReq.getUserIdx(), 300,
+                300, userReportReq.getReportedUserIdx(), "유저신고"
         };
 
         // 신고 횟수를 하나 늘린다.
@@ -72,13 +72,11 @@ public class ReportDao {
     public int reporting(ChatReportReq chatReportReq){
         // 신고 게시판에 내용 저장한다.
         String createReportSql = "INSERT INTO Report(reportingUserIdx," +
-                "reportCategoryIdx, reportedContentsIdx,reportedUserIdx,reportingContents)" +
+                "reportCategoryIdx,reportedUserIdx,reportingContents)" +
                 "VALUES (?,?,?,?,?)";
-        String getContentsSql = "SELECT contents FROM ChatComment WHERE chatCommentIdx = " + chatReportReq.getCommentIdx();
-        String contents = this.jdbcTemplate.queryForObject(getContentsSql,String.class);
         Object[] param = {
                 chatReportReq.getUserIdx(), chatReportReq.getReportCategory(),
-                chatReportReq.getCommentIdx(),chatReportReq.getReportedUserIdx(),contents
+                chatReportReq.getReportedUserIdx()
         };
 
         // 신고 횟수를 하나 늘린다.
@@ -147,10 +145,6 @@ public class ReportDao {
         return this.jdbcTemplate.update(restrictUserSql);
     }
 
-    public int deleteContents(ChatReportReq chatReportReq){
-        String increaseReportedSql = "UPDATE ChatComment SET reported = reported + 1 WHERE chatCommentIdx = "+chatReportReq.getCommentIdx();
-        return this.jdbcTemplate.update(increaseReportedSql);
-    }
     public Methods _getMethods(){
         return this.methods;
     }

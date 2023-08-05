@@ -44,7 +44,7 @@ public class ReportController {
             ))){
                 return new BaseResponse<>(REPORT_COUNT_OVER);
             }
-            int categoryIdx = communityReportReq.getReportCategoryIdx();
+            int categoryIdx = communityReportReq.getContentsKind();
             // 게시글
             if(categoryIdx <= 30){
                 if(!methods._isExistPostIdx(communityReportReq.getReportedContentsIdx()))
@@ -107,15 +107,14 @@ public class ReportController {
             }
             // 3009 같은 대상을 여러번 신고함
             if(this.methods._isExistReport(new CheckReportReq(
-                    chatReportReq.getUserIdx(), 50, chatReportReq.getCommentIdx()
+                    chatReportReq.getUserIdx(), 50, chatReportReq.getChatRoomIdx()
             ))){
                 return new BaseResponse<>(REPORT_COUNT_OVER);
             }
             String restrict= "";
             // 신고 접수 및 신고 누적 횟수 증가
             this.reportService.reporting(chatReportReq);
-            // 신고된 유저를 기준에 따라 처리하기.
-            this.reportService.deleteComment(chatReportReq);
+            // 신고된 유저를 기준에 따라 처리하기 -> 내용 없음;
             return new BaseResponse<>("성공했습니다."+restrict);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
