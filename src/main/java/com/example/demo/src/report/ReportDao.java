@@ -74,11 +74,12 @@ public class ReportDao {
     public int reporting(ChatReportReq chatReportReq){
         // 신고 게시판에 내용 저장한다.
         String createReportSql = "INSERT INTO Report(reportingUserIdx," +
-                "reportCategoryIdx,reportedUserIdx,reportingContents)" +
-                "VALUES (?,?,?,?)";
+                "reportCategory,reportContentsIdx,reportedUserIdx,reportingContents)" +
+                "VALUES (?,?,?,?,?)";
+        String reportCategory = REPORT.getReportContents(chatReportReq.getReportCategory());
         Object[] param = {
-                chatReportReq.getUserIdx(), chatReportReq.getReportCategory(),
-                chatReportReq.getReportedUserIdx(),chatReportReq.getChatRoomIdx()
+                chatReportReq.getUserIdx(), reportCategory,chatReportReq.getChatRoomIdx(),
+                chatReportReq.getReportedUserIdx(),"채팅방 유저"
         };
 
         // 신고 횟수를 하나 늘린다.
