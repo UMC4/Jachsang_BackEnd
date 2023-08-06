@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.example.demo.src.board.model.GetPageRes.handleGetPageRes;
+
 @Service
 public class ProfileProvider {
     private final ProfileDao profileDao;
@@ -32,15 +34,6 @@ public class ProfileProvider {
     public GetPageRes<GetGroupPurchaseItemRes> getGroupPurchasePage(int userIdx, int profileUserIdx, int startIdx, int size) throws BaseException {
         List<GetGroupPurchaseItemRes> items = profileDao.getGroupPurchaseList(userIdx, profileUserIdx, startIdx, size+1);
 
-        if (items.isEmpty()) {
-            throw new BaseException(BaseResponseStatus.NO_POSTS_FOUND);
-        } else {
-            boolean isLast = items.size() != size + 1;
-            if(!isLast) {
-                items.remove(items.size() - 1);
-            }
-
-            return new GetPageRes<>(items, isLast);
-        }
+        return handleGetPageRes(items, size);
     }
 }
