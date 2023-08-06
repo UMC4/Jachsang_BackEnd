@@ -4,10 +4,10 @@ public enum REPORT {
     // 커뮤니티/채팅방 신고 (1)
     AD(111,"상업적 광고 및 판매"),
     UGLY(112,"비매너 사용자"),
-    AGGRO(113,"낚시/놀람/도배"),
-    BADWORDS(114,"욕설/비하"),
+    AGGRO(113,"낚시,놀람,도배"),
+    BADWORDS(114,"욕설,비하"),
     SEXUAL(115,"성희롱"),
-    CHEAT(116,"사칭/사기"),
+    CHEAT(116,"사칭,사기"),
     // 유저 신고 (2)
     USER(200,"유저");
     private int number;
