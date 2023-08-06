@@ -116,6 +116,12 @@ public class UserController {
     public BaseResponse<GetUserRes> getUser(@PathVariable("userIdx") int userIdx) {
         // Get Users
         try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             GetUserRes getUserRes = userProvider.getUser(userIdx);
             return new BaseResponse<>(getUserRes);
         } catch (BaseException exception) {
@@ -134,6 +140,12 @@ public class UserController {
     public BaseResponse<List<GetFollowRes>> getUserFriends(@PathVariable("userIdx") int userIdx) {
         // Get User's friends
         try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             List<GetFollowRes> getFollowRes = userProvider.getFollowResList(userIdx);
             return new BaseResponse<>(getFollowRes);
         } catch (BaseException exception) {
@@ -190,16 +202,24 @@ public class UserController {
 
     /**
      * 친구 추가 API
-     * [POST] /users/follow
+     * [POST] /users/:userIdx/follow
      *
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @PostMapping("/follow")
-    public BaseResponse<String> followUser(@RequestBody PostFollowReq postFollowReq) {
+    @PostMapping("/{userIdx}/follow")
+    public BaseResponse<String> followUser(@PathVariable("userIdx") int userIdx, @RequestBody PostFollowReq postFollowReq) {
         try {
-            userService.followUser(postFollowReq);
-            String result = " ";
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            System.out.println(postFollowReq.getFollowerId());
+            //userIdx와 접근한 유저가 같은지 확인
+            if (postFollowReq.getFollowerId() != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            PostFollowReq postFollowReqUser=new PostFollowReq(postFollowReq.getFollowerId(),userIdx);
+            userService.followUser(postFollowReqUser);
+            String result = "팔로우 하였습니다.";
             return new BaseResponse<>(result);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
@@ -208,16 +228,24 @@ public class UserController {
 
     /**
      * 친구 삭제 API
-     * [DELETE] /user/follow
+     * [DELETE] users/:userIdx/follow
      *
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @DeleteMapping("/follow")
-    public BaseResponse<String> deleteFollowUser(@RequestBody PostFollowReq postFollowReq) {
+    @DeleteMapping("/{userIdx}/follow")
+    public BaseResponse<String> deleteFollowUser(@PathVariable("userIdx") int userIdx, @RequestBody PostFollowReq postFollowReq) {
         try {
-            userService.deleteFollow(postFollowReq);
-            String result = " ";
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            System.out.println(postFollowReq.getFollowerId());
+            //userIdx와 접근한 유저가 같은지 확인
+            if (postFollowReq.getFollowerId() != userIdxByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            PostFollowReq postFollowReqUnfollow=new PostFollowReq(postFollowReq.getFollowerId(),userIdx);
+            userService.deleteFollow(postFollowReqUnfollow);
+            String result = "팔로우 취소하였습니다.";
             return new BaseResponse<>(result);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
@@ -244,7 +272,7 @@ public class UserController {
             PatchUserReq patchUserReq = new PatchUserReq(userIdx, user.getNickname(), user.getPhoneNumber(), user.getPassword(), user.getEmail());
             userService.modifyUserInfo(patchUserReq);
 
-            String result = "";
+            String result = "변경하였습니다";
             return new BaseResponse<>(result);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
@@ -264,7 +292,7 @@ public class UserController {
             PatchUserPwdReq patchUserPwdReq=new PatchUserPwdReq(email,user.getPassword());
             userService.modifyUserNewPwd(patchUserPwdReq);
 
-            String result="";
+            String result="비밀번호 설정 완료";
             return new BaseResponse<>(result);
         } catch (BaseException exception){
             return new BaseResponse<>((exception.getStatus()));

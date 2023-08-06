@@ -55,8 +55,8 @@ public enum BaseResponseStatus {
     //유저
     NEEDED_EMAIL_INPUT(false,1000, "이메일을 입력해주세요."),
     PERMANENT_BANNED_USER(false, 1001, "영구정지된 회원입니다."),
-    MODIFY_FAIL_PWD(false,100,"비밀번호 재설정에 실패하였습니다."),
-
+    MODIFY_FAIL_PWD(false,1002,"비밀번호 재설정에 실패하였습니다."),
+    NOT_INPUT_PWD(false,1003,"비밀번호를 입력하지 않았습니다."),
     //게시글
     NOT_EXIST_POST_IDX(false,3000,"존재하는 게시글idx가 아닙니다."),
     OVER_LENGTH(false, 3001, "내용이 정해진 길이를 초과했습니다."),
