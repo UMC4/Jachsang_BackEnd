@@ -110,6 +110,8 @@ public class UserService {
     public void modifyUserNewPwd(PatchUserPwdReq patchUserPwdReq) throws  BaseException{
         String pwd;
         try{
+            if(patchUserPwdReq.getPassword()==null)
+                throw new BaseException(NOT_INPUT_PWD);
             pwd=new SHA256().encrypt(patchUserPwdReq.getPassword());
             patchUserPwdReq.setPassword(pwd);
         }catch (Exception ignored){
