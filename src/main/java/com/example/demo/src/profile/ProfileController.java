@@ -6,7 +6,6 @@ import com.example.demo.src.board.model.GetGroupPurchaseItemRes;
 import com.example.demo.src.board.model.GetPageRes;
 import com.example.demo.src.profile.model.GetProfileRes;
 import com.example.demo.utils.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -14,16 +13,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("app/profiles/{userIdx}")
 public class ProfileController {
 
-    @Autowired
     private final ProfileProvider profileProvider;
-    @Autowired
-    private final ProfileService profileService;
-    @Autowired
     private final JwtService jwtService;
 
-    public ProfileController(ProfileProvider profileProvider, ProfileService profileService, JwtService jwtService) {
+    public ProfileController(ProfileProvider profileProvider, JwtService jwtService) {
         this.profileProvider = profileProvider;
-        this.profileService = profileService;
         this.jwtService = jwtService;
     }
 
@@ -46,8 +40,7 @@ public class ProfileController {
 
     /**
      * 사용자 공동구매글 조회 API
-     * 필터링된 리스트 반환 (맛집이야기, 질문있어요, 대화해요, 공지)
-     * [GET] /profiles/{userIdx}/grouppurchase?limit=
+     * [GET] /profiles/{userIdx}/grouppurchase?startIdx=&size=
      */
     @ResponseBody
     @GetMapping("grouppurchase")
