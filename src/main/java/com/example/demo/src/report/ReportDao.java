@@ -2,6 +2,7 @@ package com.example.demo.src.report;
 
 import com.example.demo.src.comment.CommentDao;
 import com.example.demo.src.post.PostDao;
+import com.example.demo.src.category.REPORT;
 import com.example.demo.src.post.model.generalModel.DeleteReq;
 import com.example.demo.src.privateMethod.Methods;
 import com.example.demo.src.report.model.ChatReportReq;
@@ -28,63 +29,61 @@ public class ReportDao {
 
     public int reporting(CommunityReportReq communityReportReq){
         // 신고 게시판에 내용 저장한다.
-        String createReportSql = "INSERT INTO Report(reportingUserIdx," +
-                " contentsKind, reportedContentsIdx,reportedUserIdx)" +
-                "VALUES (?,?,?,?,?)";
-        int kind = 0;
+        String createReportSql = "INSERT INTO Report(reportingUserIdx, reportCategory" +
+                ", contentsKind, reportedContentsIdx,reportedUserIdx)" +
+                " VALUES (?,?,?,?,?)";
+
+        String reportCategory = REPORT.getReportContents(communityReportReq.getReportCategory());
 
         Object[] param = {
-                communityReportReq.getReportingUserIdx(), communityReportReq.getContentsKind(),
+                communityReportReq.getReportingUserIdx(), reportCategory, communityReportReq.getContentsKind(),
                 communityReportReq.getReportedContentsIdx(), communityReportReq.getReportedUserIdx()
         };
-
         // 신고 횟수를 하나 늘린다.
         int categoryIdx = communityReportReq.getContentsKind();
         String category = "";
         if(categoryIdx <= 30) {
-            category = "post";
+            category = "Post";
         }
         else if(categoryIdx == 40) {
-            category = "comment";
+            category = "Comment";
         }
-        String increaseReportCountSql = "UPDATE User SET CommunityReported = CommunityReported + 1 WHERE "+category+"Idx = "+ communityReportReq.getReportedContentsIdx();
+        String increaseReportCountSql = "UPDATE "+category+" SET reported = reported + 1 WHERE " +
+                category.toLowerCase()+"Idx = "+ communityReportReq.getReportedContentsIdx();
         this.jdbcTemplate.update(increaseReportCountSql);
-
-        return this.jdbcTemplate.update(createReportSql,param);
+        this.jdbcTemplate.update(createReportSql,param);
+        return deleteContents(communityReportReq);
     }
-
     public int reporting(UserReportReq userReportReq){
         // 신고 게시판에 내용 저장한다.
         String createReportSql = "INSERT INTO Report(reportingUserIdx," +
-                "reportCategoryIdx, reportedContentsIdx,reportedUserIdx,reportingContents)" +
-                "VALUES (?,?,?,?,?)";
+                "reportCategory, reportedContentsIdx,reportedUserIdx,contentsKind)" +
+                " VALUES (?,?,?,?,?)";
+        String reportCategory = REPORT.getReportContents(userReportReq.getReportCategory());
         Object[] param = {
-                userReportReq.getUserIdx(), 300,
-                300, userReportReq.getReportedUserIdx(), "유저신고"
+                userReportReq.getUserIdx(), reportCategory,
+                0,userReportReq.getReportedUserIdx(), 50
         };
-
         // 신고 횟수를 하나 늘린다.
-        String increaseReportCountSql = "UPDATE User SET userReported = userReported + 1 WHERE userIdx = "+ userReportReq.getReportedUserIdx();
+        String increaseReportCountSql = "UPDATE User SET userReported = userReported + 1" +
+                " WHERE userIdx = "+ userReportReq.getReportedUserIdx();
         this.jdbcTemplate.update(increaseReportCountSql);
-
-        return this.jdbcTemplate.update(createReportSql,param);
+        this.jdbcTemplate.update(createReportSql,param);
+        return restrictUser(userReportReq.getUserIdx());
     }
     public int reporting(ChatReportReq chatReportReq){
         // 신고 게시판에 내용 저장한다.
         String createReportSql = "INSERT INTO Report(reportingUserIdx," +
-                "reportCategoryIdx,reportedUserIdx,reportingContents)" +
-                "VALUES (?,?,?,?)";
+                "reportCategory,reportContentsIdx,reportedUserIdx,contentsKind)" +
+                "VALUES (?,?,?,?,?)";
+        String reportCategory = REPORT.getReportContents(chatReportReq.getReportCategory());
         Object[] param = {
-                chatReportReq.getUserIdx(), chatReportReq.getReportCategory(),
-                chatReportReq.getReportedUserIdx(),chatReportReq.getChatRoomIdx()
+                chatReportReq.getUserIdx(), reportCategory,chatReportReq.getChatRoomIdx(),
+                chatReportReq.getReportedUserIdx(),60
         };
 
-        // 신고 횟수를 하나 늘린다.
-        String increaseReportCountSql = "UPDATE User SET userReported = userReported + 1 WHERE userIdx = "+
-                chatReportReq.getReportedUserIdx();
-        this.jdbcTemplate.update(increaseReportCountSql);
-
-        return this.jdbcTemplate.update(createReportSql,param);
+        this.jdbcTemplate.update(createReportSql,param);
+        return restrictChatUser(chatReportReq.getReportedUserIdx(), chatReportReq.getReportCategory());
     }
     public Report getReport(int reportIdx){
         String getReportSql = "SELECT * FROM Report WHERE reportIdx = "+reportIdx;
@@ -104,21 +103,38 @@ public class ReportDao {
     public int deleteContents(CommunityReportReq communityReportReq){
         //신고 당한 게시글/댓글/답글의 reportCount 받기
         String getReportCountSql = "";
+        String kind = "";
         int categoryIdx = communityReportReq.getContentsKind();
         // 게시글
-        if(categoryIdx <= 30) getReportCountSql = "SELECT reported FROM Post WHERE postIdx = "+ communityReportReq.getReportedContentsIdx();
+        if(categoryIdx <= 30) kind = "Post";
         // 댓글/답글
-        else if (categoryIdx == 40) getReportCountSql = "SELECT reported FROM Comment WHERE commentIdx = "+ communityReportReq.getReportedContentsIdx();
-
-        // 신고 횟수 수집
+        else if (categoryIdx == 40) kind = "Comment";
+        // 신고 횟수 수집 sql
+        getReportCountSql = "SELECT reported FROM "+kind+" WHERE "+kind.toLowerCase()+"Idx = "+ communityReportReq.getReportedContentsIdx();
         int reportCount = this.jdbcTemplate.queryForObject(getReportCountSql,int.class);
-        
+
+        int restrictDate = 7;
         // 신고 누적횟수가 5회가 되는 경우 -> 컨텐츠를 삭제한다.
-        if((reportCount) %5 == 0) {
-            if(categoryIdx == 40) return (new CommentDao(jdbcTemplate.getDataSource()).deleteComment(communityReportReq.getReportedContentsIdx()));
-            else return (new PostDao(jdbcTemplate.getDataSource()).deletePost(new DeleteReq(2, communityReportReq.getReportedContentsIdx()))) == true ? 1 : 0;
+        if(reportCount %5 == 5) {
+            if(categoryIdx == 40) new CommentDao(jdbcTemplate.getDataSource()).deleteComment(communityReportReq.getReportedContentsIdx());
+            else new PostDao(jdbcTemplate.getDataSource()).deletePost(new DeleteReq(communityReportReq.getReportedUserIdx(), communityReportReq.getReportedContentsIdx()));
+            if(reportCount >= 10) {
+                restrictDate = 14;
+            }
         }
-        else return 0;
+        else {
+            String addReportCountSql = "UPDATE "+kind+" SET reported = reported+1 WHERE "+kind.toLowerCase()+"Idx = "+communityReportReq.getReportedContentsIdx();
+            this.jdbcTemplate.update(addReportCountSql);
+        }
+        Timestamp restrictTime = this.jdbcTemplate.queryForObject("SELECT NOW()",Timestamp.class);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(restrictTime);
+        cal.add(Calendar.DATE, restrictDate);
+        restrictTime.setTime(cal.getTime().getTime());
+
+        String setRestrictTimeSql = "UPDATE User SET updateAt = now(), communityRestrictTime = "+restrictTime +" WHERE" +
+                "userIdx = "+communityReportReq.getReportingUserIdx();
+        return this.jdbcTemplate.update(setRestrictTimeSql);
     }
     public int restrictUser(int userIdx){
         String checkReportedSql = "SELECT userReported FROM User WHERE userIdx = "+userIdx;
@@ -129,22 +145,55 @@ public class ReportDao {
             int number;
             if(reported > 10) number = 2;
             else number = 1;
-            String getCORTIME = "SELECT communityRestrictTime FROM User WHERE userIdx = "+userIdx;
-            String getCARTIME = "SELECT chatRestrictTime FROM User WHERE userIdx = "+userIdx;
-            Timestamp COTime = this.jdbcTemplate.queryForObject(getCORTIME,Timestamp.class);
-            Timestamp CATime = this.jdbcTemplate.queryForObject(getCARTIME,Timestamp.class);
-            String getCORTime = "SELECT DATE_ADD(COTime, INTERVAL "+number+" WEEK)";
-            String getCARTime = "SELECT DATE_ADD(COTime, INTERVAL "+number+" WEEK)";
-            restrictUserSql = "UPDATE User SET chatRestrictTime = chatRestrictTime + " +
-                    getCORTime+", communityRestrictTime =  communityRestrictTime + "  +getCARTime+
+            int restrictDate = 7;
+
+            Timestamp now,CORTime,CHRTime;
+            Calendar communityCal = Calendar.getInstance();
+            Calendar chatCal = Calendar.getInstance();
+
+            String getCHRtimeSql = "SELECT chatRestrictTime FROM User WHERE userIdx = "+userIdx;
+            String getCORtimeSql = "SELECT communityRestrictTime FROM User WHERE userIdx = "+userIdx;
+            now = this.jdbcTemplate.queryForObject("SELECT NOW()",Timestamp.class);
+            CORTime = this.jdbcTemplate.queryForObject(getCORtimeSql,Timestamp.class);
+            CHRTime = this.jdbcTemplate.queryForObject(getCHRtimeSql,Timestamp.class);
+            if(CORTime.compareTo(now) > 0)
+                 communityCal.setTime(CORTime);
+            else communityCal.setTime(now);
+            if(CHRTime.compareTo(now) > 0)
+                chatCal.setTime(CHRTime);
+            else communityCal.setTime(now);
+            chatCal.add(Calendar.DATE, restrictDate*number);
+            Timestamp communityRTime = new Timestamp(communityCal.getTimeInMillis()),
+                      chatRTime = new Timestamp(chatCal.getTimeInMillis());
+
+
+            restrictUserSql = "UPDATE User SET chatRestrictTime = " +
+                    communityRTime+", communityRestrictTime = "+chatRTime+
                     " WHERE userIdx = "+userIdx;
         }
         if(reported > 30) {
-            restrictUserSql = "UPDATE User SET status = -1 WHERE userIdx = "+userIdx;
+            restrictUserSql = "UPDATE User SET status = -1, updateAt = now() WHERE userIdx = "+userIdx;
         }
         return this.jdbcTemplate.update(restrictUserSql);
     }
-
+    public int restrictChatUser(int userIdx, int reportCategoryIdx){
+        int restrictDate = 7;
+        int level = 1;
+        if(reportCategoryIdx%10 <= 4) level = 1;
+        else if (reportCategoryIdx%10 == 5) level = 2;
+        else if (reportCategoryIdx%10 == 6) {
+            level = 3;
+        }
+        Timestamp restrictTime = this.jdbcTemplate.queryForObject("SELECT NOW()",Timestamp.class);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(restrictTime);
+        cal.add(Calendar.DATE, restrictDate*level);
+        restrictTime.setTime(cal.getTime().getTime());
+        String restrictChatUserSql = "UPDATE User SET updateAt = now(), chatReportedL"+level+" = chatReportedL"+level+
+                "+ 1, chatRestrictTime = " + restrictTime
+                + " WHERE userIdx = "+userIdx;
+        return jdbcTemplate.update(restrictChatUserSql);
+    }
     public Methods _getMethods(){
         return this.methods;
     }

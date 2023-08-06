@@ -8,6 +8,8 @@ import com.example.demo.src.report.model.UserReportReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+
 @Service
 public class ReportService {
     @Autowired
@@ -19,7 +21,7 @@ public class ReportService {
         this.reportDao = reportDao;
     }
 
-    public int reporting(CommunityReportReq communityReportReq) throws BaseException {
+    public int reporting(CommunityReportReq communityReportReq) throws BaseException, SQLIntegrityConstraintViolationException {
         return this.reportDao.reporting(communityReportReq);
     }
 
@@ -29,10 +31,6 @@ public class ReportService {
 
     public int reporting(ChatReportReq chatReportReq) throws BaseException {
         return this.reportDao.reporting(chatReportReq);
-    }
-
-    public int restrictUser(int userIdx) {
-        return this.reportDao.restrictUser(userIdx);
     }
 
     public int deleteContents(CommunityReportReq communityReportReq){
