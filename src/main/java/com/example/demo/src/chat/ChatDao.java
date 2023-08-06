@@ -128,8 +128,11 @@ public class ChatDao {
     public void addUserToChatRoom(Long chatUserIdx, Long chatRoomIdx, Long userIdx) {
         String addUserToChatRoomQuery = "INSERT INTO ChatUser(chatUserIdx, userIdx, createTime, chatRoomIdx) " +
                 "VALUES(?, ?, now(), ?)";
-
         Object[] params = {chatUserIdx, userIdx, chatRoomIdx};
+
+        String updateChatRoomMembersQuery = "UPDATE ChatRoom SET members = members + 1, " +
+                "groupPurchaseMembers = groupPurchaseMembers + 1 WHERE chatRoomIdx = ?";
+        this.jdbcTemplate.update(updateChatRoomMembersQuery, chatRoomIdx);
 
         this.jdbcTemplate.update(addUserToChatRoomQuery, params);
     }
@@ -150,7 +153,7 @@ public class ChatDao {
     public PostChatRoom postChatRoom(PostChatRoom postChatRoom, GetPost getPost) {
         String postChatRoomQuery =
                 "INSERT INTO ChatRoom(chatRoomIdx, postIdx, host, unreads, members, createTime, updateTime, groupPurchaseMembers) " +
-                        "VALUES(?, ?, ?, 0, 0, now(), now(), 0)";
+                        "VALUES(?, ?, ?, 0, 2, now(), now(), 2)";
 
         Object[] params = {postChatRoom.getChatRoomIdx(), getPost.getPostIdx(), getPost.getUserIdx()};
 
