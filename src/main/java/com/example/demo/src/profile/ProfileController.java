@@ -2,14 +2,13 @@ package com.example.demo.src.profile;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.board.model.GetGroupPurchaseItemRes;
+import com.example.demo.src.board.model.GetPageRes;
 import com.example.demo.src.profile.model.GetProfileRes;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("app/profiles/{userIdx}")
@@ -52,25 +51,14 @@ public class ProfileController {
      */
     @ResponseBody
     @GetMapping("grouppurchase")
-    public BaseResponse<List<GetGroupPurchaseItemRes>> getGroupPurchaseList(@PathVariable("userIdx") int profileUserIdx,
-                                                                            @RequestParam(value = "limit", defaultValue = "2147483647") String limit) {
-        int intLimit;
-        // limit 최댓값을 초과한 경우
-        try {
-            intLimit = Integer.parseInt(limit);
-            if (intLimit < 0) {
-                return new BaseResponse<>(BaseResponseStatus.NEGATIVE_LIMIT);
-            }
-        } catch (NumberFormatException e) {
-            // 에러 응답을 바로 반환
-            return new BaseResponse<>(BaseResponseStatus.EXCESS_LIMIT);
-        }
-
+    public BaseResponse<GetPageRes<GetGroupPurchaseItemRes>> getGroupPurchaseList(@PathVariable("userIdx") int profileUserIdx,
+                                                                                  @RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
+                                                                                  @RequestParam(value = "size", defaultValue = "10") int size) {
         try {
             int userIdxByJWT = jwtService.getUserIdx();
 
-            List<GetGroupPurchaseItemRes> getGroupPurchaseList = profileProvider.getGroupPurchaseList(userIdxByJWT, profileUserIdx, intLimit);
-            return new BaseResponse<>(getGroupPurchaseList);
+            GetPageRes<GetGroupPurchaseItemRes> getGroupPurchasePage = profileProvider.getGroupPurchasePage(userIdxByJWT, profileUserIdx, startIdx, size);
+            return new BaseResponse<>(getGroupPurchasePage);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

@@ -3,6 +3,7 @@ package com.example.demo.src.profile;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.board.model.GetGroupPurchaseItemRes;
+import com.example.demo.src.board.model.GetPageRes;
 import com.example.demo.src.profile.model.GetProfileRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,12 +29,18 @@ public class ProfileProvider {
         }
     }
 
-    public List<GetGroupPurchaseItemRes> getGroupPurchaseList(int userIdx, int profileUserIdx, int limit) throws BaseException {
-        List<GetGroupPurchaseItemRes> getGroupPurchaseList = profileDao.getGroupPurchaseList(userIdx, profileUserIdx, limit);
-        if (getGroupPurchaseList.isEmpty()) {
+    public GetPageRes<GetGroupPurchaseItemRes> getGroupPurchasePage(int userIdx, int profileUserIdx, int startIdx, int size) throws BaseException {
+        List<GetGroupPurchaseItemRes> items = profileDao.getGroupPurchaseList(userIdx, profileUserIdx, startIdx, size+1);
+
+        if (items.isEmpty()) {
             throw new BaseException(BaseResponseStatus.NO_POSTS_FOUND);
         } else {
-            return getGroupPurchaseList;
+            boolean isLast = items.size() != size + 1;
+            if(!isLast) {
+                items.remove(items.size() - 1);
+            }
+
+            return new GetPageRes<>(items, isLast);
         }
     }
 }
