@@ -30,7 +30,7 @@ public class MypageDao {
                 "LIMIT ? OFFSET ?";
     }
 
-    private RowMapper<GetCommunityActivityRes> communityRowMapper =
+    private final RowMapper<GetCommunityActivityRes> communityRowMapper =
             (rs,rowNum) -> new GetCommunityActivityRes(
                     rs.getInt("postIdx"),
                     rs.getInt("categoryIdx"),
@@ -76,7 +76,7 @@ public class MypageDao {
                 "LIMIT ? OFFSET ?";
     }
 
-    private RowMapper<GetGroupPurchaseActivityRes> groupPurchaseRowMapper =
+    private final RowMapper<GetGroupPurchaseActivityRes> groupPurchaseRowMapper =
             (rs,rowNum) -> new GetGroupPurchaseActivityRes(
                     rs.getInt("postIdx"),
                     rs.getInt("categoryIdx"),
