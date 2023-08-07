@@ -33,7 +33,13 @@ public class UserDao {
                         rs.getString("nickname"))
         );
     }
-
+    public List<GetUserIdx> getUserIdxes(){
+        String getUserIdxQuery="select userIdx from User";
+        return this.jdbcTemplate.query(getUserIdxQuery,
+                (rs, rowNum) -> new GetUserIdx(
+                        rs.getInt("userIdx"))
+        );
+    }
     public List<GetUserChatRes> getUserChatRes(int userIdx) {
         String getUserChatQuery = "select * from ChatUser where userIdx = ?";
         int getUserChatParams = userIdx;
