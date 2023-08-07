@@ -20,10 +20,28 @@ public class ChatProvider {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
+    public Object getUser(GetUser getUser) throws BaseException {
+        try {
+            Object returnGetUser = chatDao.getUser(getUser);
+            return returnGetUser;
+
+        } catch (Exception exception) {
+            // Logger를 이용하여 에러를 로그에 기록한다
+            logger.error("Error!", exception);
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
     public List<Object> getChatRooms(GetUser getUser, String category) throws BaseException {
         try {
             Long userIdx = getUser.getUserIdx();
             List<Object> getChatRoom = chatDao.getChatRooms(userIdx, category);
+
+            if (getChatRoom == null) {
+                return null;
+            }
+
             getChatRoom.removeIf(chatRoom -> Objects.equals(((GetChatRooms) chatRoom).getUserIdx(), userIdx));
 
             Set<Long> uniqueChatRoomIdx = new HashSet<>();
@@ -47,6 +65,13 @@ public class ChatProvider {
         }
     }
 
+
+    public boolean existInChatRoom(Long chatRoomIdx, Long userIdx) {
+        List<Long> chatRoomUserList = chatDao.existInChatRoom(chatRoomIdx);
+        return chatRoomUserList.contains(userIdx);
+    }
+
+
     public Object getChatRoom(Long chatRoomIdx) throws BaseException {
         try {
             Object getChatRoom = chatDao.getChatRoom(chatRoomIdx);
@@ -62,6 +87,9 @@ public class ChatProvider {
     public List<GetChatComment> getChatComment(Long chatRoomIdx) throws BaseException {
         try {
             List<GetChatComment> getChatComment = chatDao.getChatComment(chatRoomIdx);
+
+            getChatComment.removeIf(comment -> comment.getReported() > 0);
+
             return getChatComment;
         } catch (Exception exception) {
             // Logger를 이용하여 에러를 로그에 기록한다
@@ -145,5 +173,10 @@ public class ChatProvider {
         }
     }
 
+
+    public boolean existChatRoom(Long chatRoomIdx) {
+        List<Long> existChatRoom = chatDao.existChatRoom();
+        return existChatRoom.contains(chatRoomIdx);
+    }
 
 }
