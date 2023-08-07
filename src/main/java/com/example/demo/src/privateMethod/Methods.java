@@ -8,6 +8,7 @@ import com.example.demo.src.post.model.recipe.RecipeInsertReq;
 import com.example.demo.src.post.model.recipe.RecipePost;
 import com.example.demo.src.report.model.CheckReportReq;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 
@@ -132,6 +133,8 @@ public class Methods {
             return this.jdbcTemplate.queryForObject(checkSql, int.class) > 0 ? true : false;
         } catch (EmptyResultDataAccessException e) {
             return false;
+        } catch (IncorrectResultSizeDataAccessException e) {
+            return true;
         }
     }
 }

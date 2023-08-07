@@ -74,7 +74,7 @@ public class ReportDao {
     public int reporting(ChatReportReq chatReportReq){
         // 신고 게시판에 내용 저장한다.
         String createReportSql = "INSERT INTO Report(reportingUserIdx," +
-                "reportCategory,reportContentsIdx,reportedUserIdx,contentsKind)" +
+                "reportCategory,reportedContentsIdx,reportedUserIdx,contentsKind)" +
                 "VALUES (?,?,?,?,?)";
         String reportCategory = REPORT.getReportContents(chatReportReq.getReportCategory());
         Object[] param = {
@@ -157,11 +157,6 @@ public class ReportDao {
             CORTime = this.jdbcTemplate.queryForObject(getCORtimeSql,Timestamp.class);
             CHRTime = this.jdbcTemplate.queryForObject(getCHRtimeSql,Timestamp.class);
 
-            System.out.println("now : "     +now.toString());
-            System.out.println("CORTime : " +CORTime.toString());
-            System.out.println("CHRTime : " +CHRTime.toString());
-
-
             if(CORTime.compareTo(now) > 0)
                  communityCal.setTime(CORTime);
             else communityCal.setTime(now);
@@ -175,8 +170,6 @@ public class ReportDao {
 
             String comRT = new Timestamp(communityCal.getTimeInMillis()).toString();
             String chatRT = new Timestamp(chatCal.getTimeInMillis()).toString();
-
-            System.out.println(comRT+" "+chatRT);
 
             comRT.substring(0,comRT.indexOf("."));
             chatRT.substring(0,chatRT.indexOf("."));
@@ -199,15 +192,25 @@ public class ReportDao {
         else if (reportCategoryIdx%10 == 6) {
             level = 3;
         }
-        Timestamp restrictTime = this.jdbcTemplate.queryForObject("SELECT NOW()",Timestamp.class);
+        String getChatRTSql = "SELECT chatRestrictTime FROM User WHERE userIdx = "+userIdx;
+        Timestamp chatRT = this.jdbcTemplate.queryForObject(getChatRTSql,Timestamp.class);
+        Timestamp now = this.jdbcTemplate.queryForObject("SELECT NOW()",Timestamp.class);
+
         Calendar cal = Calendar.getInstance();
-        cal.setTime(restrictTime);
+        if(chatRT.compareTo(now) <= 0) cal.setTime(now);
+        else cal.setTime(chatRT);
+
+        if(level == 3) cal.add(Calendar.YEAR, 100);
         cal.add(Calendar.DATE, restrictDate*level);
-        restrictTime.setTime(cal.getTime().getTime());
+        System.out.println(cal.getTime().toString());
+        String chatRtime = new Timestamp(cal.getTimeInMillis()).toString();
+        chatRtime = chatRtime.substring(0,chatRtime.indexOf("."));
+
         String restrictChatUserSql = "UPDATE User SET updateAt = now(), chatReportedL"+level+" = chatReportedL"+level+
-                "+ 1, chatRestrictTime = " + restrictTime
+                "+ 1, chatRestrictTime = ?"
                 + " WHERE userIdx = "+userIdx;
-        return jdbcTemplate.update(restrictChatUserSql);
+        Object[] param = {chatRtime};
+        return jdbcTemplate.update(restrictChatUserSql,param);
     }
     public Methods _getMethods(){
         return this.methods;

@@ -114,11 +114,10 @@ public class ReportController {
             ))){
                 return new BaseResponse<>(REPORT_COUNT_OVER);
             }
-            String restrict= "";
             // 신고 접수 및 신고 누적 횟수 증가
             this.reportService.reporting(chatReportReq);
             // 신고된 유저를 기준에 따라 처리하기 -> 내용 없음;
-            return new BaseResponse<>("성공했습니다."+restrict);
+            return new BaseResponse<>("성공했습니다.");
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
