@@ -220,12 +220,12 @@ public class ChatDao {
     }
 
 
-    public void saveChatComment(PostChatComment postChatComment) {
+    public void saveChatComment(PostChatComment postChatComment, Long chatCommentIdx) {
         String saveChatCommentQuery = "INSERT INTO ChatComment" +
                 "(chatCommentIdx, chatUserIdx, chatRoomIdx, contents, kind, unread, createTime, contentType)" +
                 "VALUES (?, ?, ?, ?, ?, 0, now(), ?)";
         this.jdbcTemplate.update(saveChatCommentQuery,
-                postChatComment.getChatCommentIdx(),
+                chatCommentIdx,
                 postChatComment.getChatUserIdx(),
                 postChatComment.getChatRoomIdx(),
                 postChatComment.getContents(),
