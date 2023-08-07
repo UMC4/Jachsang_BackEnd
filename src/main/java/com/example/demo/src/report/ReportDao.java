@@ -69,7 +69,7 @@ public class ReportDao {
                 " WHERE userIdx = "+ userReportReq.getReportedUserIdx();
         this.jdbcTemplate.update(increaseReportCountSql);
         this.jdbcTemplate.update(createReportSql,param);
-        return restrictUser(userReportReq.getUserIdx());
+        return restrictUser(userReportReq.getReportedUserIdx());
     }
     public int reporting(ChatReportReq chatReportReq){
         // 신고 게시판에 내용 저장한다.
@@ -156,25 +156,40 @@ public class ReportDao {
             now = this.jdbcTemplate.queryForObject("SELECT NOW()",Timestamp.class);
             CORTime = this.jdbcTemplate.queryForObject(getCORtimeSql,Timestamp.class);
             CHRTime = this.jdbcTemplate.queryForObject(getCHRtimeSql,Timestamp.class);
+
+            System.out.println("now : "     +now.toString());
+            System.out.println("CORTime : " +CORTime.toString());
+            System.out.println("CHRTime : " +CHRTime.toString());
+
+
             if(CORTime.compareTo(now) > 0)
                  communityCal.setTime(CORTime);
             else communityCal.setTime(now);
+
             if(CHRTime.compareTo(now) > 0)
                 chatCal.setTime(CHRTime);
-            else communityCal.setTime(now);
+            else chatCal.setTime(now);
+
+            communityCal.add(Calendar.DATE, restrictDate*number);
             chatCal.add(Calendar.DATE, restrictDate*number);
-            Timestamp communityRTime = new Timestamp(communityCal.getTimeInMillis()),
-                      chatRTime = new Timestamp(chatCal.getTimeInMillis());
 
+            String comRT = new Timestamp(communityCal.getTimeInMillis()).toString();
+            String chatRT = new Timestamp(chatCal.getTimeInMillis()).toString();
 
-            restrictUserSql = "UPDATE User SET chatRestrictTime = " +
-                    communityRTime+", communityRestrictTime = "+chatRTime+
-                    " WHERE userIdx = "+userIdx;
+            System.out.println(comRT+" "+chatRT);
+
+            comRT.substring(0,comRT.indexOf("."));
+            chatRT.substring(0,chatRT.indexOf("."));
+
+            restrictUserSql = "UPDATE User SET chatRestrictTime = ?, communityRestrictTime = ? WHERE userIdx = "+userIdx;
+            Object[] param = {chatRT,comRT};
+            return this.jdbcTemplate.update(restrictUserSql,param);
         }
         if(reported > 30) {
             restrictUserSql = "UPDATE User SET status = -1, updateAt = now() WHERE userIdx = "+userIdx;
+            return this.jdbcTemplate.update(restrictUserSql);
         }
-        return this.jdbcTemplate.update(restrictUserSql);
+        return 0;
     }
     public int restrictChatUser(int userIdx, int reportCategoryIdx){
         int restrictDate = 7;
