@@ -29,7 +29,7 @@ public class HomeController {
     /**
      * 커뮤니티 인기글 조회 API
      * 정렬된 리스트 반환 (인기순)
-     * [GET] /boards/home/community
+     * [GET] /app/home/community
 
      * @return BaseResponse<List<GetCommunityItemRes>>
      */
@@ -49,7 +49,7 @@ public class HomeController {
     /**
      * 공동구매 마감임박글 조회 API
      * 정렬된 리스트 반환 (마감기한순)
-     * [GET] /boards/home/grouppurchase
+     * [GET] /app/home/grouppurchase
      * @return BaseResponse<List<GetGroupPurchaseItemRes>>
      */
     // 그룹 구매 게시판
@@ -68,7 +68,7 @@ public class HomeController {
     /**
      * 레시피 인기글 조회 API
      * 정렬된 리스트 반환 (인기순)
-     * [GET] /boards/recipe?sort=keyword&limit=개수
+     * [GET] /app/recipe?sort=keyword&limit=개수
      *
      * @return BaseResponse<List<GetRecipeItemRes>>
      */
