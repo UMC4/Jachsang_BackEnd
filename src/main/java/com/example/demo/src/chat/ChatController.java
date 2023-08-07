@@ -2,11 +2,13 @@ package com.example.demo.src.chat;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.chat.model.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -31,6 +33,11 @@ public class ChatController {
         String category = "community";
         try {
             List<Object> getChatRoom = chatProvider.getChatRooms(getUser, category);
+
+            if (getChatRoom == null) { // userIdx가 존재하지 않아 존재하는 채팅방 목록이 없을 때
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHATROOM_LIST);
+            }
+
             return new BaseResponse<>(getChatRoom);
         }
         catch (BaseException exception){
@@ -45,6 +52,11 @@ public class ChatController {
         String category = "grouppurchase";
         try {
             List<Object> getChatRoom = chatProvider.getChatRooms(getUser, category);
+
+            if (getChatRoom == null) { // userIdx가 존재하지 않아 존재하는 채팅방 목록이 없을 때
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHATROOM_LIST);
+            }
+
             return new BaseResponse<>(getChatRoom);
         }
         catch (BaseException exception){
@@ -59,13 +71,26 @@ public class ChatController {
     public BaseResponse<Object> getChatCommentAndRoom(@PathVariable("chatRoomIdx") Long chatRoomIdx, @RequestBody GetUser getUser) {
         try {
 
+            if (ObjectUtils.isEmpty(chatProvider.getUser(getUser))) { // getUser의 해당하는 유저가 존재하지 않을때
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHAT_USER);
+            }
+
+
+            if (!chatProvider.existInChatRoom(chatRoomIdx, getUser.getUserIdx())) { // chatRoomIdx에 해당하는 채팅방에 getUser가 입장해 있지 않을 때
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_IN_CHATROOM);
+            }
+
             Timestamp now = new Timestamp(System.currentTimeMillis());
-            if (!now.after(getUser.getChatRestrictTime())) {
-                return new BaseResponse<>("You are not allowed to enter the chat room");
+            if (!now.after(getUser.getChatRestrictTime())) { // 신고로 채팅방 입장이 불가능할때
+                return new BaseResponse<>(BaseResponseStatus.CANT_ENTER_CHATROOM);
             }
 
             Object getChatRoom = chatProvider.getChatRoom(chatRoomIdx);
             List<GetChatComment> getChatComment = chatProvider.getChatComment(chatRoomIdx);
+
+            if (getChatRoom == null) { // 존재하는 채팅방이 없을 떄
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHATROOM);
+            }
 
             GetChatRoom chatResponse = new GetChatRoom();
             chatResponse.setGetChatRoom(getChatRoom);
@@ -84,13 +109,25 @@ public class ChatController {
     public BaseResponse<Object> getChatCommentAndRoom2(@PathVariable("chatRoomIdx") Long chatRoomIdx, @RequestBody GetUser getUser) {
         try {
 
+            if (ObjectUtils.isEmpty(chatProvider.getUser(getUser))) { // getUser의 해당하는 유저가 존재하지 않을때
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHAT_USER);
+            }
+
+            if (!chatProvider.existInChatRoom(chatRoomIdx, getUser.getUserIdx())) { // chatRoomIdx에 해당하는 채팅방에 getUser가 입장해 있지 않을 때
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_IN_CHATROOM);
+            }
+
             Timestamp now = new Timestamp(System.currentTimeMillis());
-            if (!now.after(getUser.getChatRestrictTime())) {
-                return new BaseResponse<>("You are not allowed to enter the chat room");
+            if (!now.after(getUser.getChatRestrictTime())) { // 신고로 채팅방 입장이 불가능할때
+                return new BaseResponse<>(BaseResponseStatus.CANT_ENTER_CHATROOM);
             }
 
             Object getChatRoom = chatProvider.getChatRoom(chatRoomIdx);
             List<GetChatComment> getChatComment = chatProvider.getChatComment(chatRoomIdx);
+
+            if (getChatRoom == null) { // 존재하는 채팅방이 없을 떄
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHATROOM);
+            }
 
             GetChatRoom chatResponse = new GetChatRoom();
             chatResponse.setGetChatRoom(getChatRoom);
@@ -109,6 +146,10 @@ public class ChatController {
     public BaseResponse<List<String>> getChatRoomUsers(@PathVariable("chatRoomIdx") Long chatRoomIdx) {
         try {
             List<String> getChatRoomUsers = chatProvider.getChatRoomUsers(chatRoomIdx);
+
+            if (getChatRoomUsers == null) { // 존재하는 채팅방이 없을 떄
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHATROOM);
+            }
             return new BaseResponse<>(getChatRoomUsers);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
@@ -121,6 +162,10 @@ public class ChatController {
     public BaseResponse<List<String>> getChatRoomUsers2(@PathVariable("chatRoomIdx") Long chatRoomIdx) {
         try {
             List<String> getChatRoomUsers = chatProvider.getChatRoomUsers(chatRoomIdx);
+
+            if (getChatRoomUsers == null) { // 존재하는 채팅방이 없을 떄
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHATROOM);
+            }
             return new BaseResponse<>(getChatRoomUsers);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
@@ -137,8 +182,8 @@ public class ChatController {
         GetUser getUser = postChatRoomReq.getGetUser();
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        if (!now.after(getUser.getChatRestrictTime())) {
-            return "You are not allowed to enter the chat room";
+        if (!now.after(getUser.getChatRestrictTime())) { // 신고로 채팅방 입장이 불가능할때
+            return new BaseResponse<>(BaseResponseStatus.CANT_ENTER_CHATROOM);
         }
 
         return chatService.postChatRoom(getPost, getUser);
@@ -152,8 +197,8 @@ public class ChatController {
         GetUser getUser = postChatRoomReq.getGetUser();
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        if (!now.after(getUser.getChatRestrictTime())) {
-            return "You are not allowed to enter the chat room";
+        if (!now.after(getUser.getChatRestrictTime())) { // 신고로 채팅방 입장이 불가능할때
+            return new BaseResponse<>(BaseResponseStatus.CANT_ENTER_CHATROOM);
         }
 
         Long postIdx = getPost.getPostIdx();
@@ -178,6 +223,11 @@ public class ChatController {
     public BaseResponse<List<String>> setAmount(@RequestParam(value = "chatRoomIdx") Long chatRoomIdx) {
         try {
             List<String> getChatRoomUsers = chatProvider.getChatRoomUsers(chatRoomIdx);
+
+            if (getChatRoomUsers == null) { // 존재하는 채팅방이 없을 떄
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHATROOM);
+            }
+
             return new BaseResponse<>(getChatRoomUsers);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
@@ -191,6 +241,11 @@ public class ChatController {
     public BaseResponse<ChatProvider.SettlementRoom> setTopAmount(@RequestParam(value = "chatRoomIdx") Long chatRoomIdx, @RequestParam(value = "amount") int amount) {
         try {
             int members = chatProvider.getChatRoomMembers(chatRoomIdx);
+
+            if (members == 0) { // chatRoomIdx에 해당하는 채팅방이 없을 떄
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHATROOM);
+            }
+
             ChatProvider.SettlementRoom room = new ChatProvider.SettlementRoom(members);
             room.setTopAmount(amount);
 
@@ -206,6 +261,11 @@ public class ChatController {
     public BaseResponse<ChatProvider.SettlementRoom> setIndividualAmounts(@RequestParam(value = "chatRoomIdx") Long chatRoomIdx, @RequestBody int[] amounts) {
         try {
             int members = chatProvider.getChatRoomMembers(chatRoomIdx);
+
+            if (members == 0) { // chatRoomIdx에 해당하는 채팅방이 없을 떄
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHATROOM);
+            }
+
             ChatProvider.SettlementRoom room = new ChatProvider.SettlementRoom(members);
             room.setIndividualAmounts(amounts);
 
@@ -219,6 +279,9 @@ public class ChatController {
     @ResponseBody
     @GetMapping("/grouppurchase/settlement/require")
     public BaseResponse<Object> setAmountRequire(@RequestParam(value = "chatRoomIdx")Long chatRoomIdx) {
+        if (!chatProvider.existChatRoom(chatRoomIdx)) { // chatRoomIdx의 해당하는 채팅방이 없을 때
+            return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHATROOM);
+        }
         return new BaseResponse<>("정산 요청 버튼 눌렀을 때");
     }
 
@@ -228,6 +291,15 @@ public class ChatController {
     @PostMapping("/grouppurchase/{chatRoomIdx}/complete-deal")
     public BaseResponse<Object> requestSettlement(@PathVariable("chatRoomIdx")Long chatRoomIdx, @RequestBody GetChatUser getChatUser) {
         try {
+
+            if (!chatProvider.existChatRoom(chatRoomIdx)) { // chatRoomIdx의 해당하는 채팅방이 없을 때
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHATROOM);
+            }
+
+            if (!chatProvider.existInChatRoom(chatRoomIdx, getChatUser.getUserIdx())) { // chatRoomIdx에 해당하는 채팅방에 getUser가 입장해 있지 않을 때
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_IN_CHATROOM);
+            }
+
             Object x = chatService.requestSettlement(chatRoomIdx, getChatUser);
             return new BaseResponse<>(x);
 
@@ -241,6 +313,15 @@ public class ChatController {
     @PostMapping("/grouppurchase/{chatRoomIdx}/complete-settlement")
     public BaseResponse<Object> completeSettlement(@PathVariable("chatRoomIdx")Long chatRoomIdx, @RequestBody GetChatUser getChatUser) {
         try {
+
+            if (!chatProvider.existChatRoom(chatRoomIdx)) { // chatRoomIdx의 해당하는 채팅방이 없을 때
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHATROOM);
+            }
+
+            if (!chatProvider.existInChatRoom(chatRoomIdx, getChatUser.getUserIdx())) { // chatRoomIdx에 해당하는 채팅방에 getUser가 입장해 있지 않을 때
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_IN_CHATROOM);
+            }
+
             Object x = chatService.completeSettlement(chatRoomIdx, getChatUser);
             return new BaseResponse<>(x);
 
@@ -255,6 +336,11 @@ public class ChatController {
     @DeleteMapping("/grouppurchase/{chatRoomIdx}/finalize-settlement")
     public BaseResponse<Object> finalizeSettlement(@PathVariable("chatRoomIdx") Long chatRoomIdx) {
         try {
+
+            if (!chatProvider.existChatRoom(chatRoomIdx)) { // chatRoomIdx의 해당하는 채팅방이 없을 때
+                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_CHATROOM);
+            }
+
             Object x = chatService.deleteChatRoom(chatRoomIdx);
             return new BaseResponse<>(x);
         } catch (BaseException exception) {

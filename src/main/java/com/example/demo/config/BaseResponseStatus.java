@@ -82,7 +82,15 @@ public enum BaseResponseStatus {
     MIX_SEARCH_QUERY(false, 2033, "제목 검색과 재료 검색을 혼용할 수 없습니다."),
 
     //상대프로필
-    NOT_EXIST_USER(false,5000,"존재하는 유저가 아닙니다.");
+    NOT_EXIST_USER(false,5000,"존재하는 유저가 아닙니다."),
+
+
+    // 채팅
+    NOT_EXIST_CHATROOM_LIST(false, 4001, "존재하는 채팅방 목록이 없습니다."),
+    NOT_EXIST_CHATROOM(false, 4002, "존재하는 채팅방이 없습니다."),
+    NOT_EXIST_CHAT_USER(false, 4003, "해당 유저가 없습니다."),
+    NOT_EXIST_IN_CHATROOM(false, 4004, "해당 유저가 채팅방에 입장해 있지 않습니다."),
+    CANT_ENTER_CHATROOM(false, 4010, "신고로 인해 채팅방에 입장할 수 없습니다.");
 
 
     private final boolean isSuccess;
