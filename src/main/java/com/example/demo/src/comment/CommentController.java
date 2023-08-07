@@ -148,7 +148,7 @@ public class CommentController {
                 return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_COMMENT_IDX);
             }
             int result = this.commentService.deleteComment(commentIdx);
-            //if(extended == null) TODO:예외처리하기
+
             return new BaseResponse<>(result);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());

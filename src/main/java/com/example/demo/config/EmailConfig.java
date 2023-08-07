@@ -9,57 +9,30 @@ import org.springframework.mail.javamail.*;
 @Configuration
 public class EmailConfig {
 
-    @Value("${spring.mail.host}")
-    private String host;
-
-    @Value("${spring.mail.port}")
-    private int port;
-
-    @Value("${spring.mail.username}")
-    private String username;
-
-    @Value("${spring.mail.password}")
-    private String password;
-
-    @Value("${spring.mail.properties.mail.smtp.auth}")
-    private boolean auth;
-
-    @Value("${spring.mail.properties.mail.smtp.starttls.enable}")
-    private boolean starttlsEnable;
-
-    @Value("${spring.mail.properties.mail.smtp.starttls.required}")
-    private boolean starttlsRequired;
-
-    @Value("${spring.mail.properties.mail.smtp.connectiontimeout}")
-    private int connectionTimeout;
-
-    @Value("${spring.mail.properties.mail.smtp.timeout}")
-    private int timeout;
-
-    @Value("${spring.mail.properties.mail.smtp.writetimeout}")
-    private int writeTimeout;
-
     @Bean
-    public JavaMailSender javaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(host);
-        mailSender.setPort(port);
-        mailSender.setUsername(username);
-        mailSender.setPassword(password);
-        mailSender.setDefaultEncoding("UTF-8");
-        mailSender.setJavaMailProperties(getMailProperties());
+    public JavaMailSender NaverMailService(){
+        JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
 
-        return mailSender;
+        javaMailSender.setHost("smtp.gmail.com");  // SMTP 서버명
+        javaMailSender.setUsername("rlaaudsss@gmail.com"); // 네이버 아이디
+        javaMailSender.setPassword("mnlcgyakbrufujzj"); // 네이버 비밀번호
+
+        javaMailSender.setPort(465); // SMTP 포트
+
+        javaMailSender.setJavaMailProperties(getMailProperties()); // 메일 인증서버 가져오기
+
+        return javaMailSender;
     }
 
-    private Properties getMailProperties() {
+    // 메일 인증서버 정보 가져오기
+    private Properties getMailProperties(){
         Properties properties = new Properties();
-        properties.put("mail.smtp.auth", auth);
-        properties.put("mail.smtp.starttls.enable", starttlsEnable);
-        properties.put("mail.smtp.starttls.required", starttlsRequired);
-        properties.put("mail.smtp.connectiontimeout", connectionTimeout);
-        properties.put("mail.smtp.timeout", timeout);
-        properties.put("mail.smtp.writetimeout", writeTimeout);
+        properties.setProperty("mail.transport.protocol", "smtp"); // 프로토콜 설정
+        properties.setProperty("mail.smtp.auth", "true"); // smtp 인증
+        properties.setProperty("mail.smtp.starttls.enable", "true"); // smtp strattles 사용
+        properties.setProperty("mail.debug", "true"); // 디버그 사용
+        properties.setProperty("mail.smtp.ssl.trust", "smtp.gmail.com"); // ssl 인증 서버 (smtp 서버명)
+        properties.setProperty("mail.smtp.ssl.enable", "true"); // ssl 사용
 
         return properties;
     }

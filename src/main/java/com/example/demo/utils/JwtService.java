@@ -10,8 +10,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import sun.nio.cs.DoubleByte;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Base64;
 import java.util.Date;
 
 import static com.example.demo.config.BaseResponseStatus.*;
@@ -30,11 +32,22 @@ public class JwtService {
                 .setHeaderParam("type","jwt")
                 .claim("userIdx",userIdx)
                 .setIssuedAt(now)
-                .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24*365)))
+                .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24*365))) //token 유효기간이 24시간 365일 되는걸로 설정함
                 .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
                 .compact();
     }
-
+    
+    //리프레쉬 token 생성
+    public String createRefreshToken(int userIdx){
+        Date now=new Date();
+        return Jwts.builder()
+                .setHeaderParam("type","jwt")
+                .claim("userIdx",userIdx)
+                .setIssuedAt(now)
+                .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24*365)))
+                .signWith(SignatureAlgorithm.HS256,Secret.REFRESH_SECRET_KEY)
+                .compact();
+    }
     /*
     Header에서 X-ACCESS-TOKEN 으로 JWT 추출
     @return String

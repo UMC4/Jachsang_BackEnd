@@ -1,4 +1,4 @@
-package com.example.demo.src.privateMethod;
+package com.example.demo.src.report.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostIdxs {
-    private int postIdx1;
-    private int postIdx2;
+public class CheckReportReq {
+    private int userIdx;
+    private int kind;
+    private int contentsIdx;
 }
