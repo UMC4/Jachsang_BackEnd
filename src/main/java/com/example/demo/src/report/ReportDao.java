@@ -52,7 +52,7 @@ public class ReportDao {
                 category.toLowerCase()+"Idx = "+ communityReportReq.getReportedContentsIdx();
         this.jdbcTemplate.update(increaseReportCountSql);
         this.jdbcTemplate.update(createReportSql,param);
-        return deleteContents(communityReportReq);
+        return restrictContents(communityReportReq);
     }
     public int reporting(UserReportReq userReportReq){
         // 신고 게시판에 내용 저장한다.
@@ -100,7 +100,7 @@ public class ReportDao {
         ));
     }
 
-    public int deleteContents(CommunityReportReq communityReportReq){
+    public int restrictContents(CommunityReportReq communityReportReq){
         //신고 당한 게시글/댓글/답글의 reportCount 받기
         String getReportCountSql = "";
         String kind = "";
@@ -187,9 +187,9 @@ public class ReportDao {
     public int restrictChatUser(int userIdx, int reportCategoryIdx){
         int restrictDate = 7;
         int level = 1;
-        if(reportCategoryIdx%10 <= 4) level = 1;
-        else if (reportCategoryIdx%10 == 5) level = 2;
-        else if (reportCategoryIdx%10 == 6) {
+        if(reportCategoryIdx <= 4) level = 1;
+        else if (reportCategoryIdx == 5) level = 2;
+        else if (reportCategoryIdx == 6) {
             level = 3;
         }
         String getChatRTSql = "SELECT chatRestrictTime FROM User WHERE userIdx = "+userIdx;
@@ -200,9 +200,9 @@ public class ReportDao {
         if(chatRT.compareTo(now) <= 0) cal.setTime(now);
         else cal.setTime(chatRT);
 
-        if(level == 3) cal.add(Calendar.YEAR, 100);
+        if(level == 3) cal.add(Calendar.YEAR, 10);
         cal.add(Calendar.DATE, restrictDate*level);
-        System.out.println(cal.getTime().toString());
+
         String chatRtime = new Timestamp(cal.getTimeInMillis()).toString();
         chatRtime = chatRtime.substring(0,chatRtime.indexOf("."));
 
