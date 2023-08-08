@@ -47,7 +47,7 @@ public class UserService {
         }
         //아이디 중복
         if(userProvider.checkId(postUserReq.getLoginId())==1){
-            throw new BaseException(DATABASE_ERROR);
+            throw new BaseException(ID_ALREATY_EXISTS);
         }
 
         String pwd;
@@ -70,11 +70,11 @@ public class UserService {
 
     public void followUser(PostFollowReq postFollowReq) throws BaseException{
         if (userProvider.checkFollowed(postFollowReq)==1)
-            throw new BaseException(DATABASE_ERROR);
+            throw new BaseException(FOLLOWED_USER_ALREADY);
         try{
             int result=userDao.followUser(postFollowReq);
             if(result==0) {
-                throw new BaseException(DATABASE_ERROR);
+                throw new BaseException(FAILED_TO_FOLLOW);
             }
         } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
@@ -84,7 +84,7 @@ public class UserService {
         try {
             int result = userDao.deleteFollowUser(postFollowReq);
             if (result == 0) {
-                throw new BaseException(DATABASE_ERROR);
+                throw new BaseException(FAILED_TO_UNFOLLOW);
             }
         }catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
@@ -101,7 +101,7 @@ public class UserService {
         try{
             int result = userDao.modifyUserInfo(patchUserReq);
             if(result == 0){
-                throw new BaseException(MODIFY_FAIL_USERNAME);
+                throw new BaseException(MODIFY_FAIL_USERINFO);
             }
         } catch(Exception exception){
             throw new BaseException(DATABASE_ERROR);
@@ -120,7 +120,7 @@ public class UserService {
         try{
             int result = userDao.modifyUserNewPwd(patchUserPwdReq);
             if(result == 0){
-                throw new BaseException(MODIFY_FAIL_USERNAME);
+                throw new BaseException(MODIFY_FAIL_USERPWD);
             }
         } catch(Exception exception){
             throw new BaseException(DATABASE_ERROR);

@@ -62,6 +62,16 @@ public class UserController {
         }
     }
 
+    @ResponseBody
+    @GetMapping("/userIdx")
+    public BaseResponse<List<GetUserIdx>> getUsersIdx(){
+        try{
+            List<GetUserIdx> getUserIdxes=userProvider.getUserIdxes();
+            return new BaseResponse<>(getUserIdxes);
+        }catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
     /**
      * 아이디 조회 API
      * [GET] /users/getId?Email=

@@ -7,9 +7,12 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 
+import com.example.demo.config.BaseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import com.example.demo.config.BaseResponseStatus;
+
 import java.security.SecureRandom;
 
 @Service
@@ -30,12 +33,11 @@ public class RegisterMail implements MailServiceInter {
         MimeMessage message = emailSender.createMimeMessage();
 
         message.addRecipients(RecipientType.TO, to); // 메일 받을 사용자
-        message.setSubject("[Fligent] 비밀번호 변경을 위한 이메일 인증코드 입니다"); // 이메일 제목
-
+        message.setSubject("[자취생을 부탁해 Recipe] 비밀번호 변경을 위한 이메일 인증코드 입니다"); // 이메일 제목
         String msgg = "";
-        // msgg += "<img src=../resources/static/image/emailheader.jpg />"; // header image
+        msgg += "<img src=./resource/top-view-green-leafs-with-copy-space.jpg>"; // header image
         msgg += "<h1>안녕하세요</h1>";
-        msgg += "<h1>공항정보 플랫폼 Fligent 입니다</h1>";
+        msgg += "<h1>자취생을 부탁해 Recipe입니다</h1>";
         msgg += "<br>";
         msgg += "<p>아래 인증코드를 암호변경 페이지에 입력해주세요</p>";
         msgg += "<br>";
@@ -92,9 +94,10 @@ public class RegisterMail implements MailServiceInter {
 
         try { // 예외처리
             emailSender.send(message);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException();
+        } catch (Exception exception) {
+//            exception.printStackTrace();
+//            throw new IllegalArgumentException();
+            throw new BaseException(BaseResponseStatus.FAILED_SEND_EMAIL);
         }
 
         return ePw; // 메일로 사용자에게 보낸 인증코드를 서버로 반환! 인증코드 일치여부를 확인하기 위함
