@@ -47,10 +47,11 @@ public class PostDao {
             );
 
             // Post table에 insert 하는 sql 문장과 그 파라미터, URL의 경우 'null'로 저장함.
-            String sqlGeneral = "INSERT INTO Post(categoryIdx, category, userIdx, title, viewCount, likeCount, createAt, updateAt, url) VALUES (?,?,?,?,0,0,now(),now(),'null')";
+            String sqlGeneral = "INSERT INTO Post(categoryIdx, userIdx, title, viewCount, likeCount, createAt, updateAt, url) VALUES (?,?,?,0,0,now(),now(),'null')";
             String category = CATEGORY.getName(categoryIdx);
+
             Object[] paramGeneral = {
-                    categoryIdx, category, general.getUserIdx(), general.getTitle()
+                    categoryIdx, general.getUserIdx(), general.getTitle()
             };
             // general 쿼리를 실행하는 부분
             this.jdbcTemplate.update(sqlGeneral, paramGeneral);
@@ -91,7 +92,7 @@ public class PostDao {
             // 공동구매, 커뮤니티, 레시피 sql과 param을 이용해 쿼리문 실행
             this.jdbcTemplate.update(sqlSpecific, paramSpecific);
             // 반환할 응답 생성
-            PostingRes postingRes = new PostingRes(postIdx, categoryIdx, general.getCategory(), general.getUserIdx(), general.getTitle(), "null");
+            PostingRes postingRes = new PostingRes(postIdx, categoryIdx, category, general.getUserIdx(), general.getTitle(), "null");
             // 응답 반환
 
             //이미지 등록
@@ -100,6 +101,7 @@ public class PostDao {
 
             return postingRes;
         } catch (Exception e){
+            System.out.println(e.toString());
             return null;
         }
     }

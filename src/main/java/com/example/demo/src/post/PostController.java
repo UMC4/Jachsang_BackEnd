@@ -44,26 +44,27 @@ public class PostController {
     public BaseResponse<PostingRes> createPost(@RequestBody Object postingReq){
         try{
             HashMap<String,Object> req = (LinkedHashMap)postingReq;
+
+            int categoryIdx = (int)req.get("categoryIdx");
+
             //카테고리가 존재하지 않는 것일 때
-            if(CATEGORY.getNumber((String)req.get("category")) == 0){
+            if(!CATEGORY.isExistCategory(categoryIdx)){
                 throw new BaseException(BaseResponseStatus.WRONG_CATEGORY);
             }
-            //공지 작성 시 유저 권한이 없을 때
-            if(((String)req.get("category")).equals("공지")){
-                if(!this.methods._getUserRole((int)req.get("userIdx")).equals("admin")){
-                    throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
-                }
+
+            //3003 공지 작성 시 유저 권한이 admin이 아닐 때
+            if(categoryIdx == 15 && !methods._isAdmin(jwtService.getUserIdx())){
+                throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
             }
-            int categoryIdx = CATEGORY.getNumber((String)req.get("category"));
 
             PostingRes postingRes = this.postService.posting(categoryIdx/10, categoryIdx, req);
             if(postingRes != null) return new BaseResponse<>(postingRes);
             // 파라미터가 누락되었을 때
-            else throw new SQLIntegrityConstraintViolationException();
+            else throw new BaseException(BaseResponseStatus.OMITTED_PARAMETER);
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }catch (SQLIntegrityConstraintViolationException e){
-            return new BaseResponse<>(BaseResponseStatus.OMITTED_PARAMETER);
+            return new BaseResponse<>(null);
         }
     }
 

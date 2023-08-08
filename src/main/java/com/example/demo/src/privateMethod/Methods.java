@@ -137,4 +137,11 @@ public class Methods {
             return true;
         }
     }
+
+    public boolean _isAdmin(int userIdx){
+        String checkAdminSql = "SELECT role FROM User WHERE userIdx = "+userIdx;
+        String role = this.jdbcTemplate.queryForObject(checkAdminSql,String.class);
+        if(role.toLowerCase().equals("admin")) return true;
+        else return false;
+    }
 }
