@@ -47,9 +47,10 @@ public class PostDao {
             );
 
             // Post table에 insert 하는 sql 문장과 그 파라미터, URL의 경우 'null'로 저장함.
-            String sqlGeneral = "INSERT INTO Post(categoryIdx, userIdx, title, viewCount, likeCount, createAt, updateAt, url) VALUES (?,?,?,0,0,now(),now(),'null')";
+            String sqlGeneral = "INSERT INTO Post(categoryIdx, category, userIdx, title, viewCount, likeCount, createAt, updateAt, url) VALUES (?,?,?,?,0,0,now(),now(),'null')";
+            String category = CATEGORY.getName(categoryIdx);
             Object[] paramGeneral = {
-                    categoryIdx, general.getUserIdx(), general.getTitle()
+                    categoryIdx, category, general.getUserIdx(), general.getTitle()
             };
             // general 쿼리를 실행하는 부분
             this.jdbcTemplate.update(sqlGeneral, paramGeneral);
