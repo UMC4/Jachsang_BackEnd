@@ -41,4 +41,11 @@ public enum CATEGORY {
         }
         return 0;
     }
+
+    public static boolean isExistCategory(int number){
+        for(CATEGORY c : CATEGORY.values()){
+            if (c.number == number) return true;
+        }
+        return false;
+    }
 }
