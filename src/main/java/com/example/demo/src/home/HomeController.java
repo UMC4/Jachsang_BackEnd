@@ -2,11 +2,9 @@ package com.example.demo.src.home;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.board.model.GetCommunityItemRes;
 import com.example.demo.src.board.model.GetGroupPurchaseItemRes;
 import com.example.demo.src.board.model.GetRecipeItemRes;
-import com.example.demo.src.category.CATEGORY;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +46,7 @@ public class HomeController {
 
     /**
      * 공동구매 마감임박글 조회 API
-     * 정렬된 리스트 반환 (마감기한순)
+     * 정렬된 리스트 반환 (마감임박순)
      * [GET] /app/home/grouppurchase
      * @return BaseResponse<List<GetGroupPurchaseItemRes>>
      */
