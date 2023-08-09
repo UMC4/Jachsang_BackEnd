@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.util.List;
 
+import static com.example.demo.src.board.model.GetGroupPurchaseItemRes.groupPurchaseRowMapper;
+
 @Repository
 public class ProfileDao {
 
@@ -72,17 +74,6 @@ public class ProfileDao {
                 "ORDER BY P.createAt DESC " +
                 "LIMIT ? OFFSET ?";
 
-        return this.jdbcTemplate.query(Query,
-                (rs,rowNum) -> new GetGroupPurchaseItemRes(
-                        rs.getInt("postIdx"),
-                        rs.getInt("categoryIdx"),
-                        rs.getString("category"),
-                        rs.getString("title"),
-                        rs.getString("productName"),
-                        rs.getString("nickname"),
-                        rs.getInt("distance"),
-                        rs.getInt("remainDay"),
-                        rs.getString("imagePath")),
-                userIdx, profileUserIdx, size, startIdx);
+        return this.jdbcTemplate.query(Query, groupPurchaseRowMapper, userIdx, profileUserIdx, size, startIdx);
     }
 }
