@@ -101,7 +101,7 @@ public class HomeDao {
                     ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
                 "WHERE FLOOR(P.categoryIdx/10) = 3 " +
                 "ORDER BY IF(P.createAt >= TIMESTAMPADD(DAY, -7, CURRENT_TIMESTAMP), 1, 0)," +
-                    "(100*P.likeCount+P.viewCount) DESC LIMIT 3";
+                    "(100*P.likeCount+P.viewCount) DESC LIMIT 1";
 
         return this.jdbcTemplate.query(Query, recipeRowMapper, userIdx);
     }
