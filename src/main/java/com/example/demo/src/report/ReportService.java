@@ -32,10 +32,6 @@ public class ReportService {
     public int reporting(ChatReportReq chatReportReq) throws BaseException {
         return this.reportDao.reporting(chatReportReq);
     }
-
-    public int deleteContents(CommunityReportReq communityReportReq){
-        return this.reportDao.deleteContents(communityReportReq);
-    }
     public Methods _getMethods(){
         return this.reportDao._getMethods();
     }

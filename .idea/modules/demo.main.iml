@@ -6,5 +6,6 @@
     <content url="file://$MODULE_DIR$/../../src/main" dumb="true">
       <sourceFolder url="file://$MODULE_DIR$/../../src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/../../src/main/resources" isTestSource="false" />
+    </content>
   </component>
 </module>

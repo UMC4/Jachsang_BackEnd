@@ -23,6 +23,8 @@ public class ChatService {
 
     private Long chatRoomIdx = 20L;
     private Long chatUserIdx = 20L;
+
+    private Long chatCommentIdx = 20L;
     private final ChatDao chatDao;
 
     @PostConstruct
@@ -83,7 +85,8 @@ public class ChatService {
     }
 
     public void saveChatComment(PostChatComment postChatComment) {
-        chatDao.saveChatComment(postChatComment);
+        chatDao.saveChatComment(postChatComment, chatCommentIdx);
+        chatCommentIdx++;
     }
 
 
