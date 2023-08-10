@@ -38,7 +38,7 @@ public class PostDao {
     }
 
     // 글쓰기
-    public PostingRes posting(int boardIdx, int categoryIdx, HashMap<String,Object> postingReq) {
+    public PostingRes posting(int categoryIdx, HashMap<String,Object> postingReq) {
         try {
             // 입력받은 정보를 general information, specific information으로 구분하는 작업
             // 그 중에서 general information을 Post general에 담는 과정
@@ -62,13 +62,13 @@ public class PostDao {
             String sqlSpecific = "";
             Object[] paramSpecific = null;
             //커뮤니티
-            if (boardIdx == 1) {
+            if (categoryIdx < 20) {
                 CommunityPostingReq posting = new CommunityPostingReq(postIdx, (String) postingReq.get("contents"));
                 sqlSpecific = "INSERT INTO CommunityDetail(communityDetailIdx, postIdx, contents, heartCount) VALUES (" + postIdx + "," + postIdx + ",?, 0)";
                 paramSpecific = new Object[]{posting.getContents()};
             }
             //공동구매
-            else if (boardIdx == 2) {
+            else if (categoryIdx < 30) {
                 GroupPurchasePostingReq posting = new GroupPurchasePostingReq(postIdx, postingReq);
                 sqlSpecific = "INSERT INTO GroupPurchaseDetail(groupPurchaseDetailIdx, postIdx, productName, productURL, singlePrice, deliveryFee, " +
                         "members, deadline,hasExtension, calculated) VALUES (" + postIdx + "," + postIdx + ",?,?,?,?,?,?,false,false)";
@@ -101,7 +101,7 @@ public class PostDao {
 
             return postingRes;
         } catch (Exception e){
-            System.out.println(e.toString());
+            System.out.println(e.getStackTrace()+"\n알 수 없는 오류");
             return null;
         }
     }

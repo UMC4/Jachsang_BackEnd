@@ -57,7 +57,8 @@ public class PostController {
                 throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
             }
 
-            PostingRes postingRes = this.postService.posting(categoryIdx/10, categoryIdx, req);
+            PostingRes postingRes = this.postService.posting(categoryIdx, req);
+
             if(postingRes != null) return new BaseResponse<>(postingRes);
             // 파라미터가 누락되었을 때
             else throw new BaseException(BaseResponseStatus.OMITTED_PARAMETER);

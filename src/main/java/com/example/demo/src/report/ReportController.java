@@ -82,6 +82,10 @@ public class ReportController {
             if(this.jwtService.getUserIdx() != userReportReq.getUserIdx()){
                 return new BaseResponse<>(PERMISSION_DENIED);
             }
+            if(this.jwtService.getUserIdx() == userReportReq.getUserIdx()
+            || userReportReq.getUserIdx() == userReportReq.getReportedUserIdx()){
+                return new BaseResponse<>(SELF_REPORT);
+            }
             // 3009 같은 대상을 여러번 신고함
             if(this.methods._isExistReport(new CheckReportReq(
                     userReportReq.getUserIdx(), 40, 0
@@ -107,7 +111,7 @@ public class ReportController {
                 return new BaseResponse<>(BaseResponseStatus.SELF_REPORT);
             }
             // 요청자와 요청자의 JWT가 일치하지 않음
-            if(this.jwtService.getUserIdx() != jwtService.getUserIdx()){
+            if(this.jwtService.getUserIdx() != chatReportReq.getUserIdx()){
                 return new BaseResponse<>(PERMISSION_DENIED);
             }
             // 3009 같은 대상을 여러번 신고함
