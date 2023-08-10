@@ -107,16 +107,17 @@ public class PostDao {
     }
 
     // 글보기
-    public Object getPost(int categoryIdx, GetPostReq getPostReq) {
+    public Object getPost(int categoryIdx, int postIdx) {
         // 세 게시판의 글을 한번에 처리하기 위한 변수 설정
         // 기본정보와 detail 정보 불러오기
-        Object generalPost = methods._getPost(getPostReq.getPostIdx()),
-                detailPost = methods._getDetailPost(categoryIdx,getPostReq.getPostIdx());
+
+        Object generalPost = methods._getPost(postIdx),
+                detailPost = methods._getDetailPost(categoryIdx,postIdx);
         // 조회수 1 증가시키기 위해 sql문 작성 및 실행
-        String viewUpdateSql = "UPDATE Post set viewCount = viewCount+1 WHERE postIdx = "+getPostReq.getPostIdx();
+        String viewUpdateSql = "UPDATE Post set viewCount = viewCount+1 WHERE postIdx = "+postIdx;
         this.jdbcTemplate.update(viewUpdateSql);
 
-        String getImageSql = "SELECT path FROM Image WHERE postIdx = "+getPostReq.getPostIdx();
+        String getImageSql = "SELECT path FROM Image WHERE postIdx = "+postIdx;
         List<String> paths = this.jdbcTemplate.query(getImageSql, (rs,rowNum) -> new String(
                 rs.getString("path")
         ));

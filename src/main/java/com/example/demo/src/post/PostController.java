@@ -62,6 +62,7 @@ public class PostController {
             if(postingRes != null) return new BaseResponse<>(postingRes);
             // 파라미터가 누락되었을 때
             else throw new BaseException(BaseResponseStatus.OMITTED_PARAMETER);
+
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }catch (SQLIntegrityConstraintViolationException e){
@@ -71,22 +72,23 @@ public class PostController {
 
     @ResponseBody
     @GetMapping(value ="get")
-    public BaseResponse<Object> getPost(@RequestBody GetPostReq getPostReq){
+    public BaseResponse<Object> getPost(@RequestParam(value = "postIdx") int postIdx){
         try{
+            int categoryIdx = methods._getCategoryIdx(postIdx);
+            GetPostReq getPostReq = new GetPostReq(categoryIdx, postIdx);
             // 3000
             if(!this.methods._isExistPostIdx(getPostReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
 
-            int boardIdx = 10*this.methods._getBoardIdx(getPostReq.getPostIdx());
-            if(boardIdx == 10){
-                Object result = (GetCommunityPostRes)this.postProvider.getPost(boardIdx,getPostReq);
+            if(categoryIdx < 20){
+                Object result = (GetCommunityPostRes)this.postProvider.getPost(categoryIdx,postIdx);
                 return new BaseResponse<>(result);
             }
-            else if (boardIdx == 20){
-                Object result = (GetGroupPurchasePostRes)this.postProvider.getPost(boardIdx,getPostReq);
+            else if (categoryIdx < 30){
+                Object result = (GetGroupPurchasePostRes)this.postProvider.getPost(categoryIdx,postIdx);
                 return new BaseResponse<>(result);
             }
-            else if (boardIdx == 30){
-                Object result = (GetRecipePostRes)this.postProvider.getPost(boardIdx,getPostReq);
+            else if (categoryIdx == 30){
+                Object result = (GetRecipePostRes)this.postProvider.getPost(categoryIdx,postIdx);
                 return new BaseResponse<>(result);
             }
         }catch (BaseException e){

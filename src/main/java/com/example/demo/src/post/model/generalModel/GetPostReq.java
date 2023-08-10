@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetPostReq {
-    private String boardName;
+    private int categoryIdx;
     private int postIdx;
 }
