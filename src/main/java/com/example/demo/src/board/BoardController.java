@@ -9,23 +9,17 @@ import com.example.demo.src.board.model.GetPageRes;
 import com.example.demo.src.board.model.GetRecipeItemRes;
 import com.example.demo.src.category.CATEGORY;
 import com.example.demo.utils.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/app/boards")
 public class BoardController {
 
-    @Autowired
     private final BoardProvider boardProvider;
-    @Autowired
-    private final BoardService boardService;
-    @Autowired
     private final JwtService jwtService;
 
-    public BoardController(BoardProvider boardProvider, BoardService boardService, JwtService jwtService) {
+    public BoardController(BoardProvider boardProvider, JwtService jwtService) {
         this.boardProvider = boardProvider;
-        this.boardService = boardService;
         this.jwtService = jwtService;
     }
 
@@ -86,7 +80,7 @@ public class BoardController {
      * [GET] /boards/groupPurchase?category=keyword&limit=개수
 
      * 공동구매 정렬 조회 API
-     * 정렬된 리스트 반환 (최신순, 마감기한순)
+     * 정렬된 리스트 반환 (최신순, 마감임박순)
      * [GET] /boards/groupPurchase?sort=keyword&limit=개수
 
      * @return BaseResponse<GetPageRes<GetGroupPurchaseItemRes>>
