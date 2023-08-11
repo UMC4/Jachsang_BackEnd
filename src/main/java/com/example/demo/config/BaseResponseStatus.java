@@ -57,7 +57,7 @@ public enum BaseResponseStatus {
     PERMANENT_BANNED_USER(false, 1001, "영구정지된 회원입니다."),
     NOT_INPUT_PWD(false,1003,"비밀번호를 입력하지 않았습니다."),
     FAILED_GET_USERS(false,1004,"유저들을 가져오기에 실패하였습니다."),
-    FAILED_GET_USERIDX(false,1005,"유저 인덱스 가져오기에에 실패하였습니다."),
+    FAILED_GET_USERIDX(false,1005,"유저 인덱스 가져오기에 실패하였습니다."),
     FAILED_GET_ID(false,1006,"유저아이디 찾기에 실패하였습니다."),
     FAILED_GET_CHATROOM(false,1007,"유저 채팅방을 불러오는데 실패하였습니다."),
     FAILED_TO_FOLLOW(false,1008,"유저 팔로우하는데 실패하였습니다."),
@@ -71,6 +71,8 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_USERPWD(false,1015,"비밀번호 재설정에 실패하였습니다."),
     MODIFY_FAIL_USERINFO(false,1016,"유저 정보변경에 실패하였습니다."),
     FAILED_SEND_EMAIL(false,1017,"인증코드 전송에 실패하였습니다."),
+    JWT_USER_MISSMATCH(false,1018,"jwt값과 userIdx값이 가리키는 유저가 다릅니다."),
+
     //게시글
     NOT_EXIST_POST_IDX(false,3000,"존재하는 게시글idx가 아닙니다."),
     OVER_LENGTH(false, 3001, "내용이 정해진 길이를 초과했습니다."),
@@ -81,6 +83,7 @@ public enum BaseResponseStatus {
     NOT_EXIST_COMMENT_IDX(false,3006,"존재하지 않는 댓글 idx입니다."),
     SELF_REPORT(false,3007,"자기 자신을 신고할 수 없습니다."),
     REPORT_COUNT_OVER(false,3009,"이미 신고한 대상입니다."),
+    SELF_ADDITION(false,3010,"자신의 글에 공감/좋아요를 남길 수 없습니다."),
 
     //게시판
     BOTH_CATEGORY_SORT_INPUT(false, 2000, "카테고리와 정렬 조건 중 하나만 입력되어야 합니다."),

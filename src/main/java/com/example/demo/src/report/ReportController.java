@@ -37,30 +37,32 @@ public class ReportController {
     @PostMapping(value = "/create/community")
     public BaseResponse<String> communityReporting(@RequestBody CommunityReportReq communityReportReq) {
         try {
-            // 자기 자신을 신고함
+            // 자기 자신을 신고함 3007
             if(this.jwtService.getUserIdx() == communityReportReq.getReportedUserIdx()
             || communityReportReq.getReportingUserIdx() == communityReportReq.getReportingUserIdx()) {
-                return new BaseResponse<>(BaseResponseStatus.SELF_REPORT);
+                throw new BaseException(SELF_REPORT);
             }
             // 3009 같은 대상을 여러번 신고함
             if(this.methods._isExistReport(new CheckReportReq(
                     communityReportReq.getReportingUserIdx(), communityReportReq.getContentsKind(), communityReportReq.getReportedContentsIdx()
             ))){
-                return new BaseResponse<>(REPORT_COUNT_OVER);
+                throw new BaseException(REPORT_COUNT_OVER);
             }
             int categoryIdx = communityReportReq.getContentsKind();
             // 게시글
             if(categoryIdx <= 30){
+                // pidx가 존재하지 않음 3000
                 if(!methods._isExistPostIdx(communityReportReq.getReportedContentsIdx()))
-                    return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_POST_IDX);
+                    throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
             }
             // 댓글/답글
             else if (categoryIdx == 40) {
+                // cidx가 존재하지 않음 3006
                 if(!methods._isExistCommentIdx(communityReportReq.getReportedContentsIdx()))
-                    return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_COMMENT_IDX);
+                    throw new BaseException(BaseResponseStatus.NOT_EXIST_COMMENT_IDX);
             }
             //카테고리가 잘못됨
-            else return new BaseResponse<>(BaseResponseStatus.WRONG_CATEGORY);
+            else throw new BaseException(BaseResponseStatus.WRONG_CATEGORY);
 
             // 신고 접수 및 신고 누적 횟수 증가
             this.reportService.reporting(communityReportReq);
@@ -82,7 +84,7 @@ public class ReportController {
             if(this.jwtService.getUserIdx() != userReportReq.getUserIdx()){
                 return new BaseResponse<>(PERMISSION_DENIED);
             }
-            if(this.jwtService.getUserIdx() == userReportReq.getUserIdx()
+            if(this.jwtService.getUserIdx() == userReportReq.getReportedUserIdx()
             || userReportReq.getUserIdx() == userReportReq.getReportedUserIdx()){
                 return new BaseResponse<>(SELF_REPORT);
             }

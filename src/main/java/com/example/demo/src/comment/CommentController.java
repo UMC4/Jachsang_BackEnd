@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 
+import static com.example.demo.config.BaseResponseStatus.JWT_USER_MISSMATCH;
+import static com.example.demo.config.BaseResponseStatus.NOT_EXIST_COMMENT_IDX;
+
 @Controller
 @RequestMapping("/app/comment")
 public class CommentController {
@@ -41,7 +44,7 @@ public class CommentController {
             int userIdx = jwtService.getUserIdx();
             // 존재하는 게시글인지 (3000)
             if(!this.methods._isExistPostIdx(postIdx)) return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_POST_IDX);
-            // 요청 보내는 유저 정보가 올바른지
+            // 요청 보내는 유저 정보가 올바른지 1018
             if(commentingReq.getUserIdx() != userIdx) return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
             int result = this.commentService.commenting(commentingReq);
             return new BaseResponse<>(result);
@@ -59,10 +62,11 @@ public class CommentController {
         try {
             // 유저가 다르다
             if(this.methods._getUserIdxByCommentIdx((editCommentReq.getCommentIdx())) != jwtService.getUserIdx()){
-                return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
+                return new BaseResponse<>(JWT_USER_MISSMATCH);
             }
+            // commidx가 존재하지 않는다.
             if(!this.methods._isExistCommentIdx(editCommentReq.getCommentIdx())) {
-                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_COMMENT_IDX);
+                return new BaseResponse<>(NOT_EXIST_COMMENT_IDX);
             }
             int result = this.commentService.editComment(editCommentReq);
             return new BaseResponse<>(result);
@@ -81,7 +85,7 @@ public class CommentController {
                 return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
             }
             if(!this.methods._isExistCommentIdx(likeReq.getCommentIdx())){
-                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_COMMENT_IDX);
+                return new BaseResponse<>(NOT_EXIST_COMMENT_IDX);
             }
             int result = this.commentService.likeComment(likeReq);
 
@@ -98,10 +102,9 @@ public class CommentController {
                 return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
             }
             if(!this.methods._isExistCommentIdx(likeReq.getCommentIdx())) {
-                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_COMMENT_IDX);
+                return new BaseResponse<>(NOT_EXIST_COMMENT_IDX);
             }
             int result = this.commentService.cancelLikeComment(likeReq);
-            //if(extended == null) TODO:예외처리하기
             return new BaseResponse<>(result);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
@@ -112,6 +115,8 @@ public class CommentController {
     @GetMapping(value = "/get")
     public BaseResponse<Comment> getComment(@RequestParam("commentIdx") int commentIdx){
         try {
+            // 존재하지 않는 cidx 3006
+            if(!methods._isExistCommentIdx(commentIdx)) throw new BaseException(NOT_EXIST_COMMENT_IDX);
             Comment result = this.commentProvider.getComment(commentIdx);
             return new BaseResponse<>(result);
         } catch (BaseException e) {
@@ -123,14 +128,15 @@ public class CommentController {
     @PostMapping(value = "/create/reply")
     public BaseResponse<Integer> replyComment(@RequestBody ReplyReq replyReq){
         try {
+            //1018 jwt 호응 x
             if(replyReq.getUserIdx() != jwtService.getUserIdx()){
-                return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
+                return new BaseResponse<>(JWT_USER_MISSMATCH);
             }
+            // 3006 없는 cidx
             if(!this.methods._isExistCommentIdx(replyReq.getOriginIdx())) {
-                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_COMMENT_IDX);
+                return new BaseResponse<>(NOT_EXIST_COMMENT_IDX);
             }
             int result = this.commentService.replying(replyReq);
-            //if(extended == null) TODO:예외처리하기
             return new BaseResponse<>(result);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
@@ -141,11 +147,13 @@ public class CommentController {
     @DeleteMapping(value = "/delete")
     public BaseResponse<Integer> deleteComment(@RequestParam("commentIdx") int commentIdx){
         try {
+            //1018 jwt 미호응
             if(this.methods._getUserIdxByCommentIdx(commentIdx) != jwtService.getUserIdx()){
-                return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);
+                return new BaseResponse<>(JWT_USER_MISSMATCH);
             }
+            //3006 댓글 존재하지 않음
             if(!this.methods._isExistCommentIdx(commentIdx)) {
-                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_COMMENT_IDX);
+                return new BaseResponse<>(NOT_EXIST_COMMENT_IDX);
             }
             int result = this.commentService.deleteComment(commentIdx);
 
