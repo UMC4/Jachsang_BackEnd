@@ -4,14 +4,10 @@ import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.comment.model.*;
-import com.example.demo.src.post.PostProvider;
-import com.example.demo.src.post.PostService;
 import com.example.demo.src.privateMethod.Methods;
 import com.example.demo.utils.JwtService;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -28,7 +24,7 @@ public class CommentController {
     @Autowired
     private final CommentService commentService;
     private final Methods methods;
-    private JwtService jwtService;
+    private final JwtService jwtService;
     @Autowired
     public CommentController(CommentProvider commentProvider, CommentService commentService){
         this.commentProvider = commentProvider;

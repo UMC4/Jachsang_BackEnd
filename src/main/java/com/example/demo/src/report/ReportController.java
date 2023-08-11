@@ -22,8 +22,8 @@ public class ReportController {
     @Autowired
     private final ReportProvider reportProvider;
 
-    private Methods methods;
-    private JwtService jwtService;
+    private final Methods methods;
+    private final JwtService jwtService;
     @Autowired
     public ReportController(ReportService reportService, ReportProvider reportProvider){
         this.reportProvider = reportProvider;

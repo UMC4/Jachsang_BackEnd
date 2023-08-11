@@ -25,9 +25,8 @@ import static com.example.demo.config.BaseResponseStatus.*;
 @Controller
 @RequestMapping("/app/post")
 public class PostController {
-    final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private JwtService jwtService;
-    private Methods methods;
+    private final JwtService jwtService;
+    private final Methods methods;
     @Autowired
     private final PostProvider postProvider;
     @Autowired
@@ -44,22 +43,22 @@ public class PostController {
     @ResponseBody
     @PostMapping(value = "create")
     public BaseResponse<PostingRes> createPost(@RequestBody Object postingReq){
-        try{
-            HashMap<String,Object> req = (LinkedHashMap)postingReq;
+        try {
+            HashMap<String, Object> req = (LinkedHashMap) postingReq;
 
-            int categoryIdx = (int)req.get("categoryIdx");
+            int categoryIdx = (int) req.get("categoryIdx");
 
             //카테고리가 존재하지 않는 것일 때
-            if(!CATEGORY.isExistCategory(categoryIdx)){
+            if (!CATEGORY.isExistCategory(categoryIdx)) {
                 throw new BaseException(BaseResponseStatus.WRONG_CATEGORY);
             }
             // jwt와 userIdx가 호응하지 않음
-            if(this.jwtService.getUserIdx() != (int)req.get("userIdx"))
-            //3003 공지 작성 시 유저 권한이 admin이 아닐 때
-            if(categoryIdx == 15 && !methods._isAdmin(jwtService.getUserIdx())){
-                throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+            if (this.jwtService.getUserIdx() != (int) req.get("userIdx")) {
+                //3003 공지 작성 시 유저 권한이 admin이 아닐 때
+                if (categoryIdx == 15 && !methods._isAdmin(jwtService.getUserIdx())) {
+                    throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+                }
             }
-
             PostingRes postingRes = this.postService.posting(categoryIdx, req);
 
             if(postingRes != null) return new BaseResponse<>(postingRes);
@@ -83,15 +82,15 @@ public class PostController {
             if(!this.methods._isExistPostIdx(getPostReq.getPostIdx())) throw new BaseException(NOT_EXIST_POST_IDX);
 
             if(categoryIdx < 20){
-                Object result = (GetCommunityPostRes)this.postProvider.getPost(categoryIdx,postIdx);
+                Object result = this.postProvider.getPost(categoryIdx,postIdx);
                 return new BaseResponse<>(result);
             }
             else if (categoryIdx < 30){
-                Object result = (GetGroupPurchasePostRes)this.postProvider.getPost(categoryIdx,postIdx);
+                Object result = this.postProvider.getPost(categoryIdx,postIdx);
                 return new BaseResponse<>(result);
             }
             else if (categoryIdx == 30){
-                Object result = (GetRecipePostRes)this.postProvider.getPost(categoryIdx,postIdx);
+                Object result = this.postProvider.getPost(categoryIdx,postIdx);
                 return new BaseResponse<>(result);
             }
         }catch (BaseException e){
@@ -109,7 +108,7 @@ public class PostController {
             // 글쓴이와 삭제자가 다를 때
             if(jwtService.getUserIdx() != this.methods._getUserIdxByPostIdx(deleteReq.getPostIdx())) {
                 // 관리자가 아니면 권한없음 예외처리
-                if(!this.methods._getUserRole(jwtService.getUserIdx()).toLowerCase().equals("admin")) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
+                if(!this.methods._getUserRole(jwtService.getUserIdx()).equalsIgnoreCase("admin")) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
                 throw new BaseException(JWT_USER_MISSMATCH);
             }
             if(this.postService.deletePost(deleteReq)) return new BaseResponse<>("성공했습니다.");
@@ -133,7 +132,7 @@ public class PostController {
             // 존재하는 pidx인가
             if(!this.methods._isExistPostIdx((int)req.get("postIdx"))) {
                 return new BaseResponse<>(NOT_EXIST_POST_IDX);
-            };
+            }
             if(this.postService.updatePost(req))
                 return new BaseResponse<>("성공했습니다.");
         }catch (SQLIntegrityConstraintViolationException e){
