@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import static com.example.demo.config.BaseResponseStatus.REPORT_COUNT_OVER;
+import java.sql.SQLIntegrityConstraintViolationException;
+
+import static com.example.demo.config.BaseResponseStatus.*;
 
 @Controller
 @RequestMapping("/app/report")
@@ -35,7 +37,9 @@ public class ReportController {
     @PostMapping(value = "/create/community")
     public BaseResponse<String> communityReporting(@RequestBody CommunityReportReq communityReportReq) {
         try {
-            if(this.jwtService.getUserIdx() == communityReportReq.getReportingUserIdx()) {
+            // 자기 자신을 신고함
+            if(this.jwtService.getUserIdx() == communityReportReq.getReportedUserIdx()
+            || communityReportReq.getReportingUserIdx() == communityReportReq.getReportingUserIdx()) {
                 return new BaseResponse<>(BaseResponseStatus.SELF_REPORT);
             }
             // 3009 같은 대상을 여러번 신고함
@@ -57,16 +61,15 @@ public class ReportController {
             }
             //카테고리가 잘못됨
             else return new BaseResponse<>(BaseResponseStatus.WRONG_CATEGORY);
-            //3007 자기 자신을 신고함
 
-            String delete= "";
             // 신고 접수 및 신고 누적 횟수 증가
             this.reportService.reporting(communityReportReq);
-            // 신고된 컨텐츠를 조건이 되면 삭제시키기
-            if(this.reportService.deleteContents(communityReportReq) != 0) delete = " 신고 누적으로 인해 해당 컨텐츠가 삭제됐습니다.";
-            return new BaseResponse<>("성공했습니다."+delete);
+            return new BaseResponse<>("성공했습니다.");
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
+        //존재하지 않는 유저
+        } catch (SQLIntegrityConstraintViolationException e){
+            return new BaseResponse<>(NOT_EXIST_USER);
         }
     }
 
@@ -75,9 +78,13 @@ public class ReportController {
     @PostMapping(value = "/create/user")
     public BaseResponse<String> userReporting(@RequestBody UserReportReq userReportReq) {
         try {
-            //3007 자기 자신을 신고함
-            if(this.jwtService.getUserIdx() == userReportReq.getUserIdx()) {
-                return new BaseResponse<>(BaseResponseStatus.SELF_REPORT);
+            // 요청하는 유저 idx와 그의 jwt 토큰이 다름
+            if(this.jwtService.getUserIdx() != userReportReq.getUserIdx()){
+                return new BaseResponse<>(PERMISSION_DENIED);
+            }
+            if(this.jwtService.getUserIdx() == userReportReq.getUserIdx()
+            || userReportReq.getUserIdx() == userReportReq.getReportedUserIdx()){
+                return new BaseResponse<>(SELF_REPORT);
             }
             // 3009 같은 대상을 여러번 신고함
             if(this.methods._isExistReport(new CheckReportReq(
@@ -85,12 +92,9 @@ public class ReportController {
             ))){
                 return new BaseResponse<>(REPORT_COUNT_OVER);
             }
-            String restrict= "";
             // 신고 접수 및 신고 누적 횟수 증가
             this.reportService.reporting(userReportReq);
-            // 신고된 유저를 기준에 따라 처리하기.
-            if(this.reportService.restrictUser(userReportReq.getReportedUserIdx()) != -10) restrict = " 신고 누적으로 인해 영구 정지됐습니다.";
-            return new BaseResponse<>("성공했습니다."+restrict);
+            return new BaseResponse<>("성공했습니다.");
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
@@ -102,8 +106,13 @@ public class ReportController {
     public BaseResponse<String> chatReporting(@RequestBody ChatReportReq chatReportReq) {
         try {
             //3007 자기 자신을 신고함
-            if(this.jwtService.getUserIdx() == chatReportReq.getUserIdx()) {
+            if(this.jwtService.getUserIdx() == chatReportReq.getReportedUserIdx()
+            || chatReportReq.getUserIdx() == chatReportReq.getReportedUserIdx()) {
                 return new BaseResponse<>(BaseResponseStatus.SELF_REPORT);
+            }
+            // 요청자와 요청자의 JWT가 일치하지 않음
+            if(this.jwtService.getUserIdx() != chatReportReq.getUserIdx()){
+                return new BaseResponse<>(PERMISSION_DENIED);
             }
             // 3009 같은 대상을 여러번 신고함
             if(this.methods._isExistReport(new CheckReportReq(
@@ -111,11 +120,9 @@ public class ReportController {
             ))){
                 return new BaseResponse<>(REPORT_COUNT_OVER);
             }
-            String restrict= "";
             // 신고 접수 및 신고 누적 횟수 증가
             this.reportService.reporting(chatReportReq);
-            // 신고된 유저를 기준에 따라 처리하기 -> 내용 없음;
-            return new BaseResponse<>("성공했습니다."+restrict);
+            return new BaseResponse<>("성공했습니다.");
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

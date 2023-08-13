@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.util.List;
 
+import static com.example.demo.src.board.model.GetGroupPurchaseItemRes.groupPurchaseRowMapper;
+
 @Repository
 public class ProfileDao {
 
@@ -53,7 +55,7 @@ public class ProfileDao {
         }
     }
 
-    public List<GetGroupPurchaseItemRes> getGroupPurchaseList(int userIdx, int profileUserIdx, int limit) {
+    public List<GetGroupPurchaseItemRes> getGroupPurchaseList(int userIdx, int profileUserIdx, int startIdx, int size) {
         String Query =
                 "SELECT P.postIdx, P.categoryIdx, PC.category, P.title, GPD.productName, profileU.nickname, P.createAt, " +
                     "TIMESTAMPDIFF(DAY, CURRENT_TIMESTAMP, GPD.deadline) as remainDay, imagePath,  " +
@@ -69,19 +71,9 @@ public class ProfileDao {
                         ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
                     "JOIN User U ON U.userIdx = ? " +
                 "WHERE FLOOR(P.categoryIdx / 10) = 2 AND profileU.userIdx = ? " +
-                "LIMIT ?";
+                "ORDER BY P.createAt DESC " +
+                "LIMIT ? OFFSET ?";
 
-        return this.jdbcTemplate.query(Query,
-                (rs,rowNum) -> new GetGroupPurchaseItemRes(
-                        rs.getInt("postIdx"),
-                        rs.getInt("categoryIdx"),
-                        rs.getString("category"),
-                        rs.getString("title"),
-                        rs.getString("productName"),
-                        rs.getString("nickname"),
-                        rs.getInt("distance"),
-                        rs.getInt("remainDay"),
-                        rs.getString("imagePath")),
-                userIdx, profileUserIdx, limit);
+        return this.jdbcTemplate.query(Query, groupPurchaseRowMapper, userIdx, profileUserIdx, size, startIdx);
     }
 }

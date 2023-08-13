@@ -45,10 +45,32 @@ public enum BaseResponseStatus {
     PASSWORD_ENCRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 암호화에 실패하였습니다."),
     PASSWORD_DECRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 복호화에 실패하였습니다."),
 
+//<<<<<<< HEAD
+
+    /**
+     * 1000: 유저 관련 오류
+     */
+
+
     //유저
     NEEDED_EMAIL_INPUT(false,1000, "이메일을 입력해주세요."),
     PERMANENT_BANNED_USER(false, 1001, "영구정지된 회원입니다."),
-
+    NOT_INPUT_PWD(false,1003,"비밀번호를 입력하지 않았습니다."),
+    FAILED_GET_USERS(false,1004,"유저들을 가져오기에 실패하였습니다."),
+    FAILED_GET_USERIDX(false,1005,"유저 인덱스 가져오기에에 실패하였습니다."),
+    FAILED_GET_ID(false,1006,"유저아이디 찾기에 실패하였습니다."),
+    FAILED_GET_CHATROOM(false,1007,"유저 채팅방을 불러오는데 실패하였습니다."),
+    FAILED_TO_FOLLOW(false,1008,"유저 팔로우하는데 실패하였습니다."),
+    FAILED_TO_GETUSER(false,1008,"유저를 불러오는데 실패하였습니다."),
+    ID_ALREATY_EXISTS(false,1009,"아이디가 이미 존재합니다."), //Email Controller
+    FAILED_TO_GETMAIL(false,1010,"유저 이메일을 체크 실패하였습니다."),
+    FAILED_CHECK_FOLLOWED(false,1011,"팔로우 여부체크에 실패하였습니다."),
+    FAILED_CHECK_EXISTS_ID(false,1012,"아이디 존재 여부체크에 실패하였습니다."),
+    FOLLOWED_USER_ALREADY(false,1013,"이미 팔로우 하였습니다."),
+    FAILED_TO_UNFOLLOW(false,1014,"팔로우 취소에 실패하였습니다."),
+    MODIFY_FAIL_USERPWD(false,1015,"비밀번호 재설정에 실패하였습니다."),
+    MODIFY_FAIL_USERINFO(false,1016,"유저 정보변경에 실패하였습니다."),
+    FAILED_SEND_EMAIL(false,1017,"인증코드 전송에 실패하였습니다."),
     //게시글
     NOT_EXIST_POST_IDX(false,3000,"존재하는 게시글idx가 아닙니다."),
     OVER_LENGTH(false, 3001, "내용이 정해진 길이를 초과했습니다."),
@@ -74,7 +96,15 @@ public enum BaseResponseStatus {
     MIX_SEARCH_QUERY(false, 2033, "제목 검색과 재료 검색을 혼용할 수 없습니다."),
 
     //상대프로필
-    NOT_EXIST_USER(false,5000,"존재하는 유저가 아닙니다.");
+    NOT_EXIST_USER(false,5000,"존재하는 유저가 아닙니다."),
+
+
+    // 채팅
+    NOT_EXIST_CHATROOM_LIST(false, 4001, "존재하는 채팅방 목록이 없습니다."),
+    NOT_EXIST_CHATROOM(false, 4002, "존재하는 채팅방이 없습니다."),
+    NOT_EXIST_CHAT_USER(false, 4003, "해당 유저가 없습니다."),
+    NOT_EXIST_IN_CHATROOM(false, 4004, "해당 유저가 채팅방에 입장해 있지 않습니다."),
+    CANT_ENTER_CHATROOM(false, 4010, "신고로 인해 채팅방에 입장할 수 없습니다.");
 
 
     private final boolean isSuccess;

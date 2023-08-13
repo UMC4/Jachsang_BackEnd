@@ -38,7 +38,7 @@ public class PostDao {
     }
 
     // 글쓰기
-    public PostingRes posting(int boardIdx, int categoryIdx, HashMap<String,Object> postingReq) {
+    public PostingRes posting(int categoryIdx, HashMap<String,Object> postingReq) {
         try {
             // 입력받은 정보를 general information, specific information으로 구분하는 작업
             // 그 중에서 general information을 Post general에 담는 과정
@@ -48,6 +48,8 @@ public class PostDao {
 
             // Post table에 insert 하는 sql 문장과 그 파라미터, URL의 경우 'null'로 저장함.
             String sqlGeneral = "INSERT INTO Post(categoryIdx, userIdx, title, viewCount, likeCount, createAt, updateAt, url) VALUES (?,?,?,0,0,now(),now(),'null')";
+            String category = CATEGORY.getName(categoryIdx);
+
             Object[] paramGeneral = {
                     categoryIdx, general.getUserIdx(), general.getTitle()
             };
@@ -60,13 +62,13 @@ public class PostDao {
             String sqlSpecific = "";
             Object[] paramSpecific = null;
             //커뮤니티
-            if (boardIdx == 1) {
+            if (categoryIdx < 20) {
                 CommunityPostingReq posting = new CommunityPostingReq(postIdx, (String) postingReq.get("contents"));
                 sqlSpecific = "INSERT INTO CommunityDetail(communityDetailIdx, postIdx, contents, heartCount) VALUES (" + postIdx + "," + postIdx + ",?, 0)";
                 paramSpecific = new Object[]{posting.getContents()};
             }
             //공동구매
-            else if (boardIdx == 2) {
+            else if (categoryIdx < 30) {
                 GroupPurchasePostingReq posting = new GroupPurchasePostingReq(postIdx, postingReq);
                 sqlSpecific = "INSERT INTO GroupPurchaseDetail(groupPurchaseDetailIdx, postIdx, productName, productURL, singlePrice, deliveryFee, " +
                         "members, deadline,hasExtension, calculated) VALUES (" + postIdx + "," + postIdx + ",?,?,?,?,?,?,false,false)";
@@ -90,7 +92,7 @@ public class PostDao {
             // 공동구매, 커뮤니티, 레시피 sql과 param을 이용해 쿼리문 실행
             this.jdbcTemplate.update(sqlSpecific, paramSpecific);
             // 반환할 응답 생성
-            PostingRes postingRes = new PostingRes(postIdx, categoryIdx, general.getCategory(), general.getUserIdx(), general.getTitle(), "null");
+            PostingRes postingRes = new PostingRes(postIdx, categoryIdx, category, general.getUserIdx(), general.getTitle(), "null");
             // 응답 반환
 
             //이미지 등록
@@ -99,6 +101,7 @@ public class PostDao {
 
             return postingRes;
         } catch (Exception e){
+            System.out.println(e.getStackTrace()+"\n알 수 없는 오류");
             return null;
         }
     }

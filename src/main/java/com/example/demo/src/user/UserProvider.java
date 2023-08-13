@@ -41,17 +41,25 @@ public class UserProvider {
         catch (Exception exception) {
             // Logger를 이용하여 에러를 로그에 기록한다
             logger.error("Error!", exception);
-            throw new BaseException(DATABASE_ERROR);
+            throw new BaseException(FAILED_GET_USERS);
+        }
+    }
+    public List<GetUserIdx> getUserIdxes() throws BaseException{
+        try {
+            List<GetUserIdx> getUserIdxes=userDao.getUserIdxes();
+            return getUserIdxes;
+        }catch (Exception exception){
+            throw new BaseException(FAILED_GET_USERIDX);
         }
     }
 
-    public List<GetUserRes> getUsersByEmail(String email) throws BaseException{
+    public GetUserIdRes getUsersIdByEmail(String email) throws BaseException{
         try{
-            List<GetUserRes> getUsersRes = userDao.getUsersByEmail(email);
-            return getUsersRes;
+            GetUserIdRes getUserIdRes = userDao.getUsersByEmail(email);
+            return getUserIdRes;
         }
         catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
+            throw new BaseException(FAILED_GET_ID);
         }
     }
     public List<GetUserChatRes> getUserChatList(int userIdx) throws BaseException{
@@ -59,7 +67,7 @@ public class UserProvider {
             List<GetUserChatRes> getUserChatRes = userDao.getUserChatRes(userIdx);
             return getUserChatRes;
         }catch (Exception exception){
-            throw new BaseException(DATABASE_ERROR);
+            throw new BaseException(FAILED_GET_CHATROOM);
         }
     }
     public List<GetFollowRes> getFollowResList(int userIdx) throws BaseException{
@@ -67,7 +75,7 @@ public class UserProvider {
             List<GetFollowRes> getFollowRes=userDao.getFollowRes(userIdx);
             return getFollowRes;
         }catch (Exception exception){
-            throw new BaseException(DATABASE_ERROR);
+            throw new BaseException(FAILED_TO_FOLLOW);
         }
     }
     public GetUserRes getUser(int userIdx) throws BaseException {
@@ -75,7 +83,7 @@ public class UserProvider {
             GetUserRes getUserRes = userDao.getUser(userIdx);
             return getUserRes;
         } catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
+            throw new BaseException(FAILED_TO_GETUSER);
         }
     }
 
@@ -83,21 +91,21 @@ public class UserProvider {
         try{
             return userDao.checkEmail(email);
         } catch (Exception exception){
-            throw new BaseException(DATABASE_ERROR);
+            throw new BaseException(FAILED_TO_GETMAIL);
         }
     }
     public int checkFollowed(PostFollowReq postFollowReq) throws BaseException{
         try{
             return userDao.checkFollow(postFollowReq);
         } catch (Exception exception){
-            throw new BaseException(DATABASE_ERROR);
+            throw new BaseException(FAILED_CHECK_FOLLOWED);
         }
     }
     public int checkId(String id) throws BaseException{
         try {
             return userDao.checkID(id);
         }catch (Exception exception){
-            throw new BaseException(DATABASE_ERROR);
+            throw new BaseException(FAILED_CHECK_EXISTS_ID);
         }
     }
     public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException{

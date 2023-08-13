@@ -9,7 +9,6 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 public class PostChatComment {
-    private Long chatCommentIdx;
     private Long chatRoomIdx;
     private Long chatUserIdx;
     private String contents;

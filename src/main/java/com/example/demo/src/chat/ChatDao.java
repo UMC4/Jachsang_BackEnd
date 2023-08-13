@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.ObjectUtils;
 
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class ChatDao {
@@ -21,12 +23,29 @@ public class ChatDao {
     }
 
 
+
+    public Object getUser(GetUser getUser) {
+        String getUserQuery = "SELECT userIdx, chatRestrictTime " +
+                "FROM User " +
+                "WHERE userIdx = " + getUser.getUserIdx();
+        return this.jdbcTemplate.query(getUserQuery,
+                (rs, rowNum) -> new GetUser(
+                        rs.getLong("userIdx"),
+                        rs.getTimestamp("chatRestrictTime"))
+                );
+    }
+
+
     public List<Object> getChatRooms(Long userIdx, String category) {
 
         String getUserQuery = "SELECT chatRoomIdx FROM ChatUser WHERE userIdx = ?";
         List<Long> chatRoomIdxList = this.jdbcTemplate.query(getUserQuery, new Object[]{userIdx},
                 (rs, rowNum) -> rs.getLong("chatRoomIdx")
         );
+
+        if (chatRoomIdxList.isEmpty()) {
+            return null;
+        }
 
         String getChatRoomsQuery = null;
         if (category.equals("community")) {
@@ -35,7 +54,7 @@ public class ChatDao {
                     "JOIN ChatRoom cr On p.postIdx = cr.postIdx " +
                     "JOIN ChatUser cu on cr.chatRoomIdx = cu.chatRoomIdx " +
                     "JOIN ChatComment cc on cu.chatUserIdx = cc.chatUserIdx " +
-                    "WHERE p.categoryIdx BETWEEN 10 AND 19 AND cu.chatRoomIdx IN (?)" +
+                    "WHERE p.categoryIdx BETWEEN 10 AND 19 AND cu.chatRoomIdx In (?) " +
                     "ORDER BY cc.createTime DESC ";
         } else if (category.equals("grouppurchase")) {
             getChatRoomsQuery = "SELECT cr.chatRoomIdx, cu.userIdx, p.title, cr.unreads, cc.createTime, cc.contents " +
@@ -66,17 +85,33 @@ public class ChatDao {
         return chatRoomList;
     }
 
+
+    public List<Long> existInChatRoom(Long chatRoomIdx) {
+        String existInChatRoomQuery = "SELECT userIdx FROM ChatUser WHERE chatRoomIdx = ?";
+        List<Long> existInChatRoom = this.jdbcTemplate.query(existInChatRoomQuery, new Object[]{chatRoomIdx},
+                (rs, rowNum) -> rs.getLong("userIdx"));
+
+        return existInChatRoom;
+    }
+
+
     public Object getChatRoom(Long chatRoomIdx) {
         String getChatRoomQuery = "SELECT category, title " +
                 "FROM Post p " +
                 "JOIN ChatRoom c On p.postIdx = c.postIdx " +
                 "JOIN PostCategory pc On pc.categoryIdx = p.categoryIdx " +
                 "WHERE chatRoomIdx = " + chatRoomIdx;
-        return this.jdbcTemplate.query(getChatRoomQuery,
+        Object getChatRoom = this.jdbcTemplate.query(getChatRoomQuery,
                 (rs, rowNum) -> new GetInChatRoom(
                         rs.getString("category"),
                         rs.getString("title"))
-        );
+                );
+
+        if (ObjectUtils.isEmpty(getChatRoom)) {
+            return null;
+        }
+
+        return getChatRoom;
     }
 
 
@@ -93,8 +128,11 @@ public class ChatDao {
     public void addUserToChatRoom(Long chatUserIdx, Long chatRoomIdx, Long userIdx) {
         String addUserToChatRoomQuery = "INSERT INTO ChatUser(chatUserIdx, userIdx, createTime, chatRoomIdx) " +
                 "VALUES(?, ?, now(), ?)";
-
         Object[] params = {chatUserIdx, userIdx, chatRoomIdx};
+
+        String updateChatRoomMembersQuery = "UPDATE ChatRoom SET members = members + 1, " +
+                "groupPurchaseMembers = groupPurchaseMembers + 1 WHERE chatRoomIdx = ?";
+        this.jdbcTemplate.update(updateChatRoomMembersQuery, chatRoomIdx);
 
         this.jdbcTemplate.update(addUserToChatRoomQuery, params);
     }
@@ -115,7 +153,7 @@ public class ChatDao {
     public PostChatRoom postChatRoom(PostChatRoom postChatRoom, GetPost getPost) {
         String postChatRoomQuery =
                 "INSERT INTO ChatRoom(chatRoomIdx, postIdx, host, unreads, members, createTime, updateTime, groupPurchaseMembers) " +
-                        "VALUES(?, ?, ?, 0, 0, now(), now(), 0)";
+                        "VALUES(?, ?, ?, 0, 2, now(), now(), 2)";
 
         Object[] params = {postChatRoom.getChatRoomIdx(), getPost.getPostIdx(), getPost.getUserIdx()};
 
@@ -136,7 +174,8 @@ public class ChatDao {
                         rs.getString("kind"),
                         rs.getInt("unread"),
                         rs.getTimestamp("createTime"),
-                        rs.getString("contentType"))
+                        rs.getString("contentType"),
+                        rs.getInt("reported"))
         );
     }
 
@@ -152,6 +191,11 @@ public class ChatDao {
                 new Object[]{chatRoomIdx},
                 String.class
         );
+
+        if (getChatRoomUsers.isEmpty()) {
+            return null;
+        }
+
         return getChatRoomUsers;
     }
 
@@ -159,17 +203,29 @@ public class ChatDao {
 
     public int getChatRoomMembers(Long chatRoomIdx) {
         String getChatRoomMembersQuery = "SELECT members FROM ChatRoom WHERE chatRoomIdx = ?";
-        int members = this.jdbcTemplate.queryForObject(getChatRoomMembersQuery, new Object[]{chatRoomIdx}, Integer.class);
+        List<Integer> result = this.jdbcTemplate.query(getChatRoomMembersQuery, new Object[]{chatRoomIdx},
+                (rs, rowNum) -> rs.getInt("members"));
+
+        if (result.isEmpty()) {
+            return 0;
+        }
+        int members = result.get(0);
         return members;
     }
 
 
-    public void saveChatComment(PostChatComment postChatComment) {
+    public List<Long> existChatRoom() {
+        String existChatRoomQuery = "SELECT chatRoomIdx FROM ChatRoom";
+        return this.jdbcTemplate.queryForList(existChatRoomQuery, Long.class);
+    }
+
+
+    public void saveChatComment(PostChatComment postChatComment, Long chatCommentIdx) {
         String saveChatCommentQuery = "INSERT INTO ChatComment" +
                 "(chatCommentIdx, chatUserIdx, chatRoomIdx, contents, kind, unread, createTime, contentType)" +
                 "VALUES (?, ?, ?, ?, ?, 0, now(), ?)";
         this.jdbcTemplate.update(saveChatCommentQuery,
-                postChatComment.getChatCommentIdx(),
+                chatCommentIdx,
                 postChatComment.getChatUserIdx(),
                 postChatComment.getChatRoomIdx(),
                 postChatComment.getContents(),

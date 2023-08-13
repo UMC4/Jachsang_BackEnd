@@ -20,4 +20,5 @@ public class GetChatComment {
     private int unread;
     private Timestamp createTime;
     private String ContentType;
+    private int reported;
 }

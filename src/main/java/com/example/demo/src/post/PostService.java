@@ -23,9 +23,9 @@ public class PostService {
     }
     
     //글쓰기 : 공동구매, 커뮤니티, 레시피 중 뭐든 실행할 수 있도록 구성함
-    public PostingRes posting(int boardIdx, int categoryIdx, HashMap<String,Object> postingReq) throws BaseException, SQLIntegrityConstraintViolationException {
+    public PostingRes posting( int categoryIdx, HashMap<String,Object> postingReq) throws BaseException, SQLIntegrityConstraintViolationException {
         // Controller에서 타입에 따라 API를 나눌 것이므로 여기와 DAO에서는 메서드 하나로 처리 가능
-        return this.postDao.posting(boardIdx, categoryIdx, postingReq);
+        return this.postDao.posting(categoryIdx, postingReq);
     }
 
     //좋아요 표시
