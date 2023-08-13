@@ -38,10 +38,20 @@ public class Methods {
                 rs.getTimestamp("updateAt"),
                 rs.getString("url")));
     }
-    public Object _getDetailPost(int boardIdx, int postIdx){
-        // 공동구매 detail 정보 불러오기
+    public Object _getDetailPost(int categoryIdx, int postIdx){
+        // 카테고리 detail 정보 불러오기
         Object detailPost;
-        if(boardIdx == 20) {
+        if (categoryIdx < 20) {
+            String qry = "SELECT * FROM CommunityDetail WHERE postIdx = "+postIdx;
+            detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new CommunityPost(
+                    rs.getInt("communityDetailIdx"),
+                    rs.getString("contents")
+            ));
+            // Post와 detail의 정보를 합친 후 리턴하기
+            return (CommunityPost)detailPost;
+        }
+        //공동구매 detail 정보 불러오기
+        else if(categoryIdx < 20) {
             String qry = "SELECT * FROM GroupPurchaseDetail WHERE postIdx = "+postIdx;
             detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new GroupPurchasePost(
                     rs.getInt("groupPurchaseDetailIdx"),
@@ -56,18 +66,8 @@ public class Methods {
             ));
             return (GroupPurchasePost)detailPost;
         }
-        // 커뮤니티 detail 정보 불러오기
-        else if (boardIdx == 10) {
-            String qry = "SELECT * FROM CommunityDetail WHERE postIdx = "+postIdx;
-            detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new CommunityPost(
-                    rs.getInt("communityDetailIdx"),
-                    rs.getString("contents")
-            ));
-            // Post와 detail의 정보를 합친 후 리턴하기
-            return (CommunityPost)detailPost;
-        }
         // 레시피 detail 정보 불러오기
-        else if (boardIdx == 30) {
+        else if (categoryIdx == 30) {
             String qry = "SELECT * FROM RecipeDetail WHERE postIdx = " + postIdx;
             detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new RecipePost(
                     rs.getInt("recipeDetailIdx"),

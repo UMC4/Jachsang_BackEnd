@@ -33,6 +33,7 @@ public class GetGroupPurchasePostRes extends Image {
     private Timestamp deadline;
     private boolean hasExtension;
     private boolean calculated;
+    private List<Integer> comments;
 
     public GetGroupPurchasePostRes(Post generalPost, GroupPurchasePost groupPurchasePost, List<String> paths){
         super(paths);

@@ -80,10 +80,11 @@ public class ReportController {
     @PostMapping(value = "/create/user")
     public BaseResponse<String> userReporting(@RequestBody UserReportReq userReportReq) {
         try {
-            // 요청하는 유저 idx와 그의 jwt 토큰이 다름
+            // 요청하는 유저 idx와 그의 jwt 토큰이 다름 1018
             if(this.jwtService.getUserIdx() != userReportReq.getUserIdx()){
                 return new BaseResponse<>(PERMISSION_DENIED);
             }
+            // 자기 자신을 신고함 3007
             if(this.jwtService.getUserIdx() == userReportReq.getReportedUserIdx()
             || userReportReq.getUserIdx() == userReportReq.getReportedUserIdx()){
                 return new BaseResponse<>(SELF_REPORT);

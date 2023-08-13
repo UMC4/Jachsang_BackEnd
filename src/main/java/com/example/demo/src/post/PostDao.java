@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.security.Timestamp;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -121,12 +122,20 @@ public class PostDao {
         List<String> paths = this.jdbcTemplate.query(getImageSql, (rs,rowNum) -> new String(
                 rs.getString("path")
         ));
-        // Post와 detail의 정보를 합친 후 리턴하기
-        if (categoryIdx == 10) {
-            return new GetCommunityPostRes((Post)generalPost, (CommunityPost)detailPost,paths);
+
+        String getCommentIdxSql = "SELECT commentIdx FROM Comment WHERE postIdx = "+postIdx;
+        List<Integer> comments = this.jdbcTemplate.queryForList(getCommentIdxSql,Integer.class);
+
+    // Post와 detail의 정보를 합친 후 리턴하기
+        if (categoryIdx < 20 ) {
+            GetCommunityPostRes result = new GetCommunityPostRes((Post)generalPost, (CommunityPost)detailPost,paths);
+            result.setComments(comments);
+            return result;
         }
-        else if(categoryIdx == 20) {
-            return new GetGroupPurchasePostRes((Post)generalPost,(GroupPurchasePost)detailPost,paths);
+        else if(categoryIdx < 30) {
+            GetGroupPurchasePostRes result = new GetGroupPurchasePostRes((Post)generalPost,(GroupPurchasePost)detailPost,paths);
+            result.setComments(comments);
+            return result;
         }
         else if (categoryIdx == 30) {
             return new GetRecipePostRes((Post)generalPost, (RecipePost)detailPost,paths);

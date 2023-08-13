@@ -76,22 +76,12 @@ public class PostController {
             // 3000
             if(!this.methods._isExistPostIdx(getPostReq.getPostIdx())) throw new BaseException(NOT_EXIST_POST_IDX);
 
-            if(categoryIdx < 20){
-                Object result = this.postProvider.getPost(categoryIdx,postIdx);
-                return new BaseResponse<>(result);
-            }
-            else if (categoryIdx < 30){
-                Object result = this.postProvider.getPost(categoryIdx,postIdx);
-                return new BaseResponse<>(result);
-            }
-            else if (categoryIdx == 30){
-                Object result = this.postProvider.getPost(categoryIdx,postIdx);
-                return new BaseResponse<>(result);
-            }
+            Object result = this.postProvider.getPost(categoryIdx,postIdx);
+            return new BaseResponse<>(result);
+
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
-        return new BaseResponse<>("실패했습니다.");
     }
 
     @ResponseBody

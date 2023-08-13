@@ -26,6 +26,7 @@ public class GetCommunityPostRes extends Image {
     private String url;
     private int communityDetailIdx;
     private String contents;
+    private List<Integer> comments;
 
     public GetCommunityPostRes(Post generalPost, CommunityPost communityPost, List<String> paths) {
         super(paths);
