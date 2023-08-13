@@ -5,11 +5,12 @@ import com.example.demo.config.BaseResponse;
 import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.board.model.GetCommunityItemRes;
 import com.example.demo.src.board.model.GetGroupPurchaseItemRes;
-import com.example.demo.src.board.model.GetPageRes;
 import com.example.demo.src.board.model.GetRecipeItemRes;
 import com.example.demo.src.category.CATEGORY;
 import com.example.demo.utils.JwtService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/app/boards")
@@ -37,14 +38,14 @@ public class BoardController {
     // 커뮤니티 게시판
     @ResponseBody
     @GetMapping("/community")
-    public BaseResponse<GetPageRes<GetCommunityItemRes>> getCommunityPage(@RequestParam(value = "category", required = false) String category,
-                                                                          @RequestParam(value = "sort", required = false) String sort,
-                                                                          @RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
-                                                                          @RequestParam(value = "size", defaultValue = "10") int size) {
+    public BaseResponse<List<GetCommunityItemRes>> getCommunityPage(@RequestParam(value = "category", required = false) String category,
+                                                                    @RequestParam(value = "sort", required = false) String sort,
+                                                                    @RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
+                                                                    @RequestParam(value = "size", defaultValue = "10") int size) {
         try {
             int userIdxByJWT = jwtService.getUserIdx();
 
-            GetPageRes<GetCommunityItemRes> communityPage;
+            List<GetCommunityItemRes> communityList;
 
             // category와 sort 중 하나만 사용할 수 있다.
             // 둘 다 사용하거나, 둘 다 사용하지 않으면 오류를 발생한다.
@@ -59,16 +60,16 @@ public class BoardController {
                 if(categoryIdx == 0) {
                     throw new BaseException(BaseResponseStatus.NOT_EXIST_CATEGORY);
                 } else {
-                    communityPage = boardProvider.getFilteredCommunityPage(userIdxByJWT, categoryIdx, startIdx, size);
+                    communityList = boardProvider.getFilteredCommunityPage(userIdxByJWT, categoryIdx, startIdx, size);
                 }
             }
             // sort가 입력된 경우 공동구매 리스트를 정렬해서 groupPurchasePage에 할당한다.
             else {
                 SortType sortType = SortType.fromName(sort);
-                communityPage = boardProvider.getSortedCommunityPage(userIdxByJWT, sortType, startIdx, size);
+                communityList = boardProvider.getSortedCommunityPage(userIdxByJWT, sortType, startIdx, size);
             }
 
-            return new BaseResponse<>(communityPage);
+            return new BaseResponse<>(communityList);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -88,13 +89,13 @@ public class BoardController {
     // 그룹 구매 게시판
     @ResponseBody
     @GetMapping("/grouppurchase")
-    public BaseResponse<GetPageRes<GetGroupPurchaseItemRes>> getGroupPurchasePage(@RequestParam(value = "category", required = false) String category,
+    public BaseResponse<List<GetGroupPurchaseItemRes>> getGroupPurchasePage(@RequestParam(value = "category", required = false) String category,
                                                                             @RequestParam(value = "sort", required = false) String sort,
                                                                             @RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
                                                                             @RequestParam(value = "size", defaultValue = "10") int size) {
         try {
             int userIdxByJWT = jwtService.getUserIdx();
-            GetPageRes<GetGroupPurchaseItemRes> groupPurchasePage;
+            List<GetGroupPurchaseItemRes> groupPurchaseList;
 
             // category와 sort 중 하나만 사용할 수 있다.
             // 둘 다 사용하거나, 둘 다 사용하지 않으면 오류를 발생한다.
@@ -109,15 +110,15 @@ public class BoardController {
                 if(categoryIdx == 0) {
                     throw new BaseException(BaseResponseStatus.NOT_EXIST_CATEGORY);
                 } else {
-                    groupPurchasePage = boardProvider.getFilteredGroupPurchasePage(userIdxByJWT, categoryIdx, startIdx, size);
+                    groupPurchaseList = boardProvider.getFilteredGroupPurchasePage(userIdxByJWT, categoryIdx, startIdx, size);
                 }
             }
             // sort가 입력된 경우 공동구매 리스트를 정렬해서 groupPurchasePage에 할당한다.
             else {
                 SortType sortType = SortType.fromName(sort);
-                groupPurchasePage = boardProvider.getSortedGroupPurchasePage(userIdxByJWT, sortType, startIdx, size);
+                groupPurchaseList = boardProvider.getSortedGroupPurchasePage(userIdxByJWT, sortType, startIdx, size);
             }
-            return new BaseResponse<>(groupPurchasePage);
+            return new BaseResponse<>(groupPurchaseList);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
@@ -133,18 +134,18 @@ public class BoardController {
     // 레시피 게시판
     @ResponseBody
     @GetMapping("/recipe")
-    public BaseResponse<GetPageRes<GetRecipeItemRes>> getRecipePage(@RequestParam(value = "sort") String sort,
+    public BaseResponse<List<GetRecipeItemRes>> getRecipePage(@RequestParam(value = "sort") String sort,
                                                               @RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
                                                               @RequestParam(value = "size", defaultValue = "10") int size) {
         try {
             int userIdxByJWT = jwtService.getUserIdx();
 
-            GetPageRes<GetRecipeItemRes> recipePage;
+            List<GetRecipeItemRes> recipeList;
             // sort가 입력된 경우 공동구매 리스트를 정렬해서 groupPurchasePage에 할당한다.
             SortType sortType = SortType.fromName(sort);
-            recipePage = boardProvider.getSortedRecipePage(userIdxByJWT, sortType, startIdx, size);
+            recipeList = boardProvider.getSortedRecipePage(userIdxByJWT, sortType, startIdx, size);
 
-            return new BaseResponse<>(recipePage);
+            return new BaseResponse<>(recipeList);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
@@ -159,7 +160,7 @@ public class BoardController {
     // 커뮤니티 게시판 검색
     @ResponseBody
     @GetMapping("/community/search")
-    public BaseResponse<GetPageRes<GetCommunityItemRes>> searchCommunityPage(@RequestParam("query") String query,
+    public BaseResponse<List<GetCommunityItemRes>> searchCommunityPage(@RequestParam("query") String query,
                                                                        @RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
                                                                        @RequestParam(value = "size", defaultValue = "10") int size) {
         try {
@@ -168,10 +169,10 @@ public class BoardController {
             // 검색어의 유무나 길이 검사
             validateQuery(query);
 
-            GetPageRes<GetCommunityItemRes> communityPage;
-            communityPage = boardProvider.getSearchedCommunityPage(userIdxByJWT, query, startIdx, size);
+            List<GetCommunityItemRes> communityList;
+            communityList = boardProvider.getSearchedCommunityPage(userIdxByJWT, query, startIdx, size);
 
-            return new BaseResponse<>(communityPage);
+            return new BaseResponse<>(communityList);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
@@ -186,7 +187,7 @@ public class BoardController {
     // 공동구매 게시판 검색
     @ResponseBody
     @GetMapping("/grouppurchase/search")
-    public BaseResponse<GetPageRes<GetGroupPurchaseItemRes>> searchGroupPurchasePage(@RequestParam("query") String query,
+    public BaseResponse<List<GetGroupPurchaseItemRes>> searchGroupPurchasePage(@RequestParam("query") String query,
                                                                                @RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
                                                                                @RequestParam(value = "size", defaultValue = "10") int size) {
         try {
@@ -195,10 +196,10 @@ public class BoardController {
             // 검색어의 유무나 길이 검사
             validateQuery(query);
 
-            GetPageRes<GetGroupPurchaseItemRes> groupPurchasePage;
-            groupPurchasePage = boardProvider.getSearchedGroupPurchasePage(userIdxByJWT, query, startIdx, size);
+            List<GetGroupPurchaseItemRes> groupPurchaseList;
+            groupPurchaseList = boardProvider.getSearchedGroupPurchasePage(userIdxByJWT, query, startIdx, size);
 
-            return new BaseResponse<>(groupPurchasePage);
+            return new BaseResponse<>(groupPurchaseList);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
@@ -213,7 +214,7 @@ public class BoardController {
     // 레시피 게시판 검색
     @ResponseBody
     @GetMapping("/recipe/search")
-    public BaseResponse<GetPageRes<GetRecipeItemRes>> searchRecipePage(@RequestParam("query") String query,
+    public BaseResponse<List<GetRecipeItemRes>> searchRecipePage(@RequestParam("query") String query,
                                                                  @RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
                                                                  @RequestParam(value = "size", defaultValue = "10") int size) {
         try {
@@ -224,10 +225,10 @@ public class BoardController {
             // 검색어의 종류(제목/재료 검색) 분류
             boolean firstIsTag = checkFirstIsTag(query);
 
-            GetPageRes<GetRecipeItemRes> recipePage;
-            recipePage = boardProvider.getSearchedRecipePage(userIdxByJWT, query, firstIsTag, startIdx, size);
+            List<GetRecipeItemRes> recipeList;
+            recipeList = boardProvider.getSearchedRecipePage(userIdxByJWT, query, firstIsTag, startIdx, size);
 
-            return new BaseResponse<>(recipePage);
+            return new BaseResponse<>(recipeList);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
