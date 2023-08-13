@@ -3,6 +3,7 @@ package com.example.demo.src.board.model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.jdbc.core.RowMapper;
 
 @Getter
 @Setter
@@ -13,4 +14,13 @@ public class GetRecipeItemRes {
     private boolean likeStatus;
     private int likeCount;
     private String imagePath;
+
+    public static RowMapper<GetRecipeItemRes> recipeRowMapper =
+            (rs,rowNum) -> new GetRecipeItemRes(
+                    rs.getInt("postIdx"),
+                    rs.getString("title"),
+                    rs.getBoolean("likeStatus"),
+                    rs.getInt("likeCount"),
+                    rs.getString("imagePath")
+            );
 }

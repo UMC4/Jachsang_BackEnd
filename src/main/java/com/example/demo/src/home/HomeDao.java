@@ -10,6 +10,10 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.util.List;
 
+import static com.example.demo.src.board.model.GetCommunityItemRes.communityRowMapper;
+import static com.example.demo.src.board.model.GetGroupPurchaseItemRes.groupPurchaseRowMapper;
+import static com.example.demo.src.board.model.GetRecipeItemRes.recipeRowMapper;
+
 @Repository
 public class HomeDao {
 
@@ -48,17 +52,7 @@ public class HomeDao {
                 "IF(isNew = 0, weight, NULL) DESC LIMIT 3";
 
 
-        return this.jdbcTemplate.query(Query,
-                (rs,rowNum) -> new GetCommunityItemRes(
-                        rs.getInt("postIdx"),
-                        rs.getInt("categoryIdx"),
-                        rs.getString("category"),
-                        rs.getString("title"),
-                        rs.getString("nickname"),
-                        rs.getInt("distance"),
-                        rs.getString("createAt"),
-                        rs.getString("imagePath")),
-                userIdx);
+        return this.jdbcTemplate.query(Query, communityRowMapper, userIdx);
     }
 
     // 3000미터 이내의 거리에 있는 게시물만 반환하며, 게시물 마감기한까지 기간이 짧은 순서(마감임박순)로 정렬합니다.
@@ -87,18 +81,7 @@ public class HomeDao {
                 "CASE WHEN remainDay < 0 THEN deadline END ASC " +
             "LIMIT 3";
 
-        return this.jdbcTemplate.query(Query,
-                (rs,rowNum) -> new GetGroupPurchaseItemRes(
-                        rs.getInt("postIdx"),
-                        rs.getInt("categoryIdx"),
-                        rs.getString("category"),
-                        rs.getString("title"),
-                        rs.getString("productName"),
-                        rs.getString("nickname"),
-                        rs.getInt("distance"),
-                        rs.getInt("remainDay"),
-                        rs.getString("imagePath")),
-                userIdx);
+        return this.jdbcTemplate.query(Query, groupPurchaseRowMapper, userIdx);
     }
 
     // 모든 레시피 게시물을 가져오는 메서드입니다.
@@ -118,16 +101,9 @@ public class HomeDao {
                     ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
                 "WHERE FLOOR(P.categoryIdx/10) = 3 " +
                 "ORDER BY IF(P.createAt >= TIMESTAMPADD(DAY, -7, CURRENT_TIMESTAMP), 1, 0)," +
-                    "(100*P.likeCount+P.viewCount) DESC LIMIT 3";
+                    "(100*P.likeCount+P.viewCount) DESC LIMIT 1";
 
-        return this.jdbcTemplate.query(Query,
-                (rs,rowNum) -> new GetRecipeItemRes(
-                        rs.getInt("postIdx"),
-                        rs.getString("title"),
-                        rs.getBoolean("likeStatus"),
-                        rs.getInt("likeCount"),
-                        rs.getString("imagePath")),
-                userIdx);
+        return this.jdbcTemplate.query(Query, recipeRowMapper, userIdx);
     }
 }
 
