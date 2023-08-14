@@ -219,8 +219,8 @@ public class BoardDao {
                 "FROM cte  " +
                 "WHERE distance IS NULL OR distance <= 3000  " +
                 "ORDER BY (remainDay < 0), " +
-                        "CASE WHEN remainDay >= 0 THEN deadline END DESC, " +
-                        "CASE WHEN remainDay < 0 THEN deadline END ASC " +
+                        "CASE WHEN remainDay >= 0 THEN deadline END ASC, " +
+                        "CASE WHEN remainDay < 0 THEN deadline END DESC " +
                 "LIMIT ? OFFSET ?";
 
         return this.jdbcTemplate.query(Query, groupPurchaseRowMapper, userIdx, size, startIdx);
