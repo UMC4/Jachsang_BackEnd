@@ -76,7 +76,7 @@ public class PostController {
             // 3000
             if(!this.methods._isExistPostIdx(getPostReq.getPostIdx())) throw new BaseException(NOT_EXIST_POST_IDX);
 
-            Object result = this.postProvider.getPost(categoryIdx,postIdx);
+            Object result = this.postProvider.getPost(categoryIdx,this.jwtService.getUserIdx(),postIdx);
             return new BaseResponse<>(result);
 
         }catch (BaseException e){
@@ -207,5 +207,23 @@ public class PostController {
         }
     }
 
-
+    @ResponseBody
+    @PostMapping(value = "recipeTest")
+    public BaseResponse<String> recipeTest(){
+        try{
+            this.methods.recipeTest();
+            return new BaseResponse<>("성공했습니다.");
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+    @ResponseBody
+    @DeleteMapping(value = "recipe/delete/all")
+    public BaseResponse<Integer> deleteRecipes(){
+        try{
+            return new BaseResponse<>(this.postService.deleteRecipes());
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 }

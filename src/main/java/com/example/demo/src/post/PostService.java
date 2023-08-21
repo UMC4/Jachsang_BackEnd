@@ -53,4 +53,8 @@ public class PostService {
     public Methods _getMethods(){
         return this.postDao._getMethods();
     }
+
+    public int deleteRecipes() throws BaseException{
+        return this.postDao.deleteRecipes();
+    }
 }

@@ -27,7 +27,8 @@ public class GetCommunityPostRes extends Image {
     private int communityDetailIdx;
     private String contents;
     private List<Integer> comments;
-
+    private boolean isLiked;
+    private boolean isScraped;
     public GetCommunityPostRes(Post generalPost, CommunityPost communityPost, List<String> paths) {
         super(paths);
         this.postIdx = generalPost.getPostIdx();

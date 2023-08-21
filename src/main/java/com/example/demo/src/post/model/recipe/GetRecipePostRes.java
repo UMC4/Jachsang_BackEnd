@@ -25,8 +25,10 @@ public class GetRecipePostRes extends Image {
     private Timestamp updateAt;
     private String url;
     private int recipeDetailIdx;
-    private String contents;
-    private String tag;
+    private String mainImageUrl;
+    private String ingredients;
+    private String description;
+    private boolean isScraped;
 
     public GetRecipePostRes(Post generalPost, RecipePost recipePost, List<String> paths){
         super(paths);
@@ -40,7 +42,8 @@ public class GetRecipePostRes extends Image {
         this.updateAt = generalPost.getUpdateAt();
         this.url = generalPost.getUrl();
         this.recipeDetailIdx = recipePost.getRecipeDetailIdx();
-        this.contents = recipePost.getContents();
-        this.tag = recipePost.getTag();
+        this.mainImageUrl= recipePost.getMainImageUrl();
+        this.ingredients = recipePost.getIngredients();
+        this.description = recipePost.getDescriptions();
     }
 }

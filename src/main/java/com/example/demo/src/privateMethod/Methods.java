@@ -13,9 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
 import java.util.List;
-
 
 public class Methods {
 
@@ -71,8 +69,9 @@ public class Methods {
             String qry = "SELECT * FROM RecipeDetail WHERE postIdx = " + postIdx;
             detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new RecipePost(
                     rs.getInt("recipeDetailIdx"),
-                    rs.getString("contents"),
-                    rs.getString("tag")
+                    rs.getString("mainImageUrl"),
+                    rs.getString("ingredients"),
+                    rs.getString("description")
             ));
             return (RecipePost)detailPost;
         }
@@ -137,11 +136,44 @@ public class Methods {
             return true;
         }
     }
-
     public boolean _isAdmin(int userIdx){
         String checkAdminSql = "SELECT role FROM User WHERE userIdx = "+userIdx;
         String role = this.jdbcTemplate.queryForObject(checkAdminSql,String.class);
         if(role.toLowerCase().equals("admin")) return true;
         else return false;
+    }
+    public boolean _isLikedPost(int userIdx, int postIdx){
+        String checkLikedPost = "EXISTS(SELECT * FROM LikedPost WHERE postIdx = ? AND userIdx = ?)";
+        Object[] param = {postIdx, userIdx};
+        return this.jdbcTemplate.queryForObject(checkLikedPost,param,int.class) == 1 ? true : false;
+    }
+    public boolean _isHeartPost(int userIdx, int postIdx){
+        String checkLikedPost = "EXISTS(SELECT * FROM HeartPost WHERE postIdx = ? AND userIdx = ?)";
+        Object[] param = {postIdx, userIdx};
+        return this.jdbcTemplate.queryForObject(checkLikedPost,param,int.class) == 1 ? true : false;
+    }
+    public void recipeTest() throws BaseException {
+        com.example.demo.src.recipeCrawl.Methods m = new com.example.demo.src.recipeCrawl.Methods();
+        List<RecipeInsertReq> list = m.getRecipe();
+        for(RecipeInsertReq r : list){
+            _insertRecipeData(r);
+        }
+    }
+    public int _insertRecipeData(RecipeInsertReq recipeInsertReq){
+        String insertOnPostSql = "INSERT INTO Post(categoryIdx,userIdx,title,url) VALUES(30,2,?,?)";
+        String insertOnRecipeSql = "INSERT INTO RecipeDetail(postIdx, ingredients,description,mainImageUrl,originUrl) VALUES(?,?,?,?,?)";
+        Object[] postParam = {
+                recipeInsertReq.getTitle(), recipeInsertReq.getUrl()
+        };
+        this.jdbcTemplate.update(insertOnPostSql ,postParam);
+        String sql = "SELECT postIdx FROM Post WHERE categoryIdx = 30 " + "AND userIdx = 2 "+
+                "AND title = \""+ recipeInsertReq.getTitle()+"\"";
+        List<Integer> postIdx = this.jdbcTemplate.queryForList(sql,int.class);
+
+        Object[] recipeParam = {
+                postIdx.get(0), recipeInsertReq.getIngredients(), recipeInsertReq.getDescription(),
+                recipeInsertReq.getMainImageUrl(), recipeInsertReq.getOriginUrl()
+        };
+        return this.jdbcTemplate.update(insertOnRecipeSql,recipeParam);
     }
 }

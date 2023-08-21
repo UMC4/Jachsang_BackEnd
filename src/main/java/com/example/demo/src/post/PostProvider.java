@@ -13,8 +13,8 @@ public class PostProvider {
         this.postDao = postDao;
     }
 
-    public Object getPost(int categoryIdx, int postIdx) throws BaseException {
-        return this.postDao.getPost(categoryIdx, postIdx);
+    public Object getPost(int categoryIdx, int userIdx, int postIdx) throws BaseException {
+        return this.postDao.getPost(categoryIdx, userIdx, postIdx);
     }
     public int getLikeCount(int postIdx) throws BaseException{
         return this.postDao.getLikeCount(postIdx);

@@ -34,7 +34,8 @@ public class GetGroupPurchasePostRes extends Image {
     private boolean hasExtension;
     private boolean calculated;
     private List<Integer> comments;
-
+    private boolean isLiked;
+    private boolean isScraped;
     public GetGroupPurchasePostRes(Post generalPost, GroupPurchasePost groupPurchasePost, List<String> paths){
         super(paths);
         this.postIdx = generalPost.getPostIdx();

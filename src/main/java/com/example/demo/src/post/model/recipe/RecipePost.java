@@ -12,8 +12,8 @@ import lombok.Setter;
 public class RecipePost {
 
     private int recipeDetailIdx;
-    private String contents;
-    private String tag;
-
+    private String ingredients;
+    private String descriptions;
+    private String mainImageUrl;
 
 }

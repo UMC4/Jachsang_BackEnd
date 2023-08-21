@@ -108,12 +108,13 @@ public class PostDao {
     }
 
     // 글보기
-    public Object getPost(int categoryIdx, int postIdx) {
+    public Object getPost(int categoryIdx, int userIdx, int postIdx) {
         // 세 게시판의 글을 한번에 처리하기 위한 변수 설정
         // 기본정보와 detail 정보 불러오기
 
         Object generalPost = methods._getPost(postIdx),
                 detailPost = methods._getDetailPost(categoryIdx,postIdx);
+
         // 조회수 1 증가시키기 위해 sql문 작성 및 실행
         String viewUpdateSql = "UPDATE Post set viewCount = viewCount+1 WHERE postIdx = "+postIdx;
         this.jdbcTemplate.update(viewUpdateSql);
@@ -125,20 +126,28 @@ public class PostDao {
 
         String getCommentIdxSql = "SELECT commentIdx FROM Comment WHERE postIdx = "+postIdx;
         List<Integer> comments = this.jdbcTemplate.queryForList(getCommentIdxSql,Integer.class);
+        boolean isScraped = this.methods._isLikedPost(userIdx, postIdx);
+        boolean isHearted = this.methods._isHeartPost(userIdx, postIdx);
 
     // Post와 detail의 정보를 합친 후 리턴하기
         if (categoryIdx < 20 ) {
             GetCommunityPostRes result = new GetCommunityPostRes((Post)generalPost, (CommunityPost)detailPost,paths);
             result.setComments(comments);
+            result.setScraped(isScraped);
+            result.setLiked(isHearted);
             return result;
         }
         else if(categoryIdx < 30) {
             GetGroupPurchasePostRes result = new GetGroupPurchasePostRes((Post)generalPost,(GroupPurchasePost)detailPost,paths);
             result.setComments(comments);
+            result.setScraped(isScraped);
+            result.setLiked(isHearted);
             return result;
         }
         else if (categoryIdx == 30) {
-            return new GetRecipePostRes((Post)generalPost, (RecipePost)detailPost,paths);
+            GetRecipePostRes result = new GetRecipePostRes((Post)generalPost, (RecipePost)detailPost,paths);
+            result.setScraped(isScraped);
+            return result;
         }
         else return null;
     }
@@ -333,5 +342,19 @@ public class PostDao {
 
     public Methods _getMethods(){
         return this.methods;
+    }
+
+    public int deleteRecipes(){
+        String getRecipePidx = "SELECT postIdx FROM RecipeDetail";
+        List<Integer> postIdx = this.jdbcTemplate.queryForList(getRecipePidx,int.class);
+        int count = 0;
+        for(int p : postIdx){
+            String deleteRecipeSql = "DELETE FROM RecipeDetail WHERE postIdx = " + p;
+            String deletePostSql = "DELETE FROM Post WHERE postIdx = "+ p;
+            this.jdbcTemplate.update(deleteRecipeSql);
+            this.jdbcTemplate.update(deletePostSql);
+            count++;
+        }
+        return count;
     }
 }
