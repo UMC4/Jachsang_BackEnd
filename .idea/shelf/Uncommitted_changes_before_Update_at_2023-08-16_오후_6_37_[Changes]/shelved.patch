@@ -1,0 +1,943 @@
+Index: src/main/java/com/example/demo/src/post/model/generalModel/GetPostReq.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.demo.src.post.model.generalModel;\r\n\r\nimport lombok.AllArgsConstructor;\r\nimport lombok.Getter;\r\nimport lombok.NoArgsConstructor;\r\nimport lombok.Setter;\r\n\r\n@Getter\r\n@Setter\r\n@NoArgsConstructor\r\n@AllArgsConstructor\r\npublic class GetPostReq {\r\n    private String boardName;\r\n    private int postIdx;\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/demo/src/post/model/generalModel/GetPostReq.java b/src/main/java/com/example/demo/src/post/model/generalModel/GetPostReq.java
+--- a/src/main/java/com/example/demo/src/post/model/generalModel/GetPostReq.java	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ b/src/main/java/com/example/demo/src/post/model/generalModel/GetPostReq.java	(date 1691918226680)
+@@ -10,6 +10,5 @@
+ @NoArgsConstructor
+ @AllArgsConstructor
+ public class GetPostReq {
+-    private String boardName;
+     private int postIdx;
+ }
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    id 'org.springframework.boot' version '2.7.11'\r\n    id 'io.spring.dependency-management' version '1.1.0'\r\n    id 'java'\r\n}\r\n\r\ngroup = 'com.example'\r\nversion = '0.0.1-SNAPSHOT'\r\n\r\nsourceCompatibility = 1.8\r\ntargetCompatibility = 1.8\r\n\r\ncompileJava.options.encoding = 'UTF-8'\r\n\r\nconfigurations {\r\n    compileOnly {\r\n        extendsFrom annotationProcessor\r\n    }\r\n}\r\n\r\nrepositories {\r\n    mavenCentral()\r\n}\r\n\r\ndependencies {\r\n    implementation 'org.jetbrains:annotations:24.0.1'\r\n\r\n    // Spring Boot Starter\r\n    implementation('org.springframework.boot:spring-boot-starter')\r\n    implementation('org.springframework.boot:spring-boot-starter-web')\r\n    testImplementation ('org.springframework.boot:spring-boot-starter-test')\r\n\r\n    // Lombok\r\n    implementation ('org.projectlombok:lombok')\r\n    compileOnly ('org.projectlombok:lombok:1.18.26')\r\n    annotationProcessor ('org.projectlombok:lombok:1.18.26')\r\n\r\n    // DB\r\n    runtimeOnly ('com.mysql:mysql-connector-j') //mysql8\r\n    implementation ('org.springframework.boot:spring-boot-starter-jdbc')\r\n    implementation ('org.springframework.boot:spring-boot-starter-data-jpa')\r\n\r\n    // Web\r\n    implementation ('org.springframework.boot:spring-boot-starter-web')\r\n    implementation ('org.springframework.boot:spring-boot-starter-websocket')\r\n\r\n    // Security, Authentication\r\n    implementation('org.springframework.boot:spring-boot-starter-security')\r\n    implementation(group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0')\r\n    implementation('io.jsonwebtoken:jjwt:0.9.0')\r\n\r\n    // Email Authentication\r\n    implementation('org.springframework.boot:spring-boot-starter-mail')\r\n    implementation('org.springframework.boot:spring-boot-starter-validation')\r\n    implementation('org.springframework.boot:spring-boot-configuration-processor')\r\n   // implementation group: 'org.springframework.boot', name:'spring-boot-starter-mail', version:'2.6.3'\r\n\r\n    //SpringTemplateEngine\r\n    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'\r\n\r\n\r\n}\r\n\r\ntest {\r\n    useJUnitPlatform()\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle b/build.gradle
+--- a/build.gradle	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ b/build.gradle	(date 1691917782906)
+@@ -7,6 +7,7 @@
+ group = 'com.example'
+ version = '0.0.1-SNAPSHOT'
+ 
++
+ sourceCompatibility = 1.8
+ targetCompatibility = 1.8
+ 
+Index: src/main/java/com/example/demo/src/post/model/community/GetCommunityPostRes.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.demo.src.post.model.community;\r\n\r\nimport com.example.demo.src.post.model.generalModel.Image;\r\nimport com.example.demo.src.post.model.generalModel.Post;\r\nimport lombok.AllArgsConstructor;\r\nimport lombok.Getter;\r\nimport lombok.NoArgsConstructor;\r\nimport lombok.Setter;\r\n\r\nimport java.sql.Timestamp;\r\nimport java.util.List;\r\n\r\n@Getter\r\n@Setter\r\n@NoArgsConstructor\r\n@AllArgsConstructor\r\npublic class GetCommunityPostRes extends Image {\r\n    private int postIdx;\r\n    private int categoryIdx;\r\n    private int userIdx;\r\n    private String title;\r\n    private int viewCount;\r\n    private int likeCount;\r\n    private Timestamp createAt;\r\n    private Timestamp updateAt;\r\n    private String url;\r\n    private int communityDetailIdx;\r\n    private String contents;\r\n\r\n    public GetCommunityPostRes(Post generalPost, CommunityPost communityPost, List<String> paths) {\r\n        super(paths);\r\n        this.postIdx = generalPost.getPostIdx();\r\n        this.categoryIdx = generalPost.getCategoryIdx();\r\n        this.userIdx = generalPost.getUserIdx();\r\n        this.title = generalPost.getTitle();\r\n        this.viewCount = generalPost.getViewCount();\r\n        this.likeCount = generalPost.getLikeCount();\r\n        this.createAt = generalPost.getCreateAt();\r\n        this.updateAt = generalPost.getUpdateAt();\r\n        this.url = generalPost.getUrl();\r\n        this.communityDetailIdx = communityPost.getCommunityDetailIdx();\r\n        this.contents = communityPost.getContents();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/demo/src/post/model/community/GetCommunityPostRes.java b/src/main/java/com/example/demo/src/post/model/community/GetCommunityPostRes.java
+--- a/src/main/java/com/example/demo/src/post/model/community/GetCommunityPostRes.java	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ b/src/main/java/com/example/demo/src/post/model/community/GetCommunityPostRes.java	(date 1691917180384)
+@@ -26,6 +26,7 @@
+     private String url;
+     private int communityDetailIdx;
+     private String contents;
++    private List<Integer> comments;
+ 
+     public GetCommunityPostRes(Post generalPost, CommunityPost communityPost, List<String> paths) {
+         super(paths);
+Index: src/main/java/com/example/demo/src/post/PostController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.demo.src.post;\r\n\r\nimport com.example.demo.config.BaseException;\r\nimport com.example.demo.config.BaseResponse;\r\nimport com.example.demo.config.BaseResponseStatus;\r\nimport com.example.demo.src.category.CATEGORY;\r\nimport com.example.demo.src.post.model.community.GetCommunityPostRes;\r\nimport com.example.demo.src.post.model.generalModel.*;\r\nimport com.example.demo.src.post.model.groupPurchase.GetGroupPurchasePostRes;\r\nimport com.example.demo.src.post.model.recipe.GetRecipePostRes;\r\nimport com.example.demo.src.privateMethod.Methods;\r\nimport com.example.demo.utils.JwtService;\r\nimport org.slf4j.Logger;\r\nimport org.slf4j.LoggerFactory;\r\nimport org.springframework.beans.factory.annotation.Autowired;\r\nimport org.springframework.stereotype.Controller;\r\nimport org.springframework.web.bind.annotation.*;\r\n\r\nimport java.sql.SQLIntegrityConstraintViolationException;\r\nimport java.util.HashMap;\r\nimport java.util.LinkedHashMap;\r\n\r\n@Controller\r\n@RequestMapping(\"/app/post\")\r\npublic class PostController {\r\n    final Logger logger = LoggerFactory.getLogger(this.getClass());\r\n    private JwtService jwtService;\r\n    private Methods methods;\r\n    @Autowired\r\n    private final PostProvider postProvider;\r\n    @Autowired\r\n    private final PostService postService;\r\n    @Autowired\r\n    public PostController(PostProvider postProvider, PostService postService) {\r\n        this.postService = postService;\r\n        this.postProvider = postProvider;\r\n        this.jwtService = new JwtService();\r\n        this.methods = this.postService._getMethods();\r\n    }\r\n    //글쓰기\r\n    ///\r\n    @ResponseBody\r\n    @PostMapping(value = \"create\")\r\n    public BaseResponse<PostingRes> createPost(@RequestBody Object postingReq){\r\n        try{\r\n            HashMap<String,Object> req = (LinkedHashMap)postingReq;\r\n\r\n            int categoryIdx = (int)req.get(\"categoryIdx\");\r\n\r\n            //카테고리가 존재하지 않는 것일 때\r\n            if(!CATEGORY.isExistCategory(categoryIdx)){\r\n                throw new BaseException(BaseResponseStatus.WRONG_CATEGORY);\r\n            }\r\n\r\n            //3003 공지 작성 시 유저 권한이 admin이 아닐 때\r\n            if(categoryIdx == 15 && !methods._isAdmin(jwtService.getUserIdx())){\r\n                throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);\r\n            }\r\n\r\n            PostingRes postingRes = this.postService.posting(categoryIdx, req);\r\n\r\n            if(postingRes != null) return new BaseResponse<>(postingRes);\r\n            // 파라미터가 누락되었을 때\r\n            else throw new BaseException(BaseResponseStatus.OMITTED_PARAMETER);\r\n        }catch (BaseException e) {\r\n            return new BaseResponse<>(e.getStatus());\r\n        }catch (SQLIntegrityConstraintViolationException e){\r\n            return new BaseResponse<>(null);\r\n        }\r\n    }\r\n\r\n    @ResponseBody\r\n    @GetMapping(value =\"get\")\r\n    public BaseResponse<Object> getPost(@RequestBody GetPostReq getPostReq){\r\n        try{\r\n            // 3000\r\n            if(!this.methods._isExistPostIdx(getPostReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);\r\n\r\n            int boardIdx = 10*this.methods._getBoardIdx(getPostReq.getPostIdx());\r\n            if(boardIdx == 10){\r\n                Object result = (GetCommunityPostRes)this.postProvider.getPost(boardIdx,getPostReq);\r\n                return new BaseResponse<>(result);\r\n            }\r\n            else if (boardIdx == 20){\r\n                Object result = (GetGroupPurchasePostRes)this.postProvider.getPost(boardIdx,getPostReq);\r\n                return new BaseResponse<>(result);\r\n            }\r\n            else if (boardIdx == 30){\r\n                Object result = (GetRecipePostRes)this.postProvider.getPost(boardIdx,getPostReq);\r\n                return new BaseResponse<>(result);\r\n            }\r\n        }catch (BaseException e){\r\n            return new BaseResponse<>(e.getStatus());\r\n        }\r\n        return new BaseResponse<>(\"실패했습니다.\");\r\n    }\r\n\r\n    @ResponseBody\r\n    @DeleteMapping(value = \"delete\")\r\n    public BaseResponse<String> deletePost(@RequestBody DeleteReq deleteReq){\r\n        try{\r\n            // 3000\r\n            if(!this.methods._isExistPostIdx(deleteReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);\r\n            // 글쓴이와 삭제자가 다를 때\r\n            if(jwtService.getUserIdx() != this.methods._getUserIdxByPostIdx(deleteReq.getPostIdx())) {\r\n                // 관리자가 아니면 권한없음 예외처리\r\n                if(!this.methods._getUserRole(jwtService.getUserIdx()).toLowerCase().equals(\"admin\")) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);\r\n                throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);\r\n            }\r\n            if(this.postService.deletePost(deleteReq)) return new BaseResponse<>(\"성공했습니다.\");\r\n        }catch (BaseException e){\r\n            return new BaseResponse<>(e.getStatus());\r\n        }\r\n        return new BaseResponse<>(\"성공했습니다..\");\r\n    }\r\n\r\n    @ResponseBody\r\n    @PutMapping(value = \"update\")\r\n    public BaseResponse<String> updatePost(@RequestBody Object updateReq){\r\n        try{\r\n            HashMap<String,Object> req = (LinkedHashMap)updateReq;\r\n            int userIdx = jwtService.getUserIdx();\r\n            //3008\r\n            if(userIdx != this.methods._getUserIdxByPostIdx((int)(req.get(\"postIdx\")))){\r\n                return new BaseResponse<>(BaseResponseStatus.PERMISSION_DENIED);\r\n            }\r\n            // 글자 길이 예외처리\r\n            // 존재하는 pidx인가\r\n            if(!this.methods._isExistPostIdx((int)req.get(\"postIdx\"))) {\r\n                return new BaseResponse<>(BaseResponseStatus.NOT_EXIST_POST_IDX);\r\n            };\r\n            if(this.postService.updatePost(req))\r\n                return new BaseResponse<>(\"성공했습니다.\");\r\n        }catch (BaseException e){\r\n            return new BaseResponse<>(e.getStatus());\r\n        }catch (SQLIntegrityConstraintViolationException e){\r\n            return new BaseResponse<>(BaseResponseStatus.OMITTED_PARAMETER);\r\n        }\r\n        return new BaseResponse<>(\"실패입니다!\");\r\n    }\r\n\r\n    @ResponseBody\r\n    @PostMapping(value = \"scrap\")\r\n    public BaseResponse<String> scrapPost(@RequestBody LikeReq likeReq){\r\n        try{\r\n            // 요청하는 유저와 당사자가 다른 경우\r\n            if(jwtService.getUserIdx() != likeReq.getUserIdx()) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);\r\n            // 존재하지 않는 게시글인 경우\r\n            if(!this.methods._isExistPostIdx(likeReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);\r\n            if(this.postService.scrapPost(likeReq)) return new BaseResponse<>(\"성공했습니다.\");\r\n        }catch (BaseException e){\r\n            return new BaseResponse<>(e.getStatus());\r\n        }\r\n        return new BaseResponse<>(\"실패했습니다.\");\r\n    }\r\n    @ResponseBody\r\n    @PostMapping(value = \"scrap/cancel\")\r\n    public BaseResponse<String> cancelScrapPost(@RequestBody LikeReq likeReq){\r\n        try{\r\n            if(jwtService.getUserIdx() != likeReq.getUserIdx()) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);\r\n            // 존재하지 않는 게시글인 경우\r\n            if(!this.methods._isExistPostIdx(likeReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);\r\n            if(this.postService.cancelScrapPost(likeReq)) return new BaseResponse<>(\"성공했습니다.\");\r\n        }catch (BaseException e){\r\n            return new BaseResponse<>(e.getStatus());\r\n        }\r\n        return new BaseResponse<>(\"실패했습니다.\");\r\n    }\r\n    @ResponseBody\r\n    @PostMapping(value = \"heart\")\r\n    public BaseResponse<String> heartPost(@RequestBody HeartPostReq heartPostReq){\r\n        try{\r\n            if(jwtService.getUserIdx() != heartPostReq.getUserIdx()) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);\r\n            // 존재하지 않는 게시글인 경우\r\n            if(!this.methods._isExistPostIdx(heartPostReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);\r\n\r\n            if(this.postService.heartPost(heartPostReq)) return new BaseResponse<>(\"성공했습니다.\");\r\n            // 실패한 경우 예외처리\r\n        }catch (BaseException e){\r\n            return new BaseResponse<>(e.getStatus());\r\n        }\r\n        return new BaseResponse<>(\"실패했습니다.\");\r\n    }\r\n\r\n    @ResponseBody\r\n    @PostMapping(value = \"heart/cancel\")\r\n    public BaseResponse<String> cancelHeartPost(@RequestBody HeartPostReq heartPostReq){\r\n        try{\r\n            if(jwtService.getUserIdx() != heartPostReq.getUserIdx()) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);\r\n            // 존재하지 않는 게시글인 경우\r\n            if(!this.methods._isExistPostIdx(heartPostReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);\r\n\r\n            if(this.postService.cancelHeartPost(heartPostReq)) return new BaseResponse<>(\"성공했습니다.\");\r\n            // 실패한 경우 예외처리\r\n        }catch (BaseException e){\r\n            return new BaseResponse<>(e.getStatus());\r\n        }\r\n        return new BaseResponse<>(\"실패했습니다.\");\r\n    }\r\n\r\n    @ResponseBody\r\n    @GetMapping(value = \"get/like\")\r\n    public BaseResponse<Integer> getLikeCount(@RequestParam(\"postIdx\") int postIdx){\r\n        try{\r\n            // 존재하지 않는 게시글인 경우\r\n            if(!this.methods._isExistPostIdx(postIdx)) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);\r\n            int likeCount = this.postProvider.getLikeCount(postIdx);\r\n\r\n            //if(likeCount == -1) TODO:예외처리하기\r\n            return new BaseResponse<>(likeCount);\r\n        }catch (BaseException e){\r\n            return new BaseResponse<>(e.getStatus());\r\n        }\r\n    }\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/demo/src/post/PostController.java b/src/main/java/com/example/demo/src/post/PostController.java
+--- a/src/main/java/com/example/demo/src/post/PostController.java	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ b/src/main/java/com/example/demo/src/post/PostController.java	(date 1691918247015)
+@@ -71,7 +71,7 @@
+ 
+     @ResponseBody
+     @GetMapping(value ="get")
+-    public BaseResponse<Object> getPost(@RequestBody GetPostReq getPostReq){
++    public BaseResponse<Object> getPost(@RequestParam int postIdx){
+         try{
+             // 3000
+             if(!this.methods._isExistPostIdx(getPostReq.getPostIdx())) throw new BaseException(BaseResponseStatus.NOT_EXIST_POST_IDX);
+Index: .idea/.gitignore
+===================================================================
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+deleted file mode 100644
+--- a/.idea/.gitignore	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ /dev/null	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
+@@ -1,8 +0,0 @@
+-# 디폴트 무시된 파일
+-/shelf/
+-/workspace.xml
+-# 에디터 기반 HTTP 클라이언트 요청
+-/httpRequests/
+-# Datasource local storage ignored files
+-/dataSources/
+-/dataSources.local.xml
+Index: .idea/uiDesigner.xml
+===================================================================
+diff --git a/.idea/uiDesigner.xml b/.idea/uiDesigner.xml
+deleted file mode 100644
+--- a/.idea/uiDesigner.xml	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ /dev/null	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
+@@ -1,124 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="Palette2">
+-    <group name="Swing">
+-      <item class="com.intellij.uiDesigner.HSpacer" tooltip-text="Horizontal Spacer" icon="/com/intellij/uiDesigner/icons/hspacer.svg" removable="false" auto-create-binding="false" can-attach-label="false">
+-        <default-constraints vsize-policy="1" hsize-policy="6" anchor="0" fill="1" />
+-      </item>
+-      <item class="com.intellij.uiDesigner.VSpacer" tooltip-text="Vertical Spacer" icon="/com/intellij/uiDesigner/icons/vspacer.svg" removable="false" auto-create-binding="false" can-attach-label="false">
+-        <default-constraints vsize-policy="6" hsize-policy="1" anchor="0" fill="2" />
+-      </item>
+-      <item class="javax.swing.JPanel" icon="/com/intellij/uiDesigner/icons/panel.svg" removable="false" auto-create-binding="false" can-attach-label="false">
+-        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3" />
+-      </item>
+-      <item class="javax.swing.JScrollPane" icon="/com/intellij/uiDesigner/icons/scrollPane.svg" removable="false" auto-create-binding="false" can-attach-label="true">
+-        <default-constraints vsize-policy="7" hsize-policy="7" anchor="0" fill="3" />
+-      </item>
+-      <item class="javax.swing.JButton" icon="/com/intellij/uiDesigner/icons/button.svg" removable="false" auto-create-binding="true" can-attach-label="false">
+-        <default-constraints vsize-policy="0" hsize-policy="3" anchor="0" fill="1" />
+-        <initial-values>
+-          <property name="text" value="Button" />
+-        </initial-values>
+-      </item>
+-      <item class="javax.swing.JRadioButton" icon="/com/intellij/uiDesigner/icons/radioButton.svg" removable="false" auto-create-binding="true" can-attach-label="false">
+-        <default-constraints vsize-policy="0" hsize-policy="3" anchor="8" fill="0" />
+-        <initial-values>
+-          <property name="text" value="RadioButton" />
+-        </initial-values>
+-      </item>
+-      <item class="javax.swing.JCheckBox" icon="/com/intellij/uiDesigner/icons/checkBox.svg" removable="false" auto-create-binding="true" can-attach-label="false">
+-        <default-constraints vsize-policy="0" hsize-policy="3" anchor="8" fill="0" />
+-        <initial-values>
+-          <property name="text" value="CheckBox" />
+-        </initial-values>
+-      </item>
+-      <item class="javax.swing.JLabel" icon="/com/intellij/uiDesigner/icons/label.svg" removable="false" auto-create-binding="false" can-attach-label="false">
+-        <default-constraints vsize-policy="0" hsize-policy="0" anchor="8" fill="0" />
+-        <initial-values>
+-          <property name="text" value="Label" />
+-        </initial-values>
+-      </item>
+-      <item class="javax.swing.JTextField" icon="/com/intellij/uiDesigner/icons/textField.svg" removable="false" auto-create-binding="true" can-attach-label="true">
+-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
+-          <preferred-size width="150" height="-1" />
+-        </default-constraints>
+-      </item>
+-      <item class="javax.swing.JPasswordField" icon="/com/intellij/uiDesigner/icons/passwordField.svg" removable="false" auto-create-binding="true" can-attach-label="true">
+-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
+-          <preferred-size width="150" height="-1" />
+-        </default-constraints>
+-      </item>
+-      <item class="javax.swing.JFormattedTextField" icon="/com/intellij/uiDesigner/icons/formattedTextField.svg" removable="false" auto-create-binding="true" can-attach-label="true">
+-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
+-          <preferred-size width="150" height="-1" />
+-        </default-constraints>
+-      </item>
+-      <item class="javax.swing.JTextArea" icon="/com/intellij/uiDesigner/icons/textArea.svg" removable="false" auto-create-binding="true" can-attach-label="true">
+-        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
+-          <preferred-size width="150" height="50" />
+-        </default-constraints>
+-      </item>
+-      <item class="javax.swing.JTextPane" icon="/com/intellij/uiDesigner/icons/textPane.svg" removable="false" auto-create-binding="true" can-attach-label="true">
+-        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
+-          <preferred-size width="150" height="50" />
+-        </default-constraints>
+-      </item>
+-      <item class="javax.swing.JEditorPane" icon="/com/intellij/uiDesigner/icons/editorPane.svg" removable="false" auto-create-binding="true" can-attach-label="true">
+-        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
+-          <preferred-size width="150" height="50" />
+-        </default-constraints>
+-      </item>
+-      <item class="javax.swing.JComboBox" icon="/com/intellij/uiDesigner/icons/comboBox.svg" removable="false" auto-create-binding="true" can-attach-label="true">
+-        <default-constraints vsize-policy="0" hsize-policy="2" anchor="8" fill="1" />
+-      </item>
+-      <item class="javax.swing.JTable" icon="/com/intellij/uiDesigner/icons/table.svg" removable="false" auto-create-binding="true" can-attach-label="false">
+-        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
+-          <preferred-size width="150" height="50" />
+-        </default-constraints>
+-      </item>
+-      <item class="javax.swing.JList" icon="/com/intellij/uiDesigner/icons/list.svg" removable="false" auto-create-binding="true" can-attach-label="false">
+-        <default-constraints vsize-policy="6" hsize-policy="2" anchor="0" fill="3">
+-          <preferred-size width="150" height="50" />
+-        </default-constraints>
+-      </item>
+-      <item class="javax.swing.JTree" icon="/com/intellij/uiDesigner/icons/tree.svg" removable="false" auto-create-binding="true" can-attach-label="false">
+-        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
+-          <preferred-size width="150" height="50" />
+-        </default-constraints>
+-      </item>
+-      <item class="javax.swing.JTabbedPane" icon="/com/intellij/uiDesigner/icons/tabbedPane.svg" removable="false" auto-create-binding="true" can-attach-label="false">
+-        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3">
+-          <preferred-size width="200" height="200" />
+-        </default-constraints>
+-      </item>
+-      <item class="javax.swing.JSplitPane" icon="/com/intellij/uiDesigner/icons/splitPane.svg" removable="false" auto-create-binding="false" can-attach-label="false">
+-        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3">
+-          <preferred-size width="200" height="200" />
+-        </default-constraints>
+-      </item>
+-      <item class="javax.swing.JSpinner" icon="/com/intellij/uiDesigner/icons/spinner.svg" removable="false" auto-create-binding="true" can-attach-label="true">
+-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1" />
+-      </item>
+-      <item class="javax.swing.JSlider" icon="/com/intellij/uiDesigner/icons/slider.svg" removable="false" auto-create-binding="true" can-attach-label="false">
+-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1" />
+-      </item>
+-      <item class="javax.swing.JSeparator" icon="/com/intellij/uiDesigner/icons/separator.svg" removable="false" auto-create-binding="false" can-attach-label="false">
+-        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3" />
+-      </item>
+-      <item class="javax.swing.JProgressBar" icon="/com/intellij/uiDesigner/icons/progressbar.svg" removable="false" auto-create-binding="true" can-attach-label="false">
+-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="0" fill="1" />
+-      </item>
+-      <item class="javax.swing.JToolBar" icon="/com/intellij/uiDesigner/icons/toolbar.svg" removable="false" auto-create-binding="false" can-attach-label="false">
+-        <default-constraints vsize-policy="0" hsize-policy="6" anchor="0" fill="1">
+-          <preferred-size width="-1" height="20" />
+-        </default-constraints>
+-      </item>
+-      <item class="javax.swing.JToolBar$Separator" icon="/com/intellij/uiDesigner/icons/toolbarSeparator.svg" removable="false" auto-create-binding="false" can-attach-label="false">
+-        <default-constraints vsize-policy="0" hsize-policy="0" anchor="0" fill="1" />
+-      </item>
+-      <item class="javax.swing.JScrollBar" icon="/com/intellij/uiDesigner/icons/scrollbar.svg" removable="false" auto-create-binding="true" can-attach-label="false">
+-        <default-constraints vsize-policy="6" hsize-policy="0" anchor="0" fill="2" />
+-      </item>
+-    </group>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/inspectionProfiles/Project_Default.xml
+===================================================================
+diff --git a/.idea/inspectionProfiles/Project_Default.xml b/.idea/inspectionProfiles/Project_Default.xml
+deleted file mode 100644
+--- a/.idea/inspectionProfiles/Project_Default.xml	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ /dev/null	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
+@@ -1,6 +0,0 @@
+-<component name="InspectionProjectProfileManager">
+-  <profile version="1.0">
+-    <option name="myName" value="Project Default" />
+-    <inspection_tool class="NonAsciiCharacters" enabled="false" level="WARNING" enabled_by_default="false" />
+-  </profile>
+-</component>
+\ No newline at end of file
+Index: .idea/dbnavigator.xml
+===================================================================
+diff --git a/.idea/dbnavigator.xml b/.idea/dbnavigator.xml
+deleted file mode 100644
+--- a/.idea/dbnavigator.xml	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ /dev/null	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
+@@ -1,517 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="DBNavigator.Project.DataEditorManager">
+-    <record-view-column-sorting-type value="BY_INDEX" />
+-    <value-preview-text-wrapping value="false" />
+-    <value-preview-pinned value="false" />
+-  </component>
+-  <component name="DBNavigator.Project.DatabaseBrowserManager">
+-    <autoscroll-to-editor value="false" />
+-    <autoscroll-from-editor value="true" />
+-    <show-object-properties value="true" />
+-    <loaded-nodes />
+-  </component>
+-  <component name="DBNavigator.Project.DatabaseConsoleManager">
+-    <connection id="bc6fd32d-ba8b-4f99-8ebc-a5930d1c4287">
+-      <console name="@jachsang.cwhnnogh441c.ap-northeast-2.rds.amazonaws.com" type="STANDARD" schema="mysql" session="Main" />
+-    </connection>
+-  </component>
+-  <component name="DBNavigator.Project.DatabaseEditorStateManager">
+-    <last-used-providers />
+-  </component>
+-  <component name="DBNavigator.Project.DatabaseFileManager">
+-    <open-files />
+-  </component>
+-  <component name="DBNavigator.Project.DatasetFilterManager">
+-    <filter-actions connection-id="bc6fd32d-ba8b-4f99-8ebc-a5930d1c4287" dataset="JachsangDB.Board" active-filter-id="" />
+-  </component>
+-  <component name="DBNavigator.Project.ObjectQuickFilterManager">
+-    <last-used-operator value="EQUAL" />
+-    <filters />
+-  </component>
+-  <component name="DBNavigator.Project.Settings">
+-    <connections>
+-      <connection id="bc6fd32d-ba8b-4f99-8ebc-a5930d1c4287" active="true" signed="true">
+-        <database>
+-          <name value="@jachsang.cwhnnogh441c.ap-northeast-2.rds.amazonaws.com" />
+-          <description value="" />
+-          <database-type value="MYSQL" />
+-          <config-type value="BASIC" />
+-          <database-version value="8.0" />
+-          <driver-source value="BUILTIN" />
+-          <driver-library value="" />
+-          <driver value="" />
+-          <url-type value="DATABASE" />
+-          <host value="jachsang.cwhnnogh441c.ap-northeast-2.rds.amazonaws.com" />
+-          <port value="3306" />
+-          <database value="mysql" />
+-          <type value="USER_PASSWORD" />
+-          <user value="JachsangTeam" />
+-          <deprecated-pwd value="SmFjaHNhbmdUZWFtXl4hIV5e" />
+-        </database>
+-        <properties>
+-          <auto-commit value="false" />
+-        </properties>
+-        <ssh-settings>
+-          <active value="false" />
+-          <proxy-host value="" />
+-          <proxy-port value="22" />
+-          <proxy-user value="" />
+-          <deprecated-proxy-pwd value="" />
+-          <auth-type value="PASSWORD" />
+-          <key-file value="" />
+-          <key-passphrase value="" />
+-        </ssh-settings>
+-        <ssl-settings>
+-          <active value="false" />
+-          <certificate-authority-file value="" />
+-          <client-certificate-file value="" />
+-          <client-key-file value="" />
+-        </ssl-settings>
+-        <details>
+-          <charset value="UTF-8" />
+-          <session-management value="true" />
+-          <ddl-file-binding value="true" />
+-          <database-logging value="true" />
+-          <connect-automatically value="true" />
+-          <restore-workspace value="true" />
+-          <restore-workspace-deep value="false" />
+-          <environment-type value="default" />
+-          <connectivity-timeout value="10" />
+-          <idle-time-to-disconnect value="30" />
+-          <idle-time-to-disconnect-pool value="5" />
+-          <credential-expiry-time value="10" />
+-          <max-connection-pool-size value="7" />
+-          <alternative-statement-delimiter value="" />
+-        </details>
+-        <object-filters hide-empty-schemas="false" hide-pseudo-columns="false">
+-          <object-type-filter>
+-            <object-type name="SCHEMA" enabled="true" />
+-            <object-type name="USER" enabled="true" />
+-            <object-type name="ROLE" enabled="true" />
+-            <object-type name="PRIVILEGE" enabled="true" />
+-            <object-type name="CHARSET" enabled="true" />
+-            <object-type name="TABLE" enabled="true" />
+-            <object-type name="VIEW" enabled="true" />
+-            <object-type name="MATERIALIZED_VIEW" enabled="true" />
+-            <object-type name="NESTED_TABLE" enabled="true" />
+-            <object-type name="COLUMN" enabled="true" />
+-            <object-type name="INDEX" enabled="true" />
+-            <object-type name="CONSTRAINT" enabled="true" />
+-            <object-type name="DATASET_TRIGGER" enabled="true" />
+-            <object-type name="DATABASE_TRIGGER" enabled="true" />
+-            <object-type name="SYNONYM" enabled="true" />
+-            <object-type name="SEQUENCE" enabled="true" />
+-            <object-type name="PROCEDURE" enabled="true" />
+-            <object-type name="FUNCTION" enabled="true" />
+-            <object-type name="PACKAGE" enabled="true" />
+-            <object-type name="TYPE" enabled="true" />
+-            <object-type name="TYPE_ATTRIBUTE" enabled="true" />
+-            <object-type name="ARGUMENT" enabled="true" />
+-            <object-type name="DIMENSION" enabled="true" />
+-            <object-type name="CLUSTER" enabled="true" />
+-            <object-type name="DBLINK" enabled="true" />
+-          </object-type-filter>
+-          <object-name-filters />
+-        </object-filters>
+-      </connection>
+-    </connections>
+-    <browser-settings>
+-      <general>
+-        <display-mode value="TABBED" />
+-        <navigation-history-size value="100" />
+-        <show-object-details value="false" />
+-      </general>
+-      <filters>
+-        <object-type-filter>
+-          <object-type name="SCHEMA" enabled="true" />
+-          <object-type name="USER" enabled="true" />
+-          <object-type name="ROLE" enabled="true" />
+-          <object-type name="PRIVILEGE" enabled="true" />
+-          <object-type name="CHARSET" enabled="true" />
+-          <object-type name="TABLE" enabled="true" />
+-          <object-type name="VIEW" enabled="true" />
+-          <object-type name="MATERIALIZED_VIEW" enabled="true" />
+-          <object-type name="NESTED_TABLE" enabled="true" />
+-          <object-type name="COLUMN" enabled="true" />
+-          <object-type name="INDEX" enabled="true" />
+-          <object-type name="CONSTRAINT" enabled="true" />
+-          <object-type name="DATASET_TRIGGER" enabled="true" />
+-          <object-type name="DATABASE_TRIGGER" enabled="true" />
+-          <object-type name="SYNONYM" enabled="true" />
+-          <object-type name="SEQUENCE" enabled="true" />
+-          <object-type name="PROCEDURE" enabled="true" />
+-          <object-type name="FUNCTION" enabled="true" />
+-          <object-type name="PACKAGE" enabled="true" />
+-          <object-type name="TYPE" enabled="true" />
+-          <object-type name="TYPE_ATTRIBUTE" enabled="true" />
+-          <object-type name="ARGUMENT" enabled="true" />
+-          <object-type name="DIMENSION" enabled="true" />
+-          <object-type name="CLUSTER" enabled="true" />
+-          <object-type name="DBLINK" enabled="true" />
+-        </object-type-filter>
+-      </filters>
+-      <sorting>
+-        <object-type name="COLUMN" sorting-type="NAME" />
+-        <object-type name="FUNCTION" sorting-type="NAME" />
+-        <object-type name="PROCEDURE" sorting-type="NAME" />
+-        <object-type name="ARGUMENT" sorting-type="POSITION" />
+-        <object-type name="TYPE ATTRIBUTE" sorting-type="POSITION" />
+-      </sorting>
+-      <default-editors>
+-        <object-type name="VIEW" editor-type="SELECTION" />
+-        <object-type name="PACKAGE" editor-type="SELECTION" />
+-        <object-type name="TYPE" editor-type="SELECTION" />
+-      </default-editors>
+-    </browser-settings>
+-    <navigation-settings>
+-      <lookup-filters>
+-        <lookup-objects>
+-          <object-type name="SCHEMA" enabled="true" />
+-          <object-type name="USER" enabled="false" />
+-          <object-type name="ROLE" enabled="false" />
+-          <object-type name="PRIVILEGE" enabled="false" />
+-          <object-type name="CHARSET" enabled="false" />
+-          <object-type name="TABLE" enabled="true" />
+-          <object-type name="VIEW" enabled="true" />
+-          <object-type name="MATERIALIZED VIEW" enabled="true" />
+-          <object-type name="INDEX" enabled="true" />
+-          <object-type name="CONSTRAINT" enabled="true" />
+-          <object-type name="DATASET TRIGGER" enabled="true" />
+-          <object-type name="DATABASE TRIGGER" enabled="true" />
+-          <object-type name="SYNONYM" enabled="false" />
+-          <object-type name="SEQUENCE" enabled="true" />
+-          <object-type name="PROCEDURE" enabled="true" />
+-          <object-type name="FUNCTION" enabled="true" />
+-          <object-type name="PACKAGE" enabled="true" />
+-          <object-type name="TYPE" enabled="true" />
+-          <object-type name="DIMENSION" enabled="false" />
+-          <object-type name="CLUSTER" enabled="false" />
+-          <object-type name="DBLINK" enabled="true" />
+-        </lookup-objects>
+-        <force-database-load value="false" />
+-        <prompt-connection-selection value="true" />
+-        <prompt-schema-selection value="true" />
+-      </lookup-filters>
+-    </navigation-settings>
+-    <dataset-grid-settings>
+-      <general>
+-        <enable-zooming value="true" />
+-        <enable-column-tooltip value="true" />
+-      </general>
+-      <sorting>
+-        <nulls-first value="true" />
+-        <max-sorting-columns value="4" />
+-      </sorting>
+-      <audit-columns>
+-        <column-names value="" />
+-        <visible value="true" />
+-        <editable value="false" />
+-      </audit-columns>
+-    </dataset-grid-settings>
+-    <dataset-editor-settings>
+-      <text-editor-popup>
+-        <active value="false" />
+-        <active-if-empty value="false" />
+-        <data-length-threshold value="100" />
+-        <popup-delay value="1000" />
+-      </text-editor-popup>
+-      <values-actions-popup>
+-        <show-popup-button value="true" />
+-        <element-count-threshold value="1000" />
+-        <data-length-threshold value="250" />
+-      </values-actions-popup>
+-      <general>
+-        <fetch-block-size value="100" />
+-        <fetch-timeout value="30" />
+-        <trim-whitespaces value="true" />
+-        <convert-empty-strings-to-null value="true" />
+-        <select-content-on-cell-edit value="true" />
+-        <large-value-preview-active value="true" />
+-      </general>
+-      <filters>
+-        <prompt-filter-dialog value="true" />
+-        <default-filter-type value="BASIC" />
+-      </filters>
+-      <qualified-text-editor text-length-threshold="300">
+-        <content-types>
+-          <content-type name="Text" enabled="true" />
+-          <content-type name="Properties" enabled="true" />
+-          <content-type name="XML" enabled="true" />
+-          <content-type name="DTD" enabled="true" />
+-          <content-type name="HTML" enabled="true" />
+-          <content-type name="XHTML" enabled="true" />
+-          <content-type name="Java" enabled="true" />
+-          <content-type name="SQL" enabled="true" />
+-          <content-type name="PL/SQL" enabled="true" />
+-          <content-type name="JSON" enabled="true" />
+-          <content-type name="JSON5" enabled="true" />
+-          <content-type name="Groovy" enabled="true" />
+-          <content-type name="AIDL" enabled="true" />
+-          <content-type name="YAML" enabled="true" />
+-          <content-type name="Manifest" enabled="true" />
+-        </content-types>
+-      </qualified-text-editor>
+-      <record-navigation>
+-        <navigation-target value="VIEWER" />
+-      </record-navigation>
+-    </dataset-editor-settings>
+-    <code-editor-settings>
+-      <general>
+-        <show-object-navigation-gutter value="false" />
+-        <show-spec-declaration-navigation-gutter value="true" />
+-        <enable-spellchecking value="true" />
+-        <enable-reference-spellchecking value="false" />
+-      </general>
+-      <confirmations>
+-        <save-changes value="false" />
+-        <revert-changes value="true" />
+-      </confirmations>
+-    </code-editor-settings>
+-    <code-completion-settings>
+-      <filters>
+-        <basic-filter>
+-          <filter-element type="RESERVED_WORD" id="keyword" selected="true" />
+-          <filter-element type="RESERVED_WORD" id="function" selected="true" />
+-          <filter-element type="RESERVED_WORD" id="parameter" selected="true" />
+-          <filter-element type="RESERVED_WORD" id="datatype" selected="true" />
+-          <filter-element type="RESERVED_WORD" id="exception" selected="true" />
+-          <filter-element type="OBJECT" id="schema" selected="true" />
+-          <filter-element type="OBJECT" id="role" selected="true" />
+-          <filter-element type="OBJECT" id="user" selected="true" />
+-          <filter-element type="OBJECT" id="privilege" selected="true" />
+-          <user-schema>
+-            <filter-element type="OBJECT" id="table" selected="true" />
+-            <filter-element type="OBJECT" id="view" selected="true" />
+-            <filter-element type="OBJECT" id="materialized view" selected="true" />
+-            <filter-element type="OBJECT" id="index" selected="true" />
+-            <filter-element type="OBJECT" id="constraint" selected="true" />
+-            <filter-element type="OBJECT" id="trigger" selected="true" />
+-            <filter-element type="OBJECT" id="synonym" selected="false" />
+-            <filter-element type="OBJECT" id="sequence" selected="true" />
+-            <filter-element type="OBJECT" id="procedure" selected="true" />
+-            <filter-element type="OBJECT" id="function" selected="true" />
+-            <filter-element type="OBJECT" id="package" selected="true" />
+-            <filter-element type="OBJECT" id="type" selected="true" />
+-            <filter-element type="OBJECT" id="dimension" selected="true" />
+-            <filter-element type="OBJECT" id="cluster" selected="true" />
+-            <filter-element type="OBJECT" id="dblink" selected="true" />
+-          </user-schema>
+-          <public-schema>
+-            <filter-element type="OBJECT" id="table" selected="false" />
+-            <filter-element type="OBJECT" id="view" selected="false" />
+-            <filter-element type="OBJECT" id="materialized view" selected="false" />
+-            <filter-element type="OBJECT" id="index" selected="false" />
+-            <filter-element type="OBJECT" id="constraint" selected="false" />
+-            <filter-element type="OBJECT" id="trigger" selected="false" />
+-            <filter-element type="OBJECT" id="synonym" selected="false" />
+-            <filter-element type="OBJECT" id="sequence" selected="false" />
+-            <filter-element type="OBJECT" id="procedure" selected="false" />
+-            <filter-element type="OBJECT" id="function" selected="false" />
+-            <filter-element type="OBJECT" id="package" selected="false" />
+-            <filter-element type="OBJECT" id="type" selected="false" />
+-            <filter-element type="OBJECT" id="dimension" selected="false" />
+-            <filter-element type="OBJECT" id="cluster" selected="false" />
+-            <filter-element type="OBJECT" id="dblink" selected="false" />
+-          </public-schema>
+-          <any-schema>
+-            <filter-element type="OBJECT" id="table" selected="true" />
+-            <filter-element type="OBJECT" id="view" selected="true" />
+-            <filter-element type="OBJECT" id="materialized view" selected="true" />
+-            <filter-element type="OBJECT" id="index" selected="true" />
+-            <filter-element type="OBJECT" id="constraint" selected="true" />
+-            <filter-element type="OBJECT" id="trigger" selected="true" />
+-            <filter-element type="OBJECT" id="synonym" selected="true" />
+-            <filter-element type="OBJECT" id="sequence" selected="true" />
+-            <filter-element type="OBJECT" id="procedure" selected="true" />
+-            <filter-element type="OBJECT" id="function" selected="true" />
+-            <filter-element type="OBJECT" id="package" selected="true" />
+-            <filter-element type="OBJECT" id="type" selected="true" />
+-            <filter-element type="OBJECT" id="dimension" selected="true" />
+-            <filter-element type="OBJECT" id="cluster" selected="true" />
+-            <filter-element type="OBJECT" id="dblink" selected="true" />
+-          </any-schema>
+-        </basic-filter>
+-        <extended-filter>
+-          <filter-element type="RESERVED_WORD" id="keyword" selected="true" />
+-          <filter-element type="RESERVED_WORD" id="function" selected="true" />
+-          <filter-element type="RESERVED_WORD" id="parameter" selected="true" />
+-          <filter-element type="RESERVED_WORD" id="datatype" selected="true" />
+-          <filter-element type="RESERVED_WORD" id="exception" selected="true" />
+-          <filter-element type="OBJECT" id="schema" selected="true" />
+-          <filter-element type="OBJECT" id="user" selected="true" />
+-          <filter-element type="OBJECT" id="role" selected="true" />
+-          <filter-element type="OBJECT" id="privilege" selected="true" />
+-          <user-schema>
+-            <filter-element type="OBJECT" id="table" selected="true" />
+-            <filter-element type="OBJECT" id="view" selected="true" />
+-            <filter-element type="OBJECT" id="materialized view" selected="true" />
+-            <filter-element type="OBJECT" id="index" selected="true" />
+-            <filter-element type="OBJECT" id="constraint" selected="true" />
+-            <filter-element type="OBJECT" id="trigger" selected="true" />
+-            <filter-element type="OBJECT" id="synonym" selected="true" />
+-            <filter-element type="OBJECT" id="sequence" selected="true" />
+-            <filter-element type="OBJECT" id="procedure" selected="true" />
+-            <filter-element type="OBJECT" id="function" selected="true" />
+-            <filter-element type="OBJECT" id="package" selected="true" />
+-            <filter-element type="OBJECT" id="type" selected="true" />
+-            <filter-element type="OBJECT" id="dimension" selected="true" />
+-            <filter-element type="OBJECT" id="cluster" selected="true" />
+-            <filter-element type="OBJECT" id="dblink" selected="true" />
+-          </user-schema>
+-          <public-schema>
+-            <filter-element type="OBJECT" id="table" selected="true" />
+-            <filter-element type="OBJECT" id="view" selected="true" />
+-            <filter-element type="OBJECT" id="materialized view" selected="true" />
+-            <filter-element type="OBJECT" id="index" selected="true" />
+-            <filter-element type="OBJECT" id="constraint" selected="true" />
+-            <filter-element type="OBJECT" id="trigger" selected="true" />
+-            <filter-element type="OBJECT" id="synonym" selected="true" />
+-            <filter-element type="OBJECT" id="sequence" selected="true" />
+-            <filter-element type="OBJECT" id="procedure" selected="true" />
+-            <filter-element type="OBJECT" id="function" selected="true" />
+-            <filter-element type="OBJECT" id="package" selected="true" />
+-            <filter-element type="OBJECT" id="type" selected="true" />
+-            <filter-element type="OBJECT" id="dimension" selected="true" />
+-            <filter-element type="OBJECT" id="cluster" selected="true" />
+-            <filter-element type="OBJECT" id="dblink" selected="true" />
+-          </public-schema>
+-          <any-schema>
+-            <filter-element type="OBJECT" id="table" selected="true" />
+-            <filter-element type="OBJECT" id="view" selected="true" />
+-            <filter-element type="OBJECT" id="materialized view" selected="true" />
+-            <filter-element type="OBJECT" id="index" selected="true" />
+-            <filter-element type="OBJECT" id="constraint" selected="true" />
+-            <filter-element type="OBJECT" id="trigger" selected="true" />
+-            <filter-element type="OBJECT" id="synonym" selected="true" />
+-            <filter-element type="OBJECT" id="sequence" selected="true" />
+-            <filter-element type="OBJECT" id="procedure" selected="true" />
+-            <filter-element type="OBJECT" id="function" selected="true" />
+-            <filter-element type="OBJECT" id="package" selected="true" />
+-            <filter-element type="OBJECT" id="type" selected="true" />
+-            <filter-element type="OBJECT" id="dimension" selected="true" />
+-            <filter-element type="OBJECT" id="cluster" selected="true" />
+-            <filter-element type="OBJECT" id="dblink" selected="true" />
+-          </any-schema>
+-        </extended-filter>
+-      </filters>
+-      <sorting enabled="true">
+-        <sorting-element type="RESERVED_WORD" id="keyword" />
+-        <sorting-element type="RESERVED_WORD" id="datatype" />
+-        <sorting-element type="OBJECT" id="column" />
+-        <sorting-element type="OBJECT" id="table" />
+-        <sorting-element type="OBJECT" id="view" />
+-        <sorting-element type="OBJECT" id="materialized view" />
+-        <sorting-element type="OBJECT" id="index" />
+-        <sorting-element type="OBJECT" id="constraint" />
+-        <sorting-element type="OBJECT" id="trigger" />
+-        <sorting-element type="OBJECT" id="synonym" />
+-        <sorting-element type="OBJECT" id="sequence" />
+-        <sorting-element type="OBJECT" id="procedure" />
+-        <sorting-element type="OBJECT" id="function" />
+-        <sorting-element type="OBJECT" id="package" />
+-        <sorting-element type="OBJECT" id="type" />
+-        <sorting-element type="OBJECT" id="dimension" />
+-        <sorting-element type="OBJECT" id="cluster" />
+-        <sorting-element type="OBJECT" id="dblink" />
+-        <sorting-element type="OBJECT" id="schema" />
+-        <sorting-element type="OBJECT" id="role" />
+-        <sorting-element type="OBJECT" id="user" />
+-        <sorting-element type="RESERVED_WORD" id="function" />
+-        <sorting-element type="RESERVED_WORD" id="parameter" />
+-      </sorting>
+-      <format>
+-        <enforce-code-style-case value="true" />
+-      </format>
+-    </code-completion-settings>
+-    <execution-engine-settings>
+-      <statement-execution>
+-        <fetch-block-size value="100" />
+-        <execution-timeout value="20" />
+-        <debug-execution-timeout value="600" />
+-        <focus-result value="false" />
+-        <prompt-execution value="false" />
+-      </statement-execution>
+-      <script-execution>
+-        <command-line-interfaces />
+-        <execution-timeout value="300" />
+-      </script-execution>
+-      <method-execution>
+-        <execution-timeout value="30" />
+-        <debug-execution-timeout value="600" />
+-        <parameter-history-size value="10" />
+-      </method-execution>
+-    </execution-engine-settings>
+-    <operation-settings>
+-      <transactions>
+-        <uncommitted-changes>
+-          <on-project-close value="ASK" />
+-          <on-disconnect value="ASK" />
+-          <on-autocommit-toggle value="ASK" />
+-        </uncommitted-changes>
+-        <multiple-uncommitted-changes>
+-          <on-commit value="ASK" />
+-          <on-rollback value="ASK" />
+-        </multiple-uncommitted-changes>
+-      </transactions>
+-      <session-browser>
+-        <disconnect-session value="ASK" />
+-        <kill-session value="ASK" />
+-        <reload-on-filter-change value="false" />
+-      </session-browser>
+-      <compiler>
+-        <compile-type value="KEEP" />
+-        <compile-dependencies value="ASK" />
+-        <always-show-controls value="false" />
+-      </compiler>
+-      <debugger>
+-        <debugger-type value="ASK" />
+-        <use-generic-runners value="true" />
+-      </debugger>
+-    </operation-settings>
+-    <ddl-file-settings>
+-      <extensions>
+-        <mapping file-type-id="VIEW" extensions="vw" />
+-        <mapping file-type-id="TRIGGER" extensions="trg" />
+-        <mapping file-type-id="PROCEDURE" extensions="prc" />
+-        <mapping file-type-id="FUNCTION" extensions="fnc" />
+-        <mapping file-type-id="PACKAGE" extensions="pkg" />
+-        <mapping file-type-id="PACKAGE_SPEC" extensions="pks" />
+-        <mapping file-type-id="PACKAGE_BODY" extensions="pkb" />
+-        <mapping file-type-id="TYPE" extensions="tpe" />
+-        <mapping file-type-id="TYPE_SPEC" extensions="tps" />
+-        <mapping file-type-id="TYPE_BODY" extensions="tpb" />
+-      </extensions>
+-      <general>
+-        <lookup-ddl-files value="true" />
+-        <create-ddl-files value="false" />
+-        <synchronize-ddl-files value="true" />
+-        <use-qualified-names value="false" />
+-        <make-scripts-rerunnable value="true" />
+-      </general>
+-    </ddl-file-settings>
+-    <general-settings>
+-      <regional-settings>
+-        <date-format value="MEDIUM" />
+-        <number-format value="UNGROUPED" />
+-        <locale value="SYSTEM_DEFAULT" />
+-        <use-custom-formats value="false" />
+-      </regional-settings>
+-      <environment>
+-        <environment-types>
+-          <environment-type id="development" name="Development" description="Development environment" color="-2430209/-12296320" readonly-code="false" readonly-data="false" />
+-          <environment-type id="integration" name="Integration" description="Integration environment" color="-2621494/-12163514" readonly-code="true" readonly-data="false" />
+-          <environment-type id="production" name="Production" description="Productive environment" color="-11574/-10271420" readonly-code="true" readonly-data="true" />
+-          <environment-type id="other" name="Other" description="" color="-1576/-10724543" readonly-code="false" readonly-data="false" />
+-        </environment-types>
+-        <visibility-settings>
+-          <connection-tabs value="true" />
+-          <dialog-headers value="true" />
+-          <object-editor-tabs value="true" />
+-          <script-editor-tabs value="false" />
+-          <execution-result-tabs value="true" />
+-        </visibility-settings>
+-      </environment>
+-    </general-settings>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/discord.xml
+===================================================================
+diff --git a/.idea/discord.xml b/.idea/discord.xml
+deleted file mode 100644
+--- a/.idea/discord.xml	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ /dev/null	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
+@@ -1,7 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="DiscordProjectSettings">
+-    <option name="show" value="ASK" />
+-    <option name="description" value="" />
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/dataSources.xml
+===================================================================
+diff --git a/.idea/dataSources.xml b/.idea/dataSources.xml
+deleted file mode 100644
+--- a/.idea/dataSources.xml	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ /dev/null	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
+@@ -1,12 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+-    <data-source source="LOCAL" name="Jachsang" uuid="8e31d8f7-e2c5-4b75-b765-d6e284de8b24">
+-      <driver-ref>mysql.8</driver-ref>
+-      <synchronize>true</synchronize>
+-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+-      <jdbc-url>jdbc:mysql://jachsang.cwhnnogh441c.ap-northeast-2.rds.amazonaws.com:3306</jdbc-url>
+-      <working-dir>$ProjectFileDir$</working-dir>
+-    </data-source>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/sqldialects.xml
+===================================================================
+diff --git a/.idea/sqldialects.xml b/.idea/sqldialects.xml
+deleted file mode 100644
+--- a/.idea/sqldialects.xml	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ /dev/null	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="SqlDialectMappings">
+-    <file url="file://$PROJECT_DIR$/src/main/java/com/example/demo/src/user/UserDao.java" dialect="GenericSQL" />
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/libraries/jsoup_1_16_1.xml
+===================================================================
+diff --git a/.idea/libraries/jsoup_1_16_1.xml b/.idea/libraries/jsoup_1_16_1.xml
+deleted file mode 100644
+--- a/.idea/libraries/jsoup_1_16_1.xml	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ /dev/null	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
+@@ -1,9 +0,0 @@
+-<component name="libraryTable">
+-  <library name="jsoup-1.16.1">
+-    <CLASSES>
+-      <root url="jar://$PROJECT_DIR$/jsoup-1.16.1.jar!/" />
+-    </CLASSES>
+-    <JAVADOC />
+-    <SOURCES />
+-  </library>
+-</component>
+\ No newline at end of file
+Index: .idea/Jachsang.iml
+===================================================================
+diff --git a/.idea/Jachsang.iml b/.idea/Jachsang.iml
+deleted file mode 100644
+--- a/.idea/Jachsang.iml	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ /dev/null	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
+@@ -1,9 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<module type="JAVA_MODULE" version="4">
+-  <component name="NewModuleRootManager" inherit-compiler-output="true">
+-    <exclude-output />
+-    <content url="file://$MODULE_DIR$" />
+-    <orderEntry type="inheritedJdk" />
+-    <orderEntry type="sourceFolder" forTests="false" />
+-  </component>
+-</module>
+\ No newline at end of file
+Index: .idea/Jachsang_BackEnd.iml
+===================================================================
+diff --git a/.idea/Jachsang_BackEnd.iml b/.idea/Jachsang_BackEnd.iml
+deleted file mode 100644
+--- a/.idea/Jachsang_BackEnd.iml	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ /dev/null	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
+@@ -1,9 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<module type="JAVA_MODULE" version="4">
+-  <component name="NewModuleRootManager" inherit-compiler-output="true">
+-    <exclude-output />
+-    <content url="file://$MODULE_DIR$" />
+-    <orderEntry type="inheritedJdk" />
+-    <orderEntry type="sourceFolder" forTests="false" />
+-  </component>
+-</module>
+\ No newline at end of file
+Index: src/main/java/com/example/demo/src/post/PostDao.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.demo.src.post;\r\n\r\nimport com.example.demo.src.category.CATEGORY;\r\nimport com.example.demo.src.post.model.community.CommunityPost;\r\nimport com.example.demo.src.post.model.community.GetCommunityPostRes;\r\nimport com.example.demo.src.post.model.community.CommunityPostingReq;\r\nimport com.example.demo.src.post.model.generalModel.*;\r\nimport com.example.demo.src.post.model.groupPurchase.GetGroupPurchasePostRes;\r\nimport com.example.demo.src.post.model.groupPurchase.GroupPurchasePost;\r\nimport com.example.demo.src.post.model.groupPurchase.GroupPurchasePostingReq;\r\nimport com.example.demo.src.post.model.recipe.GetRecipePostRes;\r\nimport com.example.demo.src.post.model.recipe.RecipeInsertReq;\r\nimport com.example.demo.src.post.model.recipe.RecipePost;\r\nimport com.example.demo.src.post.model.recipe.RecipePostingReq;\r\nimport com.example.demo.src.privateMethod.Methods;\r\nimport com.fasterxml.jackson.databind.ObjectMapper;\r\nimport org.springframework.beans.factory.annotation.Autowired;\r\nimport org.springframework.jdbc.core.JdbcTemplate;\r\nimport org.springframework.stereotype.Repository;\r\n\r\nimport javax.sql.DataSource;\r\nimport java.security.Timestamp;\r\nimport java.sql.SQLIntegrityConstraintViolationException;\r\nimport java.util.HashMap;\r\nimport java.util.List;\r\n\r\n@Repository\r\npublic class PostDao {\r\n\r\n    private JdbcTemplate jdbcTemplate;\r\n    private ObjectMapper mapper;\r\n    private Methods methods;\r\n    @Autowired\r\n    public PostDao(DataSource dataSource) {\r\n        this.jdbcTemplate = new JdbcTemplate(dataSource);\r\n        this.mapper = new ObjectMapper();\r\n        methods = new Methods(dataSource);\r\n    }\r\n\r\n    // 글쓰기\r\n    public PostingRes posting(int categoryIdx, HashMap<String,Object> postingReq) {\r\n        try {\r\n            // 입력받은 정보를 general information, specific information으로 구분하는 작업\r\n            // 그 중에서 general information을 Post general에 담는 과정\r\n            PostingReq general = new PostingReq(\r\n                    (int) postingReq.get(\"userIdx\"), (String) postingReq.get(\"title\")\r\n            );\r\n\r\n            // Post table에 insert 하는 sql 문장과 그 파라미터, URL의 경우 'null'로 저장함.\r\n            String sqlGeneral = \"INSERT INTO Post(categoryIdx, userIdx, title, viewCount, likeCount, createAt, updateAt, url) VALUES (?,?,?,0,0,now(),now(),'null')\";\r\n            String category = CATEGORY.getName(categoryIdx);\r\n\r\n            Object[] paramGeneral = {\r\n                    categoryIdx, general.getUserIdx(), general.getTitle()\r\n            };\r\n            // general 쿼리를 실행하는 부분\r\n            this.jdbcTemplate.update(sqlGeneral, paramGeneral);\r\n            // postIdx 값을 쉽게 사용하기 위해 정의함.\r\n            String lastInsertIdQuery = \"select last_insert_id()\";\r\n            int postIdx = this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class);\r\n            // 공동구매, 커뮤니티, 레시피 세 경우에 대해, 각 테이블에 정보를 저장하기 위해 sql문과 param을 정의함.\r\n            String sqlSpecific = \"\";\r\n            Object[] paramSpecific = null;\r\n            //커뮤니티\r\n            if (categoryIdx < 20) {\r\n                CommunityPostingReq posting = new CommunityPostingReq(postIdx, (String) postingReq.get(\"contents\"));\r\n                sqlSpecific = \"INSERT INTO CommunityDetail(communityDetailIdx, postIdx, contents, heartCount) VALUES (\" + postIdx + \",\" + postIdx + \",?, 0)\";\r\n                paramSpecific = new Object[]{posting.getContents()};\r\n            }\r\n            //공동구매\r\n            else if (categoryIdx < 30) {\r\n                GroupPurchasePostingReq posting = new GroupPurchasePostingReq(postIdx, postingReq);\r\n                sqlSpecific = \"INSERT INTO GroupPurchaseDetail(groupPurchaseDetailIdx, postIdx, productName, productURL, singlePrice, deliveryFee, \" +\r\n                        \"members, deadline,hasExtension, calculated) VALUES (\" + postIdx + \",\" + postIdx + \",?,?,?,?,?,?,false,false)\";\r\n\r\n                paramSpecific = new Object[]{\r\n                        posting.getProductName(), posting.getProductURL(), posting.getSinglePrice(),\r\n                        posting.getDeliveryFee(), posting.getMembers(), posting.getDeadline()\r\n                };\r\n            }\r\n\r\n            // 오류 처리\r\n            else {\r\n                System.out.println(\"잘못된 카테고리 이름입니다.\");\r\n                return null;\r\n            }\r\n            // validation : 오류 처리\r\n            if (sqlSpecific.equals(\"\") || paramSpecific == null) {\r\n                System.out.println(\"쿼리 또는 파라미터가 제대로 설정되지 않았습니다.\");\r\n                return null;\r\n            }\r\n            // 공동구매, 커뮤니티, 레시피 sql과 param을 이용해 쿼리문 실행\r\n            this.jdbcTemplate.update(sqlSpecific, paramSpecific);\r\n            // 반환할 응답 생성\r\n            PostingRes postingRes = new PostingRes(postIdx, categoryIdx, category, general.getUserIdx(), general.getTitle(), \"null\");\r\n            // 응답 반환\r\n\r\n            //이미지 등록\r\n            //여기서 이미지 없을 때 예외처리 해야됨\r\n            postImage(postIdx, (List<String>) postingReq.get(\"paths\"));\r\n\r\n            return postingRes;\r\n        } catch (Exception e){\r\n            System.out.println(e.getStackTrace()+\"\\n알 수 없는 오류\");\r\n            return null;\r\n        }\r\n    }\r\n\r\n    // 글보기\r\n    public Object getPost(int categoryIdx, GetPostReq getPostReq) {\r\n        // 세 게시판의 글을 한번에 처리하기 위한 변수 설정\r\n        // 기본정보와 detail 정보 불러오기\r\n        Object generalPost = methods._getPost(getPostReq.getPostIdx()),\r\n                detailPost = methods._getDetailPost(categoryIdx,getPostReq.getPostIdx());\r\n        // 조회수 1 증가시키기 위해 sql문 작성 및 실행\r\n        String viewUpdateSql = \"UPDATE Post set viewCount = viewCount+1 WHERE postIdx = \"+getPostReq.getPostIdx();\r\n        this.jdbcTemplate.update(viewUpdateSql);\r\n\r\n        String getImageSql = \"SELECT path FROM Image WHERE postIdx = \"+getPostReq.getPostIdx();\r\n        List<String> paths = this.jdbcTemplate.query(getImageSql, (rs,rowNum) -> new String(\r\n                rs.getString(\"path\")\r\n        ));\r\n        // Post와 detail의 정보를 합친 후 리턴하기\r\n        if (categoryIdx == 10) {\r\n            return new GetCommunityPostRes((Post)generalPost, (CommunityPost)detailPost,paths);\r\n        }\r\n        else if(categoryIdx == 20) {\r\n            return new GetGroupPurchasePostRes((Post)generalPost,(GroupPurchasePost)detailPost,paths);\r\n        }\r\n        else if (categoryIdx == 30) {\r\n            return new GetRecipePostRes((Post)generalPost, (RecipePost)detailPost,paths);\r\n        }\r\n        else return null;\r\n    }\r\n    // 글 삭제\r\n    public boolean deletePost(DeleteReq deleteReq) {\r\n        // 결과 확인용 변수 선언 - Post(general)와 Detail 각각 준비한다.\r\n        int general = 0, detail = 0, image = 0, like = 0, heart = 0, comment = 0;\r\n        // 유저 idx를 저장한다.\r\n        int userIdx = deleteReq.getUserIdx();\r\n        // 게시판 종류를 확인한다.\r\n        int postIdx = deleteReq.getPostIdx();\r\n        int boardIdx = 10*methods._getBoardIdx(postIdx);\r\n        // 게시판 종류를 저장한다.\r\n        String board = boardIdx == 10 ? \"Community\" :\r\n                (boardIdx == 20 ? \"GroupPurchase\" :\r\n                        (boardIdx == 30 ? \"Recipe\" : null));\r\n        // 잘못된 게시판 이름 입력 시\r\n        if (board == null) return false;\r\n        // Detail의 내용을 먼저 없애야 한다 (ANOMALY 예방)\r\n        String deleteDetailSql = \"DELETE FROM \"+board+\"Detail WHERE postIdx = \"+postIdx;\r\n        // Image 내용을 삭제한다.\r\n        String deleteImageSql = \"DELETE FROM Image WHERE postIdx = \"+postIdx;\r\n        // LikedTable 내용을 삭제한다.\r\n        String deleteLikeSql = \"DELETE FROM LikedPost WHERE postIdx = \"+postIdx;\r\n        // HeartPost 내용을 삭제한다.\r\n        String deleteHeartSql = \"DELETE FROM HeartPost WHERE postIdx = \"+postIdx;\r\n\r\n        // HeartComment 내용을 삭제한다.\r\n        String getPostIdxSql = \"SELECT commentIdx FROM Comment WHERE postIdx = \"+postIdx;\r\n        List<Integer> comIdxs = this.jdbcTemplate.queryForList(getPostIdxSql,int.class);\r\n        for(int i : comIdxs){\r\n            String deleteHeartCommentSql = \"DELETE FROM HeartComment WHERE commentIdx = \"+i;\r\n            this.jdbcTemplate.update(deleteHeartCommentSql);\r\n        }\r\n        // Comment 내용을 삭제한다.\r\n        String deleteCommentSql = \"DELETE FROM Comment WHERE postIdx = \"+postIdx;\r\n        // 마지막으로 Post 내용을 삭제한다.\r\n        String deleteGeneralSql = \"DELETE FROM Post WHERE postIdx = \"+postIdx;\r\n        // sql문 실행\r\n        image = this.jdbcTemplate.update(deleteImageSql);\r\n        like = this.jdbcTemplate.update(deleteLikeSql);\r\n        heart = this.jdbcTemplate.update(deleteHeartSql);\r\n        this.jdbcTemplate.update(deleteCommentSql);\r\n        detail = this.jdbcTemplate.update(deleteDetailSql);\r\n        general = this.jdbcTemplate.update(deleteGeneralSql);\r\n\r\n        if(detail * general == 0) return false;\r\n        else return true;\r\n    }\r\n    // 글 수정\r\n    public boolean updatePost(HashMap<String,Object> updateReq){\r\n        // 입력받은 정보를 general information, specific information으로 구분하는 작업\r\n        // 그 중에서 general information을 Post general에 담는 과정\r\n        // postIdx, title을 저장\r\n        int postIdx = (int)updateReq.get(\"postIdx\");\r\n        int boardIdx = methods._getBoardIdx(postIdx);\r\n        int categoryIdx = methods._getCategoryIdx(postIdx);\r\n        String title = (String)updateReq.get(\"title\");\r\n\r\n        // Post table에 insert 하는 sql 문장과 그 파라미터, URL의 경우 'null'로 저장함.\r\n        String sqlGeneral = \"UPDATE Post SET categoryIdx = ?, title = ?, updateAt = now() WHERE postIdx = \"+postIdx;\r\n        Object[] paramGeneral = {\r\n                categoryIdx, title\r\n        };\r\n        // general 쿼리를 실행하는 부분\r\n        this.jdbcTemplate.update(sqlGeneral, paramGeneral);\r\n\r\n        // 공동구매, 커뮤니티, 레시피 세 경우에 대해, 각 테이블에 정보를 저장하기 위해 sql문과 param을 정의함.\r\n        String sqlSpecific = \"\";\r\n        Object[] paramSpecific = null;\r\n        //커뮤니티\r\n        if (boardIdx == 1) {\r\n            sqlSpecific = \"UPDATE CommunityDetail SET contents =  ? WHERE postIdx = \"+postIdx;\r\n            paramSpecific = new Object[]{\r\n                    (String)updateReq.get(\"contents\")\r\n            };\r\n        }\r\n        //공동구매\r\n        else if (boardIdx == 2) {\r\n            sqlSpecific = \"UPDATE GroupPurchaseDetail SET productName = ?, productURL =  ?, singlePrice = ?, deliveryFee = ?,\" +\r\n                    \" members = ?, deadline = ? WHERE postIdx = \"+postIdx;\r\n            paramSpecific = new Object[]{\r\n                    (String)updateReq.get(\"productName\"),\r\n                    (String)updateReq.get(\"productURL\"), (int)updateReq.get(\"singlePrice\"),\r\n                    (int)updateReq.get(\"deliveryFee\"), (int)updateReq.get(\"members\"),\r\n                    (String)updateReq.get(\"deadline\")\r\n            };\r\n        }\r\n        // 오류 처리\r\n        else {\r\n            System.out.println(\"잘못된 카테고리 이름입니다.\");\r\n            return false;\r\n        }\r\n        // validation : 오류 처리\r\n        if (sqlSpecific.equals(\"\") || paramSpecific == null) {\r\n            System.out.println(\"쿼리 또는 파라미터가 제대로 설정되지 않았습니다.\");\r\n            return false;\r\n        }\r\n        // 공동구매, 커뮤니티, 레시피 sql과 param을 이용해 쿼리문 실행\r\n        this.jdbcTemplate.update(sqlSpecific, paramSpecific);\r\n        // 반환할 응답 생성\r\n\r\n        //이미지 등록\r\n        //여기서 이미지 없을 때 예외처리 해야됨\r\n        updateImage(postIdx,(List<String>)updateReq.get(\"paths\"));\r\n\r\n        return true;\r\n    }\r\n\r\n    // 관심목록 추가\r\n    public boolean scrapPost(LikeReq likeReq){\r\n        // 어떤 유저가 어떤 게시글에 스크랩을 눌렀는가를 LikedPost 테이블에 기록하는 과정\r\n        String sql = \"INSERT INTO LikedPost(postIdx, userIdx) VALUES (?,?)\";\r\n        Object[] param = {likeReq.getPostIdx(),likeReq.getUserIdx()};\r\n        // 기록에 실패한 경우\r\n        if(this.jdbcTemplate.update(sql,param) == 0) {\r\n            System.out.println(\"LikedPost 테이블에 기록하지 못했습니다.\");\r\n            return false;\r\n        }\r\n        // 기록에 성공하고, 해당 게시글의 관심 지정한 수를 1 증가시키는 과정\r\n        else {\r\n            String likeCountIncreaseSql = \"UPDATE Post SET likeCount = likeCount + 1 WHERE postIdx = \"+likeReq.getPostIdx();\r\n            // 좋아요 수를 증가시키는 것을 실패한 경우\r\n            if(this.jdbcTemplate.update(likeCountIncreaseSql) == 0) return false;\r\n                // 좋아요 수를 증가시키고, 해당 게시글의 좋아요 수를 불러오는 과정 (리턴과 관련)\r\n            else {\r\n                return true;\r\n            }\r\n        }\r\n    }\r\n    //관심목록에서 제거\r\n    public boolean cancelScrapPost(LikeReq likeReq){\r\n        String subSql = \"UPDATE Post SET likeCount = likeCount - 1 WHERE postIdx = \"+likeReq.getPostIdx();\r\n        String delSql = \"DELETE FROM LikedPost WHERE postIdx = \"+likeReq.getPostIdx()+\r\n                \" AND userIdx = \"+likeReq.getUserIdx();\r\n        if(this.jdbcTemplate.update(subSql) == 0) return false;\r\n        // 예외처리 필요\r\n        if(this.jdbcTemplate.update(delSql) == 0) return false;\r\n        // 예외처리 필요\r\n        return true;\r\n    }\r\n    // 좋아요 누르기\r\n    public boolean heartPost(HeartPostReq heartPostReq){\r\n        // 게시글 좋아요 수 늘리는 sql 작성\r\n        String countSql = \"UPDATE CommunityDetail SET heartCount = heartCount+1 WHERE postIdx = \"+heartPostReq.getPostIdx();\r\n        String addSql = \"INSERT INTO HeartPost(postIdx,userIdx) VALUES (?,?)\";\r\n        Object[] param = {heartPostReq.getPostIdx(),heartPostReq.getUserIdx()};\r\n        if(this.jdbcTemplate.update(countSql) == 0) return false;\r\n        // 예외처리 필요\r\n        if(this.jdbcTemplate.update(addSql,param) == 0) return false;\r\n\r\n        return true;\r\n    }\r\n    // 좋아요(하트) 취소\r\n    public boolean cancelHeartPost(HeartPostReq heartPostReq){\r\n        String countSql = \"UPDATE CommunityDetail SET heartCount = heartCount-1 WHERE postIdx = \"+heartPostReq.getPostIdx();\r\n        String delSql = \"DELETE From HeartPost WHERE postIdx = \"+heartPostReq.getPostIdx()\r\n                +\" AND userIdx = \"+heartPostReq.getUserIdx();\r\n        if(this.jdbcTemplate.update(countSql) == 0) return false;\r\n        // 예외처리 필요\r\n        if(this.jdbcTemplate.update(delSql) == 0) return false;\r\n        // 예외처리 필요\r\n        return true;\r\n    }\r\n\r\n    // 게시글이 관심목록으로 등록된 수 반환 \r\n    public int getLikeCount(int postIdx) {\r\n        int likeCount = -1;\r\n        try{\r\n            //sql 작성\r\n            String sql = \"SELECT likeCount FROM Post WHERE postIdx = \"+postIdx;\r\n            likeCount = this.jdbcTemplate.queryForObject(sql,int.class);\r\n            }catch(Exception e){\r\n                return -1;\r\n            }\r\n        return likeCount;\r\n    }\r\n\r\n    // 사진 첨부 메서드\r\n    public boolean postImage(int postIdx, List<String> paths) {\r\n        String sql = \"INSERT INTO Image(postIdx, path) VALUES\";\r\n        for (String path : paths) {\r\n            sql += \"(\" + postIdx + \",\\\"\" + path + \"\\\"),\";\r\n        }\r\n        sql = sql.substring(0,sql.length()-1);\r\n        return this.jdbcTemplate.update(sql) == 1 ? true : false;\r\n    }\r\n\r\n    public boolean updateImage(int postIdx, List<String> paths) {\r\n        String deleteImageSql = \"DELETE FROM Image WHERE postIdx = \"+postIdx;\r\n        this.jdbcTemplate.update(deleteImageSql);\r\n        return postImage(postIdx,paths);\r\n    }\r\n\r\n    public Methods _getMethods(){\r\n        return this.methods;\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/demo/src/post/PostDao.java b/src/main/java/com/example/demo/src/post/PostDao.java
+--- a/src/main/java/com/example/demo/src/post/PostDao.java	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ b/src/main/java/com/example/demo/src/post/PostDao.java	(date 1691917222796)
+@@ -121,11 +121,18 @@
+                 rs.getString("path")
+         ));
+         // Post와 detail의 정보를 합친 후 리턴하기
++        String getCommentIdxSql = "SELECT commentIdx FROM Comment WHERE postIdx = "+getPostReq.getPostIdx();
++        List<Integer> comments = this.jdbcTemplate.queryForList(getCommentIdxSql,Integer.class);
++
+         if (categoryIdx == 10) {
+-            return new GetCommunityPostRes((Post)generalPost, (CommunityPost)detailPost,paths);
++            GetCommunityPostRes result = new GetCommunityPostRes((Post)generalPost, (CommunityPost)detailPost,paths);
++            result.setComments(comments);
++            return result;
+         }
+         else if(categoryIdx == 20) {
+-            return new GetGroupPurchasePostRes((Post)generalPost,(GroupPurchasePost)detailPost,paths);
++            GetGroupPurchasePostRes result = new GetGroupPurchasePostRes((Post)generalPost,(GroupPurchasePost)detailPost,paths);
++            result.setComments(comments);
++            return result;
+         }
+         else if (categoryIdx == 30) {
+             return new GetRecipePostRes((Post)generalPost, (RecipePost)detailPost,paths);
+Index: src/main/java/com/example/demo/src/chat/ChatDao.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.demo.src.chat;\r\n\r\nimport com.example.demo.src.chat.model.*;\r\nimport org.springframework.beans.factory.annotation.Autowired;\r\nimport org.springframework.dao.EmptyResultDataAccessException;\r\nimport org.springframework.jdbc.core.JdbcTemplate;\r\nimport org.springframework.stereotype.Repository;\r\nimport org.springframework.util.ObjectUtils;\r\n\r\nimport javax.sql.DataSource;\r\nimport java.sql.Timestamp;\r\nimport java.util.Collections;\r\nimport java.util.List;\r\nimport java.util.Objects;\r\n\r\n@Repository\r\npublic class ChatDao {\r\n    private JdbcTemplate jdbcTemplate;\r\n\r\n    @Autowired\r\n    public void setDataSource(DataSource dataSource){\r\n        this.jdbcTemplate = new JdbcTemplate(dataSource);\r\n    }\r\n\r\n\r\n\r\n    public Object getUser(GetUser getUser) {\r\n        String getUserQuery = \"SELECT userIdx, chatRestrictTime \" +\r\n                \"FROM User \" +\r\n                \"WHERE userIdx = \" + getUser.getUserIdx();\r\n        return this.jdbcTemplate.query(getUserQuery,\r\n                (rs, rowNum) -> new GetUser(\r\n                        rs.getLong(\"userIdx\"),\r\n                        rs.getTimestamp(\"chatRestrictTime\"))\r\n                );\r\n    }\r\n\r\n\r\n    public List<Object> getChatRooms(Long userIdx, String category) {\r\n\r\n        String getUserQuery = \"SELECT chatRoomIdx FROM ChatUser WHERE userIdx = ?\";\r\n        List<Long> chatRoomIdxList = this.jdbcTemplate.query(getUserQuery, new Object[]{userIdx},\r\n                (rs, rowNum) -> rs.getLong(\"chatRoomIdx\")\r\n        );\r\n\r\n        if (chatRoomIdxList.isEmpty()) {\r\n            return null;\r\n        }\r\n\r\n        String getChatRoomsQuery = null;\r\n        if (category.equals(\"community\")) {\r\n            getChatRoomsQuery = \"SELECT cr.chatRoomIdx, cu.userIdx, p.title, cr.unreads, cc.createTime, cc.contents \" +\r\n                    \"FROM Post p \" +\r\n                    \"JOIN ChatRoom cr On p.postIdx = cr.postIdx \" +\r\n                    \"JOIN ChatUser cu on cr.chatRoomIdx = cu.chatRoomIdx \" +\r\n                    \"JOIN ChatComment cc on cu.chatUserIdx = cc.chatUserIdx \" +\r\n                    \"WHERE p.categoryIdx BETWEEN 10 AND 19 AND cu.chatRoomIdx In (?) \" +\r\n                    \"ORDER BY cc.createTime DESC \";\r\n        } else if (category.equals(\"grouppurchase\")) {\r\n            getChatRoomsQuery = \"SELECT cr.chatRoomIdx, cu.userIdx, p.title, cr.unreads, cc.createTime, cc.contents \" +\r\n                    \"FROM Post p \" +\r\n                    \"JOIN ChatRoom cr On p.postIdx = cr.postIdx \" +\r\n                    \"JOIN ChatUser cu on cr.chatRoomIdx = cu.chatRoomIdx \" +\r\n                    \"JOIN ChatComment cc on cu.chatUserIdx = cc.chatUserIdx \" +\r\n                    \"WHERE p.categoryIdx BETWEEN 20 AND 29 AND cu.chatRoomIdx In (?) \" +\r\n                    \"ORDER BY cc.createTime DESC\";\r\n        }\r\n        if (getChatRoomsQuery == null)\r\n            return null;\r\n\r\n        String chatRoomIdxStr = String.join(\",\", Collections.nCopies(chatRoomIdxList.size(), \"?\"));\r\n        getChatRoomsQuery = getChatRoomsQuery.replace(\"?\", chatRoomIdxStr);\r\n\r\n        List<Object> chatRoomList = this.jdbcTemplate.query(getChatRoomsQuery, chatRoomIdxList.toArray(),\r\n                (rs, rowNum) -> new GetChatRooms(\r\n                        rs.getLong(\"chatRoomIdx\"),\r\n                        rs.getLong(\"userIdx\"),\r\n                        rs.getString(\"title\"),\r\n                        rs.getInt(\"unreads\"),\r\n                        rs.getTimestamp(\"createTime\"),\r\n                        rs.getString(\"contents\")\r\n                )\r\n        );\r\n\r\n        return chatRoomList;\r\n    }\r\n\r\n\r\n    public List<Long> existInChatRoom(Long chatRoomIdx) {\r\n        String existInChatRoomQuery = \"SELECT userIdx FROM ChatUser WHERE chatRoomIdx = ?\";\r\n        List<Long> existInChatRoom = this.jdbcTemplate.query(existInChatRoomQuery, new Object[]{chatRoomIdx},\r\n                (rs, rowNum) -> rs.getLong(\"userIdx\"));\r\n\r\n        return existInChatRoom;\r\n    }\r\n\r\n\r\n    public Object getChatRoom(Long chatRoomIdx) {\r\n        String getChatRoomQuery = \"SELECT category, title \" +\r\n                \"FROM Post p \" +\r\n                \"JOIN ChatRoom c On p.postIdx = c.postIdx \" +\r\n                \"JOIN PostCategory pc On pc.categoryIdx = p.categoryIdx \" +\r\n                \"WHERE chatRoomIdx = \" + chatRoomIdx;\r\n        Object getChatRoom = this.jdbcTemplate.query(getChatRoomQuery,\r\n                (rs, rowNum) -> new GetInChatRoom(\r\n                        rs.getString(\"category\"),\r\n                        rs.getString(\"title\"))\r\n                );\r\n\r\n        if (ObjectUtils.isEmpty(getChatRoom)) {\r\n            return null;\r\n        }\r\n\r\n        return getChatRoom;\r\n    }\r\n\r\n\r\n    public Long getChatRoomByPostIdx(Long postIdx) {\r\n        String getChatRoomQuery = \"SELECT chatRoomIdx FROM ChatRoom WHERE postIdx = ?\";\r\n        try {\r\n            Long existingChatRoomIdx = this.jdbcTemplate.queryForObject(getChatRoomQuery, new Object[]{postIdx}, Long.class);\r\n            return existingChatRoomIdx;\r\n        } catch (EmptyResultDataAccessException e) {\r\n            return null;\r\n        }\r\n    }\r\n\r\n    public void addUserToChatRoom(Long chatUserIdx, Long chatRoomIdx, Long userIdx) {\r\n        String addUserToChatRoomQuery = \"INSERT INTO ChatUser(chatUserIdx, userIdx, createTime, chatRoomIdx) \" +\r\n                \"VALUES(?, ?, now(), ?)\";\r\n        Object[] params = {chatUserIdx, userIdx, chatRoomIdx};\r\n\r\n        String updateChatRoomMembersQuery = \"UPDATE ChatRoom SET members = members + 1, \" +\r\n                \"groupPurchaseMembers = groupPurchaseMembers + 1 WHERE chatRoomIdx = ?\";\r\n        this.jdbcTemplate.update(updateChatRoomMembersQuery, chatRoomIdx);\r\n\r\n        this.jdbcTemplate.update(addUserToChatRoomQuery, params);\r\n    }\r\n\r\n\r\n    public PostChatUser postChatUser(Long chatUserIdx, Long userIdx, Long chatRoomIdx) {\r\n\r\n        String postChatUserQuery = \"INSERT INTO ChatUser(chatUserIdx, userIdx, createTime, chatRoomIdx) \" +\r\n                \"VALUES(?, ?, now(), ?)\";\r\n\r\n        Object[] params = {chatUserIdx, userIdx, chatRoomIdx};\r\n\r\n        this.jdbcTemplate.update(postChatUserQuery, params);\r\n\r\n        return new PostChatUser(chatUserIdx, userIdx, new Timestamp(System.currentTimeMillis()), chatRoomIdx);\r\n    }\r\n\r\n    public PostChatRoom postChatRoom(PostChatRoom postChatRoom, GetPost getPost) {\r\n        String postChatRoomQuery =\r\n                \"INSERT INTO ChatRoom(chatRoomIdx, postIdx, host, unreads, members, createTime, updateTime, groupPurchaseMembers) \" +\r\n                        \"VALUES(?, ?, ?, 0, 2, now(), now(), 2)\";\r\n\r\n        Object[] params = {postChatRoom.getChatRoomIdx(), getPost.getPostIdx(), getPost.getUserIdx()};\r\n\r\n        this.jdbcTemplate.update(postChatRoomQuery, params);\r\n\r\n        return postChatRoom;\r\n    }\r\n\r\n\r\n    public List<GetChatComment> getChatComment(Long chatRoomIdx) {\r\n        String getChatCommentQuery = \"SELECT * FROM ChatComment WHERE chatRoomIdx = \" + chatRoomIdx;\r\n        return this.jdbcTemplate.query(getChatCommentQuery,\r\n                (rs, rowNum) -> new GetChatComment(\r\n                        rs.getLong(\"chatCommentIdx\"),\r\n                        rs.getLong(\"chatRoomIdx\"),\r\n                        rs.getLong(\"chatUserIdx\"),\r\n                        rs.getString(\"contents\"),\r\n                        rs.getString(\"kind\"),\r\n                        rs.getInt(\"unread\"),\r\n                        rs.getTimestamp(\"createTime\"),\r\n                        rs.getString(\"contentType\"),\r\n                        rs.getInt(\"reported\"))\r\n        );\r\n    }\r\n\r\n    public List<String> getChatRoomUsers(Long chatRoomIdx) {\r\n        String getChatRoomUsersQuery = \"SELECT u.nickname \" +\r\n                \"FROM ChatRoom cr \" +\r\n                \"JOIN ChatUser cu ON cr.chatRoomIdx = cu.chatRoomIdx \" +\r\n                \"JOIN User u ON u.userIdx = cu.userIdx \" +\r\n                \"WHERE cr.chatRoomIdx = ?\";\r\n\r\n        List<String> getChatRoomUsers = this.jdbcTemplate.queryForList(\r\n                getChatRoomUsersQuery,\r\n                new Object[]{chatRoomIdx},\r\n                String.class\r\n        );\r\n\r\n        if (getChatRoomUsers.isEmpty()) {\r\n            return null;\r\n        }\r\n\r\n        return getChatRoomUsers;\r\n    }\r\n\r\n\r\n\r\n    public int getChatRoomMembers(Long chatRoomIdx) {\r\n        String getChatRoomMembersQuery = \"SELECT members FROM ChatRoom WHERE chatRoomIdx = ?\";\r\n        List<Integer> result = this.jdbcTemplate.query(getChatRoomMembersQuery, new Object[]{chatRoomIdx},\r\n                (rs, rowNum) -> rs.getInt(\"members\"));\r\n\r\n        if (result.isEmpty()) {\r\n            return 0;\r\n        }\r\n        int members = result.get(0);\r\n        return members;\r\n    }\r\n\r\n\r\n    public List<Long> existChatRoom() {\r\n        String existChatRoomQuery = \"SELECT chatRoomIdx FROM ChatRoom\";\r\n        return this.jdbcTemplate.queryForList(existChatRoomQuery, Long.class);\r\n    }\r\n\r\n\r\n    public void saveChatComment(PostChatComment postChatComment, Long chatCommentIdx) {\r\n        String saveChatCommentQuery = \"INSERT INTO ChatComment\" +\r\n                \"(chatCommentIdx, chatUserIdx, chatRoomIdx, contents, kind, unread, createTime, contentType)\" +\r\n                \"VALUES (?, ?, ?, ?, ?, 0, now(), ?)\";\r\n        this.jdbcTemplate.update(saveChatCommentQuery,\r\n                chatCommentIdx,\r\n                postChatComment.getChatUserIdx(),\r\n                postChatComment.getChatRoomIdx(),\r\n                postChatComment.getContents(),\r\n                postChatComment.getKind(),\r\n                postChatComment.getContentType());\r\n    }\r\n\r\n\r\n\r\n    public boolean getGroupPurchaseCheck(Long chatRoomIdx, GetChatUser getChatUser) {\r\n        String getGroupPurchaseCheckQuery = \"SELECT groupPurchaseCheck \" +\r\n                \"FROM ChatUser cu \" +\r\n                \"JOIN ChatRoom cr ON cu.chatRoomIdx = cr.chatRoomIdx \" +\r\n                \"WHERE cr.chatRoomIdx = ? AND cu.chatUserIdx = ?\";\r\n\r\n        Boolean groupPurchaseCheck = this.jdbcTemplate.queryForObject(\r\n                getGroupPurchaseCheckQuery,\r\n                new Object[]{chatRoomIdx, getChatUser.getChatUserIdx()},\r\n                Boolean.class);\r\n        return groupPurchaseCheck;\r\n    }\r\n\r\n\r\n    public int updateGroupPurchaseCheck(Long chatRoomIdx, GetChatUser getChatUser) {\r\n        String updateGroupPurchaseCheckQuery = \"UPDATE ChatUser SET groupPurchaseCheck = \" + true +\r\n                \" WHERE chatRoomIdx = ? AND chatUserIdx = ?\";\r\n\r\n        this.jdbcTemplate.update(updateGroupPurchaseCheckQuery, chatRoomIdx, getChatUser.getChatUserIdx());\r\n\r\n        String selectGroupPurchaseMembersQuery = \"SELECT groupPurchaseMembers FROM ChatRoom WHERE chatRoomIdx = ?\";\r\n\r\n        int groupPurchaseMembers = this.jdbcTemplate.queryForObject(selectGroupPurchaseMembersQuery,\r\n                new Object[]{chatRoomIdx}, Integer.class);\r\n        groupPurchaseMembers = groupPurchaseMembers - 1;\r\n\r\n        String updateGroupPurchaseMembersQuery = \"UPDATE ChatRoom SET groupPurchaseMembers = ? \" +\r\n                \"WHERE chatRoomIdx = ?\";\r\n\r\n        this.jdbcTemplate.update(updateGroupPurchaseMembersQuery, groupPurchaseMembers, chatRoomIdx);\r\n\r\n        return groupPurchaseMembers;\r\n    }\r\n\r\n    public void deleteChatUser(GetChatUser getChatUser) {\r\n        String deleteChatCommentQuery = \"DELETE FROM ChatComment WHERE chatUserIdx = \" + getChatUser.getChatUserIdx();\r\n        this.jdbcTemplate.update(deleteChatCommentQuery);\r\n\r\n        String deleteChatUserQuery = \"DELETE FROM ChatUser WHERE chatUserIdx = \" + getChatUser.getChatUserIdx();\r\n        this.jdbcTemplate.update(deleteChatUserQuery);\r\n    }\r\n\r\n\r\n\r\n    public int getGroupPurchaseMembers(Long chatRoomIdx) {\r\n        String getGroupPurchaseMembersQuery = \"SELECT groupPurchaseMembers FROM ChatRoom WHERE chatRoomIdx = ?\";\r\n\r\n        int groupPurchaseMembers = this.jdbcTemplate.queryForObject(getGroupPurchaseMembersQuery,\r\n                new Object[]{chatRoomIdx}, Integer.class);\r\n        return groupPurchaseMembers;\r\n    }\r\n\r\n\r\n    public boolean hostCheck(Long chatRoomIdx, GetChatUser getChatUser) {\r\n        String hostCheckQuery = \"SELECT host FROM ChatRoom WHERE chatRoomIdx = ?\";\r\n        int hostCheck = this.jdbcTemplate.queryForObject(hostCheckQuery,\r\n                new Object[]{chatRoomIdx}, Integer.class);\r\n\r\n        return hostCheck == getChatUser.getUserIdx();\r\n    }\r\n\r\n\r\n    public Object deleteChatRoom(Long chatRoomIdx) {\r\n        String deleteChatCommentQuery = \"DELETE FROM ChatComment WHERE chatRoomIdx = \" + chatRoomIdx;\r\n        this.jdbcTemplate.update(deleteChatCommentQuery);\r\n\r\n        String deleteChatUserQuery = \"DELETE FROM ChatUser WHERE chatRoomIdx = \" + chatRoomIdx;\r\n        this.jdbcTemplate.update(deleteChatUserQuery);\r\n\r\n        String deleteChatRoomQuery = \"DELETE FROM ChatRoom WHERE chatRoomIdx = \" + chatRoomIdx;\r\n        this.jdbcTemplate.update(deleteChatRoomQuery);\r\n        return 0;\r\n    }\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/demo/src/chat/ChatDao.java b/src/main/java/com/example/demo/src/chat/ChatDao.java
+--- a/src/main/java/com/example/demo/src/chat/ChatDao.java	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ b/src/main/java/com/example/demo/src/chat/ChatDao.java	(date 1691917290893)
+@@ -11,7 +11,6 @@
+ import java.sql.Timestamp;
+ import java.util.Collections;
+ import java.util.List;
+-import java.util.Objects;
+ 
+ @Repository
+ public class ChatDao {
+Index: src/main/java/com/example/demo/src/privateMethod/Methods.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.demo.src.privateMethod;\r\n\r\nimport com.example.demo.config.BaseException;\r\nimport com.example.demo.src.post.model.community.CommunityPost;\r\nimport com.example.demo.src.post.model.generalModel.Post;\r\nimport com.example.demo.src.post.model.groupPurchase.GroupPurchasePost;\r\nimport com.example.demo.src.post.model.recipe.RecipeInsertReq;\r\nimport com.example.demo.src.post.model.recipe.RecipePost;\r\nimport com.example.demo.src.report.model.CheckReportReq;\r\nimport org.springframework.dao.EmptyResultDataAccessException;\r\nimport org.springframework.dao.IncorrectResultSizeDataAccessException;\r\nimport org.springframework.jdbc.core.JdbcTemplate;\r\n\r\n\r\nimport javax.sql.DataSource;\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\n\r\npublic class Methods {\r\n\r\n    private final JdbcTemplate jdbcTemplate;\r\n\r\n    public Methods(DataSource dataSource){\r\n        this.jdbcTemplate = new JdbcTemplate(dataSource);\r\n    }\r\n\r\n    public Post _getPost(int postIdx){\r\n        String sql = \"SELECT * FROM Post WHERE postIdx = \" + postIdx;\r\n        return this.jdbcTemplate.queryForObject(sql, (rs,rowNum)-> new Post(\r\n                rs.getInt(\"postIdx\"),\r\n                rs.getInt(\"categoryIdx\"),\r\n                rs.getInt(\"userIdx\"),\r\n                rs.getString(\"title\"),\r\n                rs.getInt(\"viewCount\"),\r\n                rs.getInt(\"likeCount\"),\r\n                rs.getTimestamp(\"createAt\"),\r\n                rs.getTimestamp(\"updateAt\"),\r\n                rs.getString(\"url\")));\r\n    }\r\n    public Object _getDetailPost(int boardIdx, int postIdx){\r\n        // 공동구매 detail 정보 불러오기\r\n        Object detailPost;\r\n        if(boardIdx == 20) {\r\n            String qry = \"SELECT * FROM GroupPurchaseDetail WHERE postIdx = \"+postIdx;\r\n            detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new GroupPurchasePost(\r\n                    rs.getInt(\"groupPurchaseDetailIdx\"),\r\n                    rs.getString(\"productName\"),\r\n                    rs.getString(\"productURL\"),\r\n                    rs.getDouble(\"singlePrice\"),\r\n                    rs.getDouble(\"deliveryFee\"),\r\n                    rs.getInt(\"members\"),\r\n                    rs.getTimestamp(\"deadline\"),\r\n                    rs.getBoolean(\"hasExtension\"),\r\n                    rs.getBoolean(\"calculated\")\r\n            ));\r\n            return (GroupPurchasePost)detailPost;\r\n        }\r\n        // 커뮤니티 detail 정보 불러오기\r\n        else if (boardIdx == 10) {\r\n            String qry = \"SELECT * FROM CommunityDetail WHERE postIdx = \"+postIdx;\r\n            detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new CommunityPost(\r\n                    rs.getInt(\"communityDetailIdx\"),\r\n                    rs.getString(\"contents\")\r\n            ));\r\n            // Post와 detail의 정보를 합친 후 리턴하기\r\n            return (CommunityPost)detailPost;\r\n        }\r\n        // 레시피 detail 정보 불러오기\r\n        else if (boardIdx == 30) {\r\n            String qry = \"SELECT * FROM RecipeDetail WHERE postIdx = \" + postIdx;\r\n            detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new RecipePost(\r\n                    rs.getInt(\"recipeDetailIdx\"),\r\n                    rs.getString(\"contents\"),\r\n                    rs.getString(\"tag\")\r\n            ));\r\n            return (RecipePost)detailPost;\r\n        }\r\n        else return null;\r\n    }\r\n    public int _getCategoryIdx(int postIdx){\r\n        String sql = \"SELECT categoryIdx FROM Post WHERE postIdx = \"+postIdx;\r\n        return this.jdbcTemplate.queryForObject(sql,int.class);\r\n    }\r\n    public int _getBoardIdx(int postIdx){\r\n        return this._getCategoryIdx(postIdx)/10;\r\n    }\r\n    public boolean _isExistPostIdx(int postIdx) {\r\n        String sql = \"SELECT postIdx FROM Post WHERE postIdx = \"+postIdx;\r\n        try{\r\n            return this.jdbcTemplate.queryForObject(sql,int.class) == postIdx ? true:false;\r\n        } catch (Exception e) {\r\n            return false;\r\n        }\r\n    }\r\n    public String _getUserRole(int userIdx){\r\n        String getUserRoleIdxSql = \"SELECT role FROM User Where userIdx = \"+userIdx;\r\n        return this.jdbcTemplate.queryForObject(getUserRoleIdxSql,String.class);\r\n    }\r\n    public int _getUserIdxByPostIdx(int postIdx){\r\n        String getUserIdxSql = \"SELECT userIdx FROM Post WHERE postIdx = \"+postIdx;\r\n        return this.jdbcTemplate.queryForObject(getUserIdxSql,int.class);\r\n    }\r\n    public int _getOriginIdxOf(int commentIdx){\r\n        String getOriginIdxSql = \"SELECT originIdx From Comment WHERE commentIdx = \"+commentIdx;\r\n        return this.jdbcTemplate.queryForObject(getOriginIdxSql,int.class);\r\n    }\r\n    public boolean _isExistCommentIdx(int commentIdx) {\r\n        String sql = \"SELECT commentIdx FROM Comment WHERE commentIdx = \"+commentIdx;\r\n        try{\r\n            return this.jdbcTemplate.queryForObject(sql,int.class) == commentIdx ? true:false;\r\n        } catch (Exception e) {\r\n            return false;\r\n        }\r\n    }\r\n    public int _getUserIdxByCommentIdx(int commentIdx){\r\n        String getUserIdxSql = \"SELECT userIdx FROM Comment WHERE commentIdx = \"+commentIdx;\r\n        return this.jdbcTemplate.queryForObject(getUserIdxSql,int.class);\r\n    }\r\n    public boolean _isExistReport(CheckReportReq checkReportReq) {\r\n        try {\r\n            String checkSql = \"\";\r\n            if (checkReportReq.getKind() == 40) {\r\n                checkSql = \"SELECT reportIdx FROM Report WHERE reportingUserIdx = \" + checkReportReq.getUserIdx() + \" AND contentsKind = \" + checkReportReq.getKind();\r\n            } else if (checkReportReq.getKind() != 40) {\r\n                checkSql = \"SELECT reportIdx FROM Report WHERE reportingUserIdx = \" +\r\n                        checkReportReq.getUserIdx() +\r\n                        \" AND contentsKind = \" +\r\n                        checkReportReq.getKind() +\r\n                        \" AND reportedContentsIdx = \" +\r\n                        checkReportReq.getContentsIdx();\r\n            }\r\n            return this.jdbcTemplate.queryForObject(checkSql, int.class) > 0 ? true : false;\r\n        } catch (EmptyResultDataAccessException e) {\r\n            return false;\r\n        } catch (IncorrectResultSizeDataAccessException e) {\r\n            return true;\r\n        }\r\n    }\r\n\r\n    public boolean _isAdmin(int userIdx){\r\n        String checkAdminSql = \"SELECT role FROM User WHERE userIdx = \"+userIdx;\r\n        String role = this.jdbcTemplate.queryForObject(checkAdminSql,String.class);\r\n        if(role.toLowerCase().equals(\"admin\")) return true;\r\n        else return false;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/demo/src/privateMethod/Methods.java b/src/main/java/com/example/demo/src/privateMethod/Methods.java
+--- a/src/main/java/com/example/demo/src/privateMethod/Methods.java	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ b/src/main/java/com/example/demo/src/privateMethod/Methods.java	(date 1691918189698)
+@@ -90,6 +90,7 @@
+         try{
+             return this.jdbcTemplate.queryForObject(sql,int.class) == postIdx ? true:false;
+         } catch (Exception e) {
++            System.out.println(e.getStackTrace());
+             return false;
+         }
+     }
+Index: src/main/java/com/example/demo/src/post/model/groupPurchase/GetGroupPurchasePostRes.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.demo.src.post.model.groupPurchase;\r\n\r\nimport com.example.demo.src.post.model.generalModel.Image;\r\nimport com.example.demo.src.post.model.generalModel.Post;\r\nimport lombok.AllArgsConstructor;\r\nimport lombok.Getter;\r\nimport lombok.NoArgsConstructor;\r\nimport lombok.Setter;\r\n\r\nimport java.sql.Timestamp;\r\nimport java.util.List;\r\n\r\n@Getter\r\n@Setter\r\n@NoArgsConstructor\r\n@AllArgsConstructor\r\npublic class GetGroupPurchasePostRes extends Image {\r\n    private int postIdx;\r\n    private int categoryIdx;\r\n    private int userIdx;\r\n    private String title;\r\n    private int viewCount;\r\n    private int likeCount;\r\n    private Timestamp createAt;\r\n    private Timestamp updateAt;\r\n    private String url;\r\n    private int groupPurchaseDetailIdx;\r\n    private String productName;\r\n    private String productURL;\r\n    private double singlePrice;\r\n    private double deliveryFee;\r\n    private int members;\r\n    private Timestamp deadline;\r\n    private boolean hasExtension;\r\n    private boolean calculated;\r\n\r\n    public GetGroupPurchasePostRes(Post generalPost, GroupPurchasePost groupPurchasePost, List<String> paths){\r\n        super(paths);\r\n        this.postIdx = generalPost.getPostIdx();\r\n        this.categoryIdx = generalPost.getCategoryIdx();\r\n        this.userIdx = generalPost.getUserIdx();\r\n        this.title = generalPost.getTitle();\r\n        this.viewCount = generalPost.getViewCount();\r\n        this.likeCount = generalPost.getLikeCount();\r\n        this.createAt = generalPost.getCreateAt();\r\n        this.updateAt = generalPost.getUpdateAt();\r\n        this.url = generalPost.getUrl();\r\n        this.groupPurchaseDetailIdx = groupPurchasePost.getGroupPurchaseDetailIdx();\r\n        this.productName = groupPurchasePost.getProductName();\r\n        this.productURL = groupPurchasePost.getProductURL();\r\n        this.singlePrice = groupPurchasePost.getSinglePrice();\r\n        this.deliveryFee = groupPurchasePost.getDeliveryFee();\r\n        this.members = groupPurchasePost.getMembers();\r\n        this.deadline = groupPurchasePost.getDeadline();\r\n        this.hasExtension = groupPurchasePost.isHasExtension();\r\n        this.calculated = groupPurchasePost.isCalculated();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/demo/src/post/model/groupPurchase/GetGroupPurchasePostRes.java b/src/main/java/com/example/demo/src/post/model/groupPurchase/GetGroupPurchasePostRes.java
+--- a/src/main/java/com/example/demo/src/post/model/groupPurchase/GetGroupPurchasePostRes.java	(revision bba2f75d3c90116808e897c60e43de8cc2345e20)
++++ b/src/main/java/com/example/demo/src/post/model/groupPurchase/GetGroupPurchasePostRes.java	(date 1691917176689)
+@@ -33,6 +33,7 @@
+     private Timestamp deadline;
+     private boolean hasExtension;
+     private boolean calculated;
++    private List<Integer> comments;
+ 
+     public GetGroupPurchasePostRes(Post generalPost, GroupPurchasePost groupPurchasePost, List<String> paths){
+         super(paths);

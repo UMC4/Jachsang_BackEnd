@@ -146,14 +146,22 @@ public class Methods {
         else return false;
     }
     public boolean _isLikedPost(int userIdx, int postIdx){
-        String checkLikedPost = "EXISTS(SELECT * FROM LikedPost WHERE postIdx = ? AND userIdx = ?)";
-        Object[] param = {postIdx, userIdx};
-        return this.jdbcTemplate.queryForObject(checkLikedPost,param,int.class) == 1 ? true : false;
+        try {
+            String checkLikedPost = "SELECT postIdx FROM LikedPost WHERE postIdx = ? AND userIdx = ?";
+            Object[] param = {postIdx, userIdx};
+            return this.jdbcTemplate.queryForObject(checkLikedPost, param, int.class) != 0;
+        } catch (EmptyResultDataAccessException e) {
+            return false;
+        }
     }
     public boolean _isHeartPost(int userIdx, int postIdx){
-        String checkLikedPost = "EXISTS(SELECT * FROM HeartPost WHERE postIdx = ? AND userIdx = ?)";
-        Object[] param = {postIdx, userIdx};
-        return this.jdbcTemplate.queryForObject(checkLikedPost,param,int.class) == 1 ? true : false;
+        try {
+            String checkHeartedPost = "SELECT postIdx FROM HeartPost WHERE postIdx = ? AND userIdx = ?";
+            Object[] param = {postIdx, userIdx};
+            return this.jdbcTemplate.queryForObject(checkHeartedPost, param, int.class) != 0;
+        } catch (EmptyResultDataAccessException e) {
+            return false;
+        }
     }
     public void recipeTest() throws BaseException {
         com.example.demo.src.recipeCrawl.Methods m = new com.example.demo.src.recipeCrawl.Methods();
