@@ -86,17 +86,17 @@ public class PostController {
 
     @ResponseBody
     @DeleteMapping(value = "delete")
-    public BaseResponse<String> deletePost(@RequestBody DeleteReq deleteReq){
+    public BaseResponse<String> deletePost(@RequestParam int postIdx){
         try{
             // 3000
-            if(!this.methods._isExistPostIdx(deleteReq.getPostIdx())) throw new BaseException(NOT_EXIST_POST_IDX);
+            if(!this.methods._isExistPostIdx(postIdx)) throw new BaseException(NOT_EXIST_POST_IDX);
             // 글쓴이와 삭제자가 다를 때
-            if(jwtService.getUserIdx() != this.methods._getUserIdxByPostIdx(deleteReq.getPostIdx())) {
+            if(jwtService.getUserIdx() != this.methods._getUserIdxByPostIdx(postIdx)) {
                 // 관리자가 아니면 권한없음 예외처리
                 if(!this.methods._getUserRole(jwtService.getUserIdx()).equalsIgnoreCase("admin")) throw new BaseException(BaseResponseStatus.PERMISSION_DENIED);
                 throw new BaseException(JWT_USER_MISSMATCH);
             }
-            if(this.postService.deletePost(deleteReq)) return new BaseResponse<>("성공했습니다.");
+            if(this.postService.deletePost(postIdx)) return new BaseResponse<>("성공했습니다.");
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }

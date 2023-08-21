@@ -117,7 +117,7 @@ public class ReportDao {
         // 신고 누적횟수가 5회가 되는 경우 -> 컨텐츠를 삭제한다.
         if(reportCount %5 == 5) {
             if(categoryIdx == 40) new CommentDao(jdbcTemplate.getDataSource()).deleteComment(communityReportReq.getReportedContentsIdx());
-            else new PostDao(jdbcTemplate.getDataSource()).deletePost(new DeleteReq(communityReportReq.getReportedUserIdx(), communityReportReq.getReportedContentsIdx()));
+            else new PostDao(jdbcTemplate.getDataSource()).deletePost(communityReportReq.getReportedContentsIdx());
             if(reportCount >= 10) {
                 restrictDate = 14;
             }

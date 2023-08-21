@@ -143,13 +143,11 @@ public class PostDao {
         else return null;
     }
     // 글 삭제
-    public boolean deletePost(DeleteReq deleteReq) {
+    public boolean deletePost(int postIdx) {
         // 결과 확인용 변수 선언 - Post(general)와 Detail 각각 준비한다.
         int general = 0, detail = 0, image = 0, like = 0, heart = 0, comment = 0;
         // 유저 idx를 저장한다.
-        int userIdx = deleteReq.getUserIdx();
         // 게시판 종류를 확인한다.
-        int postIdx = deleteReq.getPostIdx();
         int boardIdx = 10*methods._getBoardIdx(postIdx);
         // 게시판 종류를 저장한다.
         String board = boardIdx == 10 ? "Community" :

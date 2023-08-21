@@ -42,8 +42,8 @@ public class PostService {
     public boolean cancelHeartPost(HeartPostReq heartPostReq) throws BaseException{
         return this.postDao.cancelHeartPost(heartPostReq);
     }
-    public boolean deletePost(DeleteReq deleteReq) throws BaseException{
-        return this.postDao.deletePost(deleteReq);
+    public boolean deletePost(int postIdx) throws BaseException{
+        return this.postDao.deletePost(postIdx);
     }
 
     public boolean updatePost(HashMap<String,Object> updateReq) throws BaseException, SQLIntegrityConstraintViolationException{
