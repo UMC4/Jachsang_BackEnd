@@ -40,7 +40,6 @@ public class PostController {
     public BaseResponse<PostingRes> createPost(@RequestBody Object postingReq){
         try {
             HashMap<String, Object> req = (LinkedHashMap) postingReq;
-
             int categoryIdx = (int) req.get("categoryIdx");
 
             //카테고리가 존재하지 않는 것일 때

@@ -115,7 +115,7 @@ public class PostDao {
                 detailPost = methods._getDetailPost(categoryIdx,postIdx);
 
         // 조회수 1 증가시키기 위해 sql문 작성 및 실행
-        String viewUpdateSql = "UPDATE Post set viewCount = viewCount+1 WHERE postIdx = "+postIdx;
+        String viewUpdateSql = "UPDATE Post SET viewCount = viewCount+1 WHERE postIdx = "+postIdx;
         this.jdbcTemplate.update(viewUpdateSql);
 
         String getImageSql = "SELECT path FROM Image WHERE postIdx = "+postIdx;
@@ -125,11 +125,12 @@ public class PostDao {
 
         String getCommentIdxSql = "SELECT commentIdx FROM Comment WHERE postIdx = "+postIdx;
         List<Integer> comments = this.jdbcTemplate.queryForList(getCommentIdxSql,Integer.class);
+
         boolean isScraped = this.methods._isLikedPost(userIdx, postIdx);
         boolean isHearted = this.methods._isHeartPost(userIdx, postIdx);
 
     // Post와 detail의 정보를 합친 후 리턴하기
-        if (categoryIdx < 20 ) {
+        if (categoryIdx < 20) {
             GetCommunityPostRes result = new GetCommunityPostRes((Post)generalPost, (CommunityPost)detailPost,paths);
             result.setComments(comments);
             result.setScraped(isScraped);

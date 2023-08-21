@@ -43,6 +43,7 @@ public class Methods {
             String qry = "SELECT * FROM CommunityDetail WHERE postIdx = "+postIdx;
             detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new CommunityPost(
                     rs.getInt("communityDetailIdx"),
+                    rs.getInt("heartCount"),
                     rs.getString("contents")
             ));
             // Post와 detail의 정보를 합친 후 리턴하기
@@ -55,6 +56,7 @@ public class Methods {
                     rs.getInt("groupPurchaseDetailIdx"),
                     rs.getString("productName"),
                     rs.getString("productURL"),
+                    rs.getInt("heartCount"),
                     rs.getDouble("singlePrice"),
                     rs.getDouble("deliveryFee"),
                     rs.getInt("members"),

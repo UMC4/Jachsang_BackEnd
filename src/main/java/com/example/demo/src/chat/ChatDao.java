@@ -11,7 +11,6 @@ import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 @Repository
 public class ChatDao {
