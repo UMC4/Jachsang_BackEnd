@@ -226,4 +226,14 @@ public class PostController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    @ResponseBody
+    @PostMapping(value = "get/userDetail")
+    public BaseResponse<GetUserDetailRes> getUserDetail(@RequestParam(value = "userIdx") int userIdx){
+        try {
+            return new BaseResponse<>(this.postProvider.getUserDetail(userIdx));
+        } catch(BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 }

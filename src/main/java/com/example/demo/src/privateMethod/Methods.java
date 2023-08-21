@@ -32,8 +32,8 @@ public class Methods {
                 rs.getString("title"),
                 rs.getInt("viewCount"),
                 rs.getInt("likeCount"),
-                rs.getTimestamp("createAt"),
-                rs.getTimestamp("updateAt"),
+                rs.getTimestamp("createAt").toString(),
+                rs.getTimestamp("updateAt").toString(),
                 rs.getString("url")));
     }
     public Object _getDetailPost(int categoryIdx, int postIdx){
@@ -89,6 +89,7 @@ public class Methods {
         try{
             return this.jdbcTemplate.queryForObject(sql,int.class) == postIdx ? true:false;
         } catch (Exception e) {
+            System.out.println(e.getStackTrace());
             return false;
         }
     }

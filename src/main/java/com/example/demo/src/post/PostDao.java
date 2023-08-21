@@ -111,7 +111,6 @@ public class PostDao {
     public Object getPost(int categoryIdx, int userIdx, int postIdx) {
         // 세 게시판의 글을 한번에 처리하기 위한 변수 설정
         // 기본정보와 detail 정보 불러오기
-
         Object generalPost = methods._getPost(postIdx),
                 detailPost = methods._getDetailPost(categoryIdx,postIdx);
 
@@ -254,7 +253,6 @@ public class PostDao {
 
         return true;
     }
-
     // 관심목록 추가
     public boolean scrapPost(LikeReq likeReq){
         // 어떤 유저가 어떤 게시글에 스크랩을 눌렀는가를 LikedPost 테이블에 기록하는 과정
@@ -356,5 +354,14 @@ public class PostDao {
             count++;
         }
         return count;
+    }
+
+    public GetUserDetailRes getUserDetail(int userIdx){
+        String getUserDetailSql = "SELECT userName, nickName, loginId FROM User WHERE userIdx = "+userIdx;
+        return this.jdbcTemplate.queryForObject(getUserDetailSql,(rs,rowNum)->new GetUserDetailRes(
+                rs.getString("userName"),
+                rs.getString("nickName"),
+                rs.getString("loginId")
+        ));
     }
 }

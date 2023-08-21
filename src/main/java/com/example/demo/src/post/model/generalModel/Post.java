@@ -18,7 +18,7 @@ public class Post {
     private String title;
     private int viewCount;
     private int likeCount;
-    private Timestamp createAt;
-    private Timestamp updateAt;
+    private String createAt;
+    private String updateAt;
     private String url;
 }
