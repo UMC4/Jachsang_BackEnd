@@ -33,8 +33,8 @@ public class Methods {
                 rs.getString("title"),
                 rs.getInt("viewCount"),
                 rs.getInt("likeCount"),
-                rs.getTimestamp("createAt"),
-                rs.getTimestamp("updateAt"),
+                rs.getString("createAt"),
+                rs.getString("updateAt"),
                 rs.getString("url")));
     }
     public Object _getDetailPost(int categoryIdx, int postIdx){
@@ -44,6 +44,7 @@ public class Methods {
             String qry = "SELECT * FROM CommunityDetail WHERE postIdx = "+postIdx;
             detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new CommunityPost(
                     rs.getInt("communityDetailIdx"),
+                    rs.getInt("heartCount"),
                     rs.getString("contents")
             ));
             // Post와 detail의 정보를 합친 후 리턴하기
@@ -56,6 +57,7 @@ public class Methods {
                     rs.getInt("groupPurchaseDetailIdx"),
                     rs.getString("productName"),
                     rs.getString("productURL"),
+                    rs.getInt("heartCount"),
                     rs.getDouble("singlePrice"),
                     rs.getDouble("deliveryFee"),
                     rs.getInt("members"),
