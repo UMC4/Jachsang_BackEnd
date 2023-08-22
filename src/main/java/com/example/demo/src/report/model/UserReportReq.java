@@ -9,12 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportReq {
-    private int reportingUserIdx;
-    private int reportCategoryIdx;
-    private String reportingContents;
-
-    private int reportedContentsIdx;
+public class UserReportReq {
+    private int userIdx;
     private int reportedUserIdx;
+    private int reportCategory;
 
 }

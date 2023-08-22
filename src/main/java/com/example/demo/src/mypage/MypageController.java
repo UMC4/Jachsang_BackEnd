@@ -2,21 +2,18 @@ package com.example.demo.src.mypage;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.src.board.model.GetPageRes;
 import com.example.demo.src.mypage.model.GetCommunityActivityRes;
 import com.example.demo.src.mypage.model.GetGroupPurchaseActivityRes;
 import com.example.demo.utils.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/app/mypage")
 public class MypageController {
 
-    @Autowired
     private final MypageProvider mypageProvider;
-    @Autowired
     private final JwtService jwtService;
 
     public MypageController(MypageProvider mypageProvider, JwtService jwtService) {
@@ -24,129 +21,68 @@ public class MypageController {
         this.jwtService = jwtService;
     }
 
-    /**
-     * 내가 쓴 커뮤니티 글 목록 조회 API
-     * [GET] /mypage/community/posts
-     * @return BaseResponse<List<GetCommunityActivityRes>>
-     */
+    @FunctionalInterface
+    interface TriFunction<T, U, V, R> {
+        R apply(T t, U u, V v) throws BaseException;
+    }
+
+    private <T> BaseResponse<GetPageRes<T>> getMyActivity(TriFunction<Integer, Integer, Integer, GetPageRes<T>> action, int startIdx, int size) {
+        try {
+            int userIdxByJWT = jwtService.getUserIdx();
+
+            GetPageRes<T> activityList = action.apply(userIdxByJWT, startIdx, size);
+            return new BaseResponse<>(activityList);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
     @ResponseBody
     @GetMapping("/community/posts")
-    public BaseResponse<List<GetCommunityActivityRes>> getMyCommunityPosts() {
-        try {
-            int userIdxByJWT = jwtService.getUserIdx();
-
-            List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityPosts(userIdxByJWT);
-            return new BaseResponse<>(communityList);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<GetPageRes<GetCommunityActivityRes>> getMyCommunityPosts(@RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
+                                                                                 @RequestParam(value = "size", defaultValue = "10") int size) {
+        return getMyActivity(mypageProvider::getMyCommunityPosts, startIdx, size);
     }
 
-    /**
-     * 내가 댓글 댓글 단 커뮤니티 글 목록 조회 API
-     * [GET] /mypage/community/comments
-     * @return BaseResponse<List<GetCommunityActivityRes>>
-     */
     @ResponseBody
     @GetMapping("/community/comments")
-    public BaseResponse<List<GetCommunityActivityRes>> getMyCommunityComments() {
-        try {
-            int userIdxByJWT = jwtService.getUserIdx();
-
-            List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityComments(userIdxByJWT);
-            return new BaseResponse<>(communityList);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<GetPageRes<GetCommunityActivityRes>> getMyCommunityComments(@RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
+                                                                                    @RequestParam(value = "size", defaultValue = "10") int size) {
+        return getMyActivity(mypageProvider::getMyCommunityComments, startIdx, size);
     }
 
-    /**
-     * 내가 관심(like) 표시한 커뮤니티 글 목록 조회 API
-     * [GET] /mypage/community/likes
-     * @return BaseResponse<List<GetCommunityActivityRes>>
-     */
     @ResponseBody
     @GetMapping("/community/likes")
-    public BaseResponse<List<GetCommunityActivityRes>> getMyCommunityLikes() {
-        try {
-            int userIdxByJWT = jwtService.getUserIdx();
-
-            List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityLikes(userIdxByJWT);
-            return new BaseResponse<>(communityList);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<GetPageRes<GetCommunityActivityRes>> getMyCommunityLikes(@RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
+                                                                                 @RequestParam(value = "size", defaultValue = "10") int size) {
+        return getMyActivity(mypageProvider::getMyCommunityLikes, startIdx, size);
     }
 
-    /**
-     * 내가 공감(heart) 표시한 커뮤니티 글 목록 조회 API
-     * [GET] /mypage/community/hearts
-     * @return BaseResponse<List<GetCommunityActivityRes>>
-     */
     @ResponseBody
     @GetMapping("/community/hearts")
-    public BaseResponse<List<GetCommunityActivityRes>> getMyCommunityHearts() {
-        try {
-            int userIdxByJWT = jwtService.getUserIdx();
-
-            List<GetCommunityActivityRes> communityList = mypageProvider.getMyCommunityHearts(userIdxByJWT);
-            return new BaseResponse<>(communityList);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<GetPageRes<GetCommunityActivityRes>> getMyCommunityHearts(@RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
+                                                                                  @RequestParam(value = "size", defaultValue = "10") int size) {
+        return getMyActivity(mypageProvider::getMyCommunityHearts, startIdx, size);
     }
 
-    /**
-     * 내가 쓴 공동구매 글 목록 조회 API
-     * [GET] /mypage/grouppurchase/posts
-     * @return BaseResponse<List<GetGroupPurchaseActivityRes>>
-     */
     @ResponseBody
     @GetMapping("/grouppurchase/posts")
-    public BaseResponse<List<GetGroupPurchaseActivityRes>> getMyGroupPurchasePosts() {
-        try {
-            int userIdxByJWT = jwtService.getUserIdx();
-
-            List<GetGroupPurchaseActivityRes> groupPurchaseList = mypageProvider.getMyGroupPurchasePosts(userIdxByJWT);
-            return new BaseResponse<>(groupPurchaseList);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<GetPageRes<GetGroupPurchaseActivityRes>> getMyGroupPurchasePosts(@RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
+                                                                                         @RequestParam(value = "size", defaultValue = "10") int size) {
+        return getMyActivity(mypageProvider::getMyGroupPurchasePosts, startIdx, size);
     }
 
-    /**
-     * 관심(like) 표시한 공동구매 글 목록 조회 API
-     * [GET] /mypage/grouppurchase/posts
-     * @return BaseResponse<List<GetGroupPurchaseActivityRes>>
-     */
     @ResponseBody
     @GetMapping("/grouppurchase/likes")
-    public BaseResponse<List<GetGroupPurchaseActivityRes>> getMyGroupPurchaseLikes() {
-        try {
-            int userIdxByJWT = jwtService.getUserIdx();
-
-            List<GetGroupPurchaseActivityRes> groupPurchaseList = mypageProvider.getMyGroupPurchaseLikes(userIdxByJWT);
-            return new BaseResponse<>(groupPurchaseList);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<GetPageRes<GetGroupPurchaseActivityRes>> getMyGroupPurchaseLikes(@RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
+                                                                                         @RequestParam(value = "size", defaultValue = "10") int size) {
+        return getMyActivity(mypageProvider::getMyGroupPurchaseLikes, startIdx, size);
     }
 
-    /**
-     * 내가 참여한 공동구매 글 목록 조회 API
-     * [GET] /mypage/grouppurchase/participated
-     * @return BaseResponse<List<GetGroupPurchaseActivityRes>>
-     */
     @ResponseBody
     @GetMapping("/grouppurchase/participated")
-    public BaseResponse<List<GetGroupPurchaseActivityRes>> getMyGroupPurchaseParticipated() {
-        try {
-            int userIdxByJWT = jwtService.getUserIdx();
-
-            List<GetGroupPurchaseActivityRes> groupPurchaseList = mypageProvider.getMyGroupPurchaseParticipated(userIdxByJWT);
-            return new BaseResponse<>(groupPurchaseList);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+    public BaseResponse<GetPageRes<GetGroupPurchaseActivityRes>> getMyGroupPurchaseParticipated(@RequestParam(value = "startIdx", defaultValue = "0") int startIdx,
+                                                                                                @RequestParam(value = "size", defaultValue = "10") int size) {
+        return getMyActivity(mypageProvider::getMyGroupPurchaseParticipated, startIdx, size);
     }
 }

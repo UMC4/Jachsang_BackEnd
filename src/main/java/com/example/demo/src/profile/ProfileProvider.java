@@ -3,11 +3,14 @@ package com.example.demo.src.profile;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.board.model.GetGroupPurchaseItemRes;
+import com.example.demo.src.board.model.GetPageRes;
 import com.example.demo.src.profile.model.GetProfileRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.example.demo.src.board.model.GetPageRes.handleGetPageRes;
 
 @Service
 public class ProfileProvider {
@@ -28,12 +31,9 @@ public class ProfileProvider {
         }
     }
 
-    public List<GetGroupPurchaseItemRes> getGroupPurchaseList(int userIdx, int profileUserIdx, int limit) throws BaseException {
-        List<GetGroupPurchaseItemRes> getGroupPurchaseList = profileDao.getGroupPurchaseList(userIdx, profileUserIdx, limit);
-        if (getGroupPurchaseList.isEmpty()) {
-            throw new BaseException(BaseResponseStatus.NO_POSTS_FOUND);
-        } else {
-            return getGroupPurchaseList;
-        }
+    public GetPageRes<GetGroupPurchaseItemRes> getGroupPurchasePage(int userIdx, int profileUserIdx, int startIdx, int size) throws BaseException {
+        List<GetGroupPurchaseItemRes> items = profileDao.getGroupPurchaseList(userIdx, profileUserIdx, startIdx, size+1);
+
+        return handleGetPageRes(items, size);
     }
 }
