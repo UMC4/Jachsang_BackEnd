@@ -87,6 +87,16 @@ public class UserProvider {
         }
     }
 
+    //닉네임중복확인
+    public int checkNickname(String nickname) throws BaseException{
+        try{
+            return userDao.checkNickname(nickname);
+        } catch (Exception exception){
+            throw new BaseException(FAILED_TO_GETMAIL);
+        }
+    }
+
+
     public int checkEmail(String email) throws BaseException{
         try{
             return userDao.checkEmail(email);
@@ -94,6 +104,7 @@ public class UserProvider {
             throw new BaseException(FAILED_TO_GETMAIL);
         }
     }
+
     public int checkFollowed(PostFollowReq postFollowReq) throws BaseException{
         try{
             return userDao.checkFollow(postFollowReq);

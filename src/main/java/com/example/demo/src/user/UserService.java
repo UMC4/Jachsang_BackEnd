@@ -38,91 +38,120 @@ public class UserService {
 
     }
 
-//비즈니스 로직 처리
+    //비즈니스 로직 처리
     //POST
     public PostUserRes createUser(PostUserReq postUserReq) throws BaseException {
         // 이메일 중복
-        if(userProvider.checkEmail(postUserReq.getEmail()) ==1){
+        if (userProvider.checkEmail(postUserReq.getEmail()) == 1) {
             throw new BaseException(POST_USERS_EXISTS_EMAIL);
         }
         //아이디 중복
-        if(userProvider.checkId(postUserReq.getLoginId())==1){
+        if (userProvider.checkId(postUserReq.getLoginId()) == 1) {
             throw new BaseException(ID_ALREATY_EXISTS);
         }
 
         String pwd;
-        try{
+        try {
             //암호화
             pwd = new SHA256().encrypt(postUserReq.getPassword());
             postUserReq.setPassword(pwd);
         } catch (Exception ignored) {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
-        try{
+        try {
             int userIdx = userDao.createUser(postUserReq);
             //jwt 발급.
             String jwt = jwtService.createJwt(userIdx);
-            return new PostUserRes(jwt,userIdx);
+            return new PostUserRes(jwt, userIdx);
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    public void followUser(PostFollowReq postFollowReq) throws BaseException{
-        if (userProvider.checkFollowed(postFollowReq)==1)
+    public void followUser(PostFollowReq postFollowReq) throws BaseException {
+        if (userProvider.checkFollowed(postFollowReq) == 1)
             throw new BaseException(FOLLOWED_USER_ALREADY);
-        try{
-            int result=userDao.followUser(postFollowReq);
-            if(result==0) {
+        try {
+            int result = userDao.followUser(postFollowReq);
+            if (result == 0) {
                 throw new BaseException(FAILED_TO_FOLLOW);
             }
-        } catch (Exception exception){
+        } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
     public void deleteFollow(PostFollowReq postFollowReq) throws BaseException {
         try {
             int result = userDao.deleteFollowUser(postFollowReq);
             if (result == 0) {
                 throw new BaseException(FAILED_TO_UNFOLLOW);
             }
-        }catch (Exception exception){
+        } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
     public void modifyUserInfo(PatchUserReq patchUserReq) throws BaseException {
         String pwd;
-        try{
-            pwd=new SHA256().encrypt(patchUserReq.getPassword());
+        try {
+            pwd = new SHA256().encrypt(patchUserReq.getPassword());
             patchUserReq.setPassword(pwd);
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
-        try{
+        try {
             int result = userDao.modifyUserInfo(patchUserReq);
-            if(result == 0){
+            if (result == 0) {
                 throw new BaseException(MODIFY_FAIL_USERINFO);
             }
-        } catch(Exception exception){
+        } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-    public void modifyUserNewPwd(PatchUserPwdReq patchUserPwdReq) throws  BaseException{
+
+    public void modifyUserNewPwd(PatchUserPwdReq patchUserPwdReq) throws BaseException {
         String pwd;
-        try{
-            if(patchUserPwdReq.getPassword()==null)
+        try {
+            if (patchUserPwdReq.getPassword() == null)
                 throw new BaseException(NOT_INPUT_PWD);
-            pwd=new SHA256().encrypt(patchUserPwdReq.getPassword());
+            pwd = new SHA256().encrypt(patchUserPwdReq.getPassword());
             patchUserPwdReq.setPassword(pwd);
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
-        try{
+        try {
             int result = userDao.modifyUserNewPwd(patchUserPwdReq);
-            if(result == 0){
+            if (result == 0) {
                 throw new BaseException(MODIFY_FAIL_USERPWD);
             }
-        } catch(Exception exception){
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public void modifyUserNewEmail(int userIdx,PatchUserEmailReq patchUserEmailReq) throws BaseException {
+        if (userProvider.checkEmail(patchUserEmailReq.getEmail()) == 1)
+            throw new BaseException(POST_USERS_EXISTS_EMAIL);
+        try {
+            int result = userDao.modifyUserEmail(userIdx,patchUserEmailReq);
+            if (result == 0) {
+                throw new BaseException(MODIFY_FAIL_USERIEMAIL);
+            }
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public void modifyUserNewNickname(int userIdx,PatchUserNicknameReq patchUserNicknameReq) throws BaseException {
+        if (userProvider.checkNickname(patchUserNicknameReq.getNickname()) == 1)
+            throw new BaseException(NICKNAME_ALREATY_EXISTS);
+        try {
+            int result = userDao.modifyUserNickname(userIdx,patchUserNicknameReq);
+            if (result == 0) {
+                throw new BaseException(MODIFY_FAIL_USERINICKNAME);
+            }
+        } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }

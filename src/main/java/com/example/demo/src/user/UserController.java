@@ -222,7 +222,6 @@ public class UserController {
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
-            System.out.println(postFollowReq.getFollowerId());
             //userIdx와 접근한 유저가 같은지 확인
             if (postFollowReq.getFollowerId() != userIdxByJwt) {
                 return new BaseResponse<>(INVALID_USER_JWT);
@@ -285,6 +284,50 @@ public class UserController {
             String result = "변경하였습니다";
             return new BaseResponse<>(result);
         } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /** 유저 닉네임변경
+     *[PATCH] /users/setNickname
+     *
+     * @return
+     */
+    @ResponseBody
+    @PatchMapping("/setNickname")
+    public BaseResponse<String> modifyUserNewNickname(@RequestBody User user){
+        try
+        {
+            int userIdxByJwt = jwtService.getUserIdx();
+            PatchUserNicknameReq patchUserNicknameReq=new PatchUserNicknameReq(user.getNickname());
+            userService.modifyUserNewNickname(userIdxByJwt,patchUserNicknameReq);
+
+            String result="닉네임 설정 완료";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+
+    /** 유저 이메일변경
+     *[PATCH] /users/setEmail
+     *
+     * @return
+     */
+
+    @ResponseBody
+    @PatchMapping("/setEmail")
+    public BaseResponse<String> modifyUserNewEmail(@RequestBody User user){
+        try
+        {
+            int userIdxByJwt = jwtService.getUserIdx();
+            PatchUserEmailReq patchUserEmailReq=new PatchUserEmailReq(user.getEmail());
+            userService.modifyUserNewEmail(userIdxByJwt,patchUserEmailReq);
+
+            String result="이메일 설정 완료";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
     }
