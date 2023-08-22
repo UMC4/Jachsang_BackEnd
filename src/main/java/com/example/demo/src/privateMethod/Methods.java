@@ -51,7 +51,7 @@ public class Methods {
             return (CommunityPost)detailPost;
         }
         //공동구매 detail 정보 불러오기
-        else if(categoryIdx < 20) {
+        else if(categoryIdx < 30) {
             String qry = "SELECT * FROM GroupPurchaseDetail WHERE postIdx = "+postIdx;
             detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new GroupPurchasePost(
                     rs.getInt("groupPurchaseDetailIdx"),
@@ -72,9 +72,9 @@ public class Methods {
             String qry = "SELECT * FROM RecipeDetail WHERE postIdx = " + postIdx;
             detailPost = this.jdbcTemplate.queryForObject(qry, (rs, rowNum) -> new RecipePost(
                     rs.getInt("recipeDetailIdx"),
-                    rs.getString("mainImageUrl"),
                     rs.getString("ingredients"),
-                    rs.getString("description")
+                    rs.getString("description"),
+                    rs.getString("mainImageUrl")
             ));
             return (RecipePost)detailPost;
         }
