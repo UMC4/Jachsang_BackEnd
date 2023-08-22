@@ -90,16 +90,11 @@ public class HomeDao {
     // 인기도 = (100*조회수 + 공감수)
     public List<GetRecipeItemRes> sortRecipeByPopularity(int userIdx) {
         String Query =
-                "SELECT P.postIdx, P.title, P.likeCount, imagePath, " +
+                "SELECT P.postIdx, P.title, P.likeCount, RD.mainImageUrl, " +
                     "IF(LP.postIdx IS NOT NULL, TRUE, FALSE) AS likestatus, P.likeCount " +
                 "FROM Post P " +
                     "LEFT JOIN LikedPost LP ON P.postIdx = LP.postIdx AND LP.userIdx = ? " +
-                    "LEFT JOIN ( " +
-                        "SELECT postIdx, MIN(imageIdx) as minIdx, path as imagePath " +
-                        "FROM Image  " +
-                        "GROUP BY postIdx  " +
-                    ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
-                "WHERE FLOOR(P.categoryIdx/10) = 3 " +
+                    "JOIN RecipeDetail RD ON P.postIdx = RD.postIdx " +
                 "ORDER BY IF(P.createAt >= TIMESTAMPADD(DAY, -7, CURRENT_TIMESTAMP), 1, 0)," +
                     "(100*P.likeCount+P.viewCount) DESC LIMIT 1";
 

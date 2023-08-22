@@ -256,15 +256,11 @@ public class BoardDao {
     // 게시물 생성 시간을 기준으로 내림차순으로 정렬됩니다.
     public List<GetRecipeItemRes> sortRecipeByLatest(int userIdx, int startIdx, int size) {
         String Query =
-                "SELECT P.postIdx, P.title, P.likeCount, imagePath, " +
+                "SELECT P.postIdx, P.title, P.likeCount, RD.mainImageUrl, " +
                         "IF(LP.postIdx IS NOT NULL, TRUE, FALSE) AS likestatus " +
                 "FROM Post P " +
                     "LEFT JOIN LikedPost LP ON P.postIdx = LP.postIdx AND LP.userIdx = ? " +
-                    "LEFT JOIN ( " +
-                        "SELECT postIdx, MIN(imageIdx) as minIdx, path as imagePath " +
-                        "FROM Image  " +
-                        "GROUP BY postIdx  " +
-                        ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
+                    "JOIN RecipeDetail RD ON P.postIdx = RD.postIdx " +
                 "WHERE FLOOR(P.categoryIdx / 10) = 3 " +
                 "ORDER BY P.createAt DESC " +
                 "LIMIT ? OFFSET ?";
@@ -278,15 +274,11 @@ public class BoardDao {
     // 인기도 = (100*조회수 + 공감수)
     public List<GetRecipeItemRes> sortRecipeByPopularity(int userIdx, int startIdx, int size) {
         String Query =
-                "SELECT P.postIdx, P.title, P.likeCount, imagePath, " +
+                "SELECT P.postIdx, P.title, P.likeCount, RD.mainImageUrl, " +
                     "IF(LP.postIdx IS NOT NULL, TRUE, FALSE) AS likestatus, P.likeCount " +
                 "FROM Post P " +
                     "LEFT JOIN LikedPost LP ON P.postIdx = LP.postIdx AND LP.userIdx = ? " +
-                    "LEFT JOIN ( " +
-                        "SELECT postIdx, MIN(imageIdx) as minIdx, path as imagePath " +
-                        "FROM Image  " +
-                        "GROUP BY postIdx  " +
-                    ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
+                    "JOIN RecipeDetail RD ON P.postIdx = RD.postIdx " +
                 "WHERE FLOOR(P.categoryIdx / 10) = 3 " +
                 "ORDER BY IF(P.createAt >= TIMESTAMPADD(DAY, -7, CURRENT_TIMESTAMP), 1, 0)," +
                     "(100*P.likeCount+P.viewCount) DESC " +
@@ -297,15 +289,10 @@ public class BoardDao {
 
     public List<GetRecipeItemRes> searchRecipe(int userIdx, String query, boolean isTagSearch, int startIdx, int size) {
         String Query =
-                "SELECT P.postIdx, P.title, P.likeCount, imagePath, IF(LP.postIdx IS NOT NULL, TRUE, FALSE) AS likestatus " +
+                "SELECT P.postIdx, P.title, P.likeCount, RD.mainImageUrl, IF(LP.postIdx IS NOT NULL, TRUE, FALSE) AS likestatus " +
                 "FROM Post P " +
                     "JOIN RecipeDetail RD ON P.postIdx = RD.postIdx " +
                     "LEFT JOIN LikedPost LP ON P.postIdx = LP.postIdx AND LP.userIdx = ? " +
-                    "LEFT JOIN ( " +
-                        "SELECT postIdx, MIN(imageIdx) as minIdx, path as imagePath " +
-                        "FROM Image  " +
-                        "GROUP BY postIdx  " +
-                    ") MinIdImage ON P.postIdx = MinIdImage.postIdx " +
                 "WHERE FLOOR(P.categoryIdx/10) = 3 AND " +
                 (isTagSearch ? "MATCH(RD.ingredients) AGAINST(? IN NATURAL LANGUAGE MODE) " : "MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE) ") +
                 "LIMIT ? OFFSET ?";
