@@ -63,6 +63,7 @@ public enum BaseResponseStatus {
     FAILED_TO_FOLLOW(false,1008,"유저 팔로우하는데 실패하였습니다."),
     FAILED_TO_GETUSER(false,1008,"유저를 불러오는데 실패하였습니다."),
     ID_ALREATY_EXISTS(false,1009,"아이디가 이미 존재합니다."), //Email Controller
+    NICKNAME_ALREATY_EXISTS(false,1009,"닉네임이 이미 존재합니다."), //Email Controller
     FAILED_TO_GETMAIL(false,1010,"유저 이메일을 체크 실패하였습니다."),
     FAILED_CHECK_FOLLOWED(false,1011,"팔로우 여부체크에 실패하였습니다."),
     FAILED_CHECK_EXISTS_ID(false,1012,"아이디 존재 여부체크에 실패하였습니다."),
@@ -70,6 +71,9 @@ public enum BaseResponseStatus {
     FAILED_TO_UNFOLLOW(false,1014,"팔로우 취소에 실패하였습니다."),
     MODIFY_FAIL_USERPWD(false,1015,"비밀번호 재설정에 실패하였습니다."),
     MODIFY_FAIL_USERINFO(false,1016,"유저 정보변경에 실패하였습니다."),
+    MODIFY_FAIL_USERINICKNAME(false,1016,"닉네임 변경에 실패하였습니다."),
+    MODIFY_FAIL_USERIEMAIL(false,1016,"이메일 변경에 실패하였습니다."),
+
     FAILED_SEND_EMAIL(false,1017,"인증코드 전송에 실패하였습니다."),
     JWT_USER_MISSMATCH(false,1018,"jwt값과 userIdx값이 가리키는 유저가 다릅니다."),
 

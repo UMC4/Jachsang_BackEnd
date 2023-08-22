@@ -1,5 +1,7 @@
 package com.example.demo.src.mail;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.FileSystem;
 import java.util.Random;
 
 import javax.mail.MessagingException;
@@ -9,10 +11,14 @@ import javax.mail.internet.MimeMessage.RecipientType;
 
 import com.example.demo.config.BaseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import com.example.demo.config.BaseResponseStatus;
-
 import java.security.SecureRandom;
 
 @Service
@@ -22,7 +28,8 @@ public class RegisterMail implements MailServiceInter {
     JavaMailSender emailSender; // MailConfig에서 등록해둔 Bean을 autowired하여 사용하기
 
     private String ePw; // 사용자가 메일로 받을 인증번호
-
+//    @Value("classpath:resource/templateImg.jpg")
+//    private Resource mailimg;
 
     // 메일 내용 작성
     @Override
@@ -31,11 +38,13 @@ public class RegisterMail implements MailServiceInter {
         System.out.println("인증번호" + ePw);
 
         MimeMessage message = emailSender.createMimeMessage();
-
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         message.addRecipients(RecipientType.TO, to); // 메일 받을 사용자
         message.setSubject("[자취생을 부탁해 Recipe] 비밀번호 변경을 위한 이메일 인증코드 입니다"); // 이메일 제목
         String msgg = "";
-        msgg += "<img src=./resource/top-view-green-leafs-with-copy-space.jpg>"; // header image
+       // helper.setText("<img src=cid:templateImg.jpg/>");
+        //helper.addInline("mailImage",new ClassPathResource("templateImg.jpg"));
+        msgg += "<img src=\'cid:mailImage\'/>"; // header image
         msgg += "<h1>안녕하세요</h1>";
         msgg += "<h1>자취생을 부탁해 Recipe입니다</h1>";
         msgg += "<br>";
@@ -51,7 +60,7 @@ public class RegisterMail implements MailServiceInter {
 
         message.setText(msgg, "utf-8", "html"); // 메일 내용, charset타입, subtype
         // 보내는 사람의 이메일 주소, 보내는 사람 이름
-        message.setFrom(new InternetAddress("rlaaudsss@gmail.com", "Fligent_Admin"));
+        message.setFrom(new InternetAddress("rlaaudsss@gmail.com", "Self Recipe"));
         System.out.println("********creatMessage 함수에서 생성된 msgg 메시지********" + msgg);
 
         System.out.println("********creatMessage 함수에서 생성된 리턴 메시지********" + message);
