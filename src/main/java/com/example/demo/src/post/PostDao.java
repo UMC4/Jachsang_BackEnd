@@ -326,6 +326,7 @@ public class PostDao {
 
     // 사진 첨부 메서드
     public boolean postImage(int postIdx, List<String> paths) {
+        if(paths.isEmpty()) return true;
         String sql = "INSERT INTO Image(postIdx, path) VALUES";
         for (String path : paths) {
             sql += "(" + postIdx + ",\"" + path + "\"),";
