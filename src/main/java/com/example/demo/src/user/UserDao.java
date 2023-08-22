@@ -124,11 +124,38 @@ public class UserDao {
     public int checkID(String id) {
         String checkIdQuery = "select exists(select loginId from User where loginId = ?)";
         String checkIdParams = id;
-        ;
         return this.jdbcTemplate.queryForObject(checkIdQuery, int.class, checkIdParams);
     }
-
-
+    //닉네임 중복 체크
+    public int checkNickname(String nickname) {
+        String checkIdQuery = "select exists(select nickname from User where nickname = ?)";
+        String checkIdParams = nickname;
+        return this.jdbcTemplate.queryForObject(checkIdQuery, int.class, checkIdParams);
+    }
+    //휴대폰 전화번호 중복체크
+    public int checkPhoneNumber(String phoneNumber) {
+        String checkIdQuery = "select exists(select phoneNumber from User where phoneNumber = ?)";
+        String checkIdParams = phoneNumber;
+        return this.jdbcTemplate.queryForObject(checkIdQuery, int.class, checkIdParams);
+    }
+    //닉네임 변경
+    public int modifyUserNickname(int userIdx, PatchUserNicknameReq patchUserNicknameReq){
+        String modifyUserNicknameQuery = "update User set nickname=? where userIdx = ? ";
+        Object[] modifyUserNameParams = new Object[]{patchUserNicknameReq.getNickname(),userIdx};
+        return this.jdbcTemplate.update(modifyUserNicknameQuery,modifyUserNameParams);
+    }
+    //휴대전화변경
+    public int modifyUserPhonenumber(PatchUserReq patchUserReq){
+        String modifyUserNameQuery = "update User set phoneNumber=?  where userIdx = ? ";
+        Object[] modifyUserNameParams = new Object[]{patchUserReq.getNickname(),patchUserReq.getPhoneNumber(),patchUserReq.getPassword(),patchUserReq.getEmail(),patchUserReq.getUserIdx()};
+        return this.jdbcTemplate.update(modifyUserNameQuery,modifyUserNameParams);
+    }
+    //이메일변경
+    public int modifyUserEmail(int userIdx,PatchUserEmailReq patchUserEmailReq){
+        String modifyUserEmailQuery = "update User set email=?  where userIdx = ? ";
+        Object[] modifyUserNameParams = new Object[]{patchUserEmailReq.getEmail(),userIdx};
+        return this.jdbcTemplate.update(modifyUserEmailQuery,modifyUserNameParams);
+    }
     public int modifyUserInfo(PatchUserReq patchUserReq){
         String modifyUserNameQuery = "update User set nickname=?,phoneNumber=?,password=?,email=?  where userIdx = ? ";
         Object[] modifyUserNameParams = new Object[]{patchUserReq.getNickname(),patchUserReq.getPhoneNumber(),patchUserReq.getPassword(),patchUserReq.getEmail(),patchUserReq.getUserIdx()};
