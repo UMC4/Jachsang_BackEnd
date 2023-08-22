@@ -21,6 +21,7 @@ public class GetCommunityPostRes extends Image {
     private String title;
     private int viewCount;
     private int likeCount;
+    private int heartCount;
     private String createAt;
     private String updateAt;
     private String url;
@@ -36,6 +37,7 @@ public class GetCommunityPostRes extends Image {
         this.userIdx = generalPost.getUserIdx();
         this.title = generalPost.getTitle();
         this.viewCount = generalPost.getViewCount();
+        this.heartCount = communityPost.getHeartCount();
         this.likeCount = generalPost.getLikeCount();
         this.createAt = generalPost.getCreateAt();
         this.updateAt = generalPost.getUpdateAt();

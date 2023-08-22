@@ -67,6 +67,8 @@ public class PostController {
         }
     }
 
+//    public BaseResponse<String> addImageOnPost(@RequestPart )
+
     @ResponseBody
     @GetMapping(value ="get")
     public BaseResponse<Object> getPost(@RequestParam(value = "postIdx") int postIdx){
