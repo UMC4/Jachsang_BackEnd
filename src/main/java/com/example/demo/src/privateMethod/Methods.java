@@ -147,18 +147,22 @@ public class Methods {
     }
     public boolean _isLikedPost(int userIdx, int postIdx){
         try {
-            String checkLikedPost = "EXISTS(SELECT * FROM LikedPost WHERE postIdx = ? AND userIdx = ?)";
+
+            String checkLikedPost = "SELECT userIdx FROM LikedPost WHERE postIdx = ? AND userIdx = ?";
             Object[] param = {postIdx, userIdx};
-            return this.jdbcTemplate.queryForObject(checkLikedPost, param, int.class) == 1 ? true : false;
+            int result = this.jdbcTemplate.queryForObject(checkLikedPost, param, int.class);
+            return result > 0 ? true : false;
+
         } catch(Exception e){
             return false;
         }
     }
     public boolean _isHeartPost(int userIdx, int postIdx){
         try{
-            String checkLikedPost = "EXISTS(SELECT * FROM HeartPost WHERE postIdx = ? AND userIdx = ?)";
+            String checkHeartPost = "SELECT * FROM HeartPost WHERE postIdx = ? AND userIdx = ?";
             Object[] param = {postIdx, userIdx};
-            return this.jdbcTemplate.queryForObject(checkLikedPost,param,int.class) == 1 ? true : false;
+            int result = this.jdbcTemplate.queryForObject(checkHeartPost, param, int.class);
+            return result > 0 ? true : false;
         }
         catch (Exception e) {
             return false;

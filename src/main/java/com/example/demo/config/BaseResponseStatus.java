@@ -84,6 +84,7 @@ public enum BaseResponseStatus {
     SELF_REPORT(false,3007,"자기 자신을 신고할 수 없습니다."),
     REPORT_COUNT_OVER(false,3009,"이미 신고한 대상입니다."),
     SELF_ADDITION(false,3010,"자신의 글에 공감/좋아요를 남길 수 없습니다."),
+    INCOMPLETE_POST(false,3011,"불완전한 게시글입니다. 게시글을 삭제합니다."),
 
     //게시판
     BOTH_CATEGORY_SORT_INPUT(false, 2000, "카테고리와 정렬 조건 중 하나만 입력되어야 합니다."),

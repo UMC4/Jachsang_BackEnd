@@ -8,6 +8,7 @@ import com.example.demo.src.post.model.generalModel.*;
 import com.example.demo.src.privateMethod.Methods;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -80,6 +81,9 @@ public class PostController {
 
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
+        }catch( IncorrectResultSizeDataAccessException e){
+            deletePost(postIdx);
+            return new BaseResponse<>(INCOMPLETE_POST);
         }
     }
 
