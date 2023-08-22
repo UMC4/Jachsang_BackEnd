@@ -241,4 +241,14 @@ public class PostController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    @ResponseBody
+    @PostMapping(value = "delete/all")
+    public BaseResponse<Integer> deleteAllCom(){
+        try{
+            return new BaseResponse<>(this.postService.deleteAllCommunity());
+        }catch(BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 }

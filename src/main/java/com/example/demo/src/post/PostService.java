@@ -57,4 +57,8 @@ public class PostService {
     public int deleteRecipes() throws BaseException{
         return this.postDao.deleteRecipes();
     }
+
+    public int deleteAllCommunity() throws BaseException{
+        return this.postDao.killAllCommunityPost();
+    }
 }

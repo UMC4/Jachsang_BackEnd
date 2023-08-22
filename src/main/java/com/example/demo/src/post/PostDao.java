@@ -155,7 +155,7 @@ public class PostDao {
     // 글 삭제
     public boolean deletePost(int postIdx) {
         // 결과 확인용 변수 선언 - Post(general)와 Detail 각각 준비한다.
-        int general = 0, detail = 0, image = 0, like = 0, heart = 0, comment = 0;
+        int general = 0, detail = 0, image = 0, like = 0, heart = 0, comment = 0, chatRoom = 0, chatUser = 0;
         // 유저 idx를 저장한다.
         // 게시판 종류를 확인한다.
         int boardIdx = 10*methods._getBoardIdx(postIdx);
@@ -173,7 +173,7 @@ public class PostDao {
         String deleteLikeSql = "DELETE FROM LikedPost WHERE postIdx = "+postIdx;
         // HeartPost 내용을 삭제한다.
         String deleteHeartSql = "DELETE FROM HeartPost WHERE postIdx = "+postIdx;
-
+        String deleteChatRoomSql = "DELETE FROM ChatRoom WHERE postIdx = "+postIdx;
         // HeartComment 내용을 삭제한다.
         String getPostIdxSql = "SELECT commentIdx FROM Comment WHERE postIdx = "+postIdx;
         List<Integer> comIdxs = this.jdbcTemplate.queryForList(getPostIdxSql,int.class);
@@ -186,6 +186,22 @@ public class PostDao {
         // 마지막으로 Post 내용을 삭제한다.
         String deleteGeneralSql = "DELETE FROM Post WHERE postIdx = "+postIdx;
         // sql문 실행
+
+        String getChatRoomIdx = "SELECT chatRoomIdx FROM ChatRoom WHERE postIdx = "+postIdx;
+        List<Integer> chatRoomIdx = this.jdbcTemplate.queryForList(getChatRoomIdx,int.class);
+
+        for(int idxx : chatRoomIdx){
+            String getChatUserIdxSql = "SELECT chatUserIdx FROM ChatUser WHERE chatRoomIdx = "+idxx;
+            List<Integer> chatUserIdx = this.jdbcTemplate.queryForList(getChatUserIdxSql,int.class);
+            for(int chatIdxx : chatUserIdx) {
+                String deleteChatCommentSql = "DELETE FROM ChatComment WHERE chatUserIdx = "+chatIdxx;
+                this.jdbcTemplate.execute(deleteChatCommentSql);
+            }
+            String deleteChatUserSql = "DELETE FROM ChatUser WHERE chatRoomIdx = "+idxx;
+            this.jdbcTemplate.execute(deleteChatUserSql);
+        }
+
+        chatRoom = this.jdbcTemplate.update(deleteChatRoomSql);
         image = this.jdbcTemplate.update(deleteImageSql);
         like = this.jdbcTemplate.update(deleteLikeSql);
         heart = this.jdbcTemplate.update(deleteHeartSql);
@@ -366,5 +382,16 @@ public class PostDao {
                 rs.getString("nickName"),
                 rs.getString("loginId")
         ));
+    }
+
+    public int killAllCommunityPost(){
+        String sql = "SELECT postIdx FROM Post WHERE categoryIdx < 20";
+        List<Integer> postIdx = this.jdbcTemplate.queryForList(sql,int.class);
+        int result = 0;
+        for(int p : postIdx) {
+            deletePost(p);
+            result++;
+        }
+        return result;
     }
 }
