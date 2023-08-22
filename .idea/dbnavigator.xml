@@ -25,6 +25,9 @@
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="bc6fd32d-ba8b-4f99-8ebc-a5930d1c4287" dataset="JachsangDB.Board" active-filter-id="" />
   </component>
+  <component name="DBNavigator.Project.ExecutionManager">
+    <retain-sticky-names value="false" />
+  </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
     <filters />

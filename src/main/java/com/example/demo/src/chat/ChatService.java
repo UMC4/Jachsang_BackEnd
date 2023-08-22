@@ -30,7 +30,19 @@ public class ChatService {
     @PostConstruct
     private void init() {
         chatRooms = new LinkedHashMap<>();
+        initializeChatRooms();
     }
+
+    private void initializeChatRooms() {
+
+        List<PostChatRoom> chatRoomList = chatDao.findAllChatRooms();
+        for (PostChatRoom postChatRoom : chatRoomList) {
+            Long chatRoomIdx = postChatRoom.getChatRoomIdx();
+            chatRooms.put(chatRoomIdx, postChatRoom);
+        }
+    }
+
+
 
 
     public PostChatRoom findRoomByChatRoomIdx(Long chatRoomIdx) {

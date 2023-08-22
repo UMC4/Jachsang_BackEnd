@@ -22,6 +22,22 @@ public class ChatDao {
     }
 
 
+    public List<PostChatRoom> findAllChatRooms() {
+        String getChatRoomsQuery = "SELECT cr.chatRoomIdx, p.userIdx, p.title, cr.unreads, cr.updateTime " +
+                "FROM ChatRoom cr " +
+                "Join Post p On p.postIdx = cr.postIdx";
+        List<PostChatRoom> postChatRooms = jdbcTemplate.query(getChatRoomsQuery,
+                (rs, rowNum) -> PostChatRoom.builder()
+                        .chatRoomIdx(rs.getLong("chatRoomIdx"))
+                        .userIdx(rs.getLong("userIdx"))
+                        .title(rs.getString("title"))
+                        .unreads(rs.getInt("unreads"))
+                        .updateTime(rs.getTimestamp("updateTime"))
+                        .build());
+        return postChatRooms;
+    }
+
+
 
     public Object getUser(GetUser getUser) {
         String getUserQuery = "SELECT userIdx, chatRestrictTime " +
