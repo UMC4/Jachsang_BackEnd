@@ -111,12 +111,11 @@ public class PostDao {
     public Object getPost (int categoryIdx, int userIdx, int postIdx) {
         // 세 게시판의 글을 한번에 처리하기 위한 변수 설정
         // 기본정보와 detail 정보 불러오기
-
         Object generalPost = methods._getPost(postIdx),
                 detailPost = methods._getDetailPost(categoryIdx,postIdx);
 
         // 조회수 1 증가시키기 위해 sql문 작성 및 실행
-        String viewUpdateSql = "UPDATE Post set viewCount = viewCount+1 WHERE postIdx = "+postIdx;
+        String viewUpdateSql = "UPDATE Post SET viewCount = viewCount+1 WHERE postIdx = "+postIdx;
         this.jdbcTemplate.update(viewUpdateSql);
 
         String getImageSql = "SELECT path FROM Image WHERE postIdx = "+postIdx;
@@ -126,11 +125,12 @@ public class PostDao {
 
         String getCommentIdxSql = "SELECT commentIdx FROM Comment WHERE postIdx = "+postIdx;
         List<Integer> comments = this.jdbcTemplate.queryForList(getCommentIdxSql,Integer.class);
+
         boolean isScraped = this.methods._isLikedPost(userIdx, postIdx);
         boolean isHearted = this.methods._isHeartPost(userIdx, postIdx);
 
     // Post와 detail의 정보를 합친 후 리턴하기
-        if (categoryIdx < 20 ) {
+        if (categoryIdx < 20) {
             GetCommunityPostRes result = new GetCommunityPostRes((Post)generalPost, (CommunityPost)detailPost,paths);
             result.setComments(comments);
             result.setScraped(isScraped);
@@ -254,7 +254,6 @@ public class PostDao {
 
         return true;
     }
-
     // 관심목록 추가
     public boolean scrapPost(LikeReq likeReq){
         // 어떤 유저가 어떤 게시글에 스크랩을 눌렀는가를 LikedPost 테이블에 기록하는 과정
@@ -356,5 +355,14 @@ public class PostDao {
             count++;
         }
         return count;
+    }
+
+    public GetUserDetailRes getUserDetail(int userIdx){
+        String getUserDetailSql = "SELECT userName, nickName, loginId FROM User WHERE userIdx = "+userIdx;
+        return this.jdbcTemplate.queryForObject(getUserDetailSql,(rs,rowNum)->new GetUserDetailRes(
+                rs.getString("userName"),
+                rs.getString("nickName"),
+                rs.getString("loginId")
+        ));
     }
 }

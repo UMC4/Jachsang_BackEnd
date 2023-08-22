@@ -1,6 +1,7 @@
 package com.example.demo.src.post;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.post.model.generalModel.GetUserDetailRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,5 +19,8 @@ public class PostProvider {
     }
     public int getLikeCount(int postIdx) throws BaseException{
         return this.postDao.getLikeCount(postIdx);
+    }
+    public GetUserDetailRes getUserDetail(int userIdx) throws BaseException {
+        return this.postDao.getUserDetail(userIdx);
     }
 }

@@ -40,7 +40,6 @@ public class PostController {
     public BaseResponse<PostingRes> createPost(@RequestBody Object postingReq){
         try {
             HashMap<String, Object> req = (LinkedHashMap) postingReq;
-
             int categoryIdx = (int) req.get("categoryIdx");
 
             //카테고리가 존재하지 않는 것일 때
@@ -223,6 +222,16 @@ public class PostController {
         try{
             return new BaseResponse<>(this.postService.deleteRecipes());
         }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    @ResponseBody
+    @PostMapping(value = "get/userDetail")
+    public BaseResponse<GetUserDetailRes> getUserDetail(@RequestParam(value = "userIdx") int userIdx){
+        try {
+            return new BaseResponse<>(this.postProvider.getUserDetail(userIdx));
+        } catch(BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
     }

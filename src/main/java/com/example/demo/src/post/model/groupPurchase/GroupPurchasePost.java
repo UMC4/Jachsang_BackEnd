@@ -16,6 +16,7 @@ public class GroupPurchasePost extends Post {
     private int groupPurchaseDetailIdx;
     private String productName;
     private String productURL;
+    private int heartCount;
     private double singlePrice;
     private double deliveryFee;
     private int members;

@@ -11,5 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CommunityPost {
     private int communityDetailIdx;
+    private int heartCount;
     private String contents;
 }

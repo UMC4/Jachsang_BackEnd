@@ -21,8 +21,8 @@ public class GetCommunityPostRes extends Image {
     private String title;
     private int viewCount;
     private int likeCount;
-    private Timestamp createAt;
-    private Timestamp updateAt;
+    private String createAt;
+    private String updateAt;
     private String url;
     private int communityDetailIdx;
     private String contents;
