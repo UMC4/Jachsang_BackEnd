@@ -108,7 +108,7 @@ public class PostDao {
     }
 
     // 글보기
-    public Object getPost(int categoryIdx, int userIdx, int postIdx) {
+    public Object getPost (int categoryIdx, int userIdx, int postIdx) {
         // 세 게시판의 글을 한번에 처리하기 위한 변수 설정
         // 기본정보와 detail 정보 불러오기
 

@@ -28,6 +28,7 @@ public class Methods {
         origin = origin.replace("</div>", "");
         origin = origin.replace("&lt", "<");
         origin = origin.replace("&gt", ">");
+        origin = origin.replace("\\","");
         for(int i = 0; i<origin.length(); i++) {
             if(origin.charAt(i)=='\n' || origin.charAt(i)=='\r') {
                 if(temp.equals("")) continue;
@@ -91,15 +92,45 @@ public class Methods {
         ArrayList<String> result = new ArrayList<>();
         try {
             for(int i = 0; ; i++) {
-                String ingredient = e.select("a").select("li").get(i).toString();
-                String dose = e.select("a").select("li").select("span").get(i).text().replace("\"","").replace("\'","");
-                ingredient = ingredient.substring(4,ingredient.indexOf(" <img")).replace("\"","").replace("\'","");
-                result.add(ingredient+" "+dose);
+                result.add(getIngre(e).get(i)+" "+getDose(e).get(i));
             }
         } catch (IndexOutOfBoundsException E) {
             return result;
         }
     }
+
+    public ArrayList<String> getIngre(Elements el){
+        ArrayList<String> result = new ArrayList<>();
+        try {
+
+            for(int i = 0; ;i++) {
+                String ingredient = el.select("li").select("a").get(i).text().replace("구매 ", "").replace("구매","").replace("\n","").replace("\r","");
+                if(!ingredient.equals("")) result.add(ingredient.trim());
+            }
+        } catch (IndexOutOfBoundsException e) {
+
+        }
+        finally {
+            return result;
+        }
+    }
+
+    public ArrayList<String> getDose(Elements el){
+
+        ArrayList<String> result = new ArrayList<>();
+        try {
+            for(int i = 0; ;i++) {
+                String doses = el.select("li").select("span").get(i).text().toString().replace("구매", "").replace("\n","").replace("\r","");
+                if(!doses.equals("")) result.add(doses.trim());
+            }
+        } catch (IndexOutOfBoundsException e) {
+
+        }
+        finally {
+            return result;
+        }
+    }
+
     public ArrayList<String> getDescription(Document doc){
         ArrayList<String> result = new ArrayList<>();
 
@@ -137,7 +168,7 @@ public class Methods {
     //페이지 전체 긁어와서 RecipeReq 형태로 저장하는 메서드
     public List<RecipeInsertReq> getRecipe(){
         ArrayList<RecipeInsertReq> recipe = new ArrayList<>();
-        for (int page = 1;page<2;page++) {
+        for (int page = 2;page<40;page++) {
             try {
                 System.out.println("" + page + " 페이지 작업중...");
                 System.setProperty("https.protocols", "TLSv1.2");
@@ -199,6 +230,7 @@ public class Methods {
             result += s;
             result += "|";
         }
+        System.out.println(result);
         return result;
     }
 }

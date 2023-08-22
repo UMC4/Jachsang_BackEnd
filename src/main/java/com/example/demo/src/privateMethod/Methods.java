@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.List;
 
 public class Methods {
@@ -143,14 +144,23 @@ public class Methods {
         else return false;
     }
     public boolean _isLikedPost(int userIdx, int postIdx){
-        String checkLikedPost = "EXISTS(SELECT * FROM LikedPost WHERE postIdx = ? AND userIdx = ?)";
-        Object[] param = {postIdx, userIdx};
-        return this.jdbcTemplate.queryForObject(checkLikedPost,param,int.class) == 1 ? true : false;
+        try {
+            String checkLikedPost = "EXISTS(SELECT * FROM LikedPost WHERE postIdx = ? AND userIdx = ?)";
+            Object[] param = {postIdx, userIdx};
+            return this.jdbcTemplate.queryForObject(checkLikedPost, param, int.class) == 1 ? true : false;
+        } catch(Exception e){
+            return false;
+        }
     }
     public boolean _isHeartPost(int userIdx, int postIdx){
-        String checkLikedPost = "EXISTS(SELECT * FROM HeartPost WHERE postIdx = ? AND userIdx = ?)";
-        Object[] param = {postIdx, userIdx};
-        return this.jdbcTemplate.queryForObject(checkLikedPost,param,int.class) == 1 ? true : false;
+        try{
+            String checkLikedPost = "EXISTS(SELECT * FROM HeartPost WHERE postIdx = ? AND userIdx = ?)";
+            Object[] param = {postIdx, userIdx};
+            return this.jdbcTemplate.queryForObject(checkLikedPost,param,int.class) == 1 ? true : false;
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
     public void recipeTest() throws BaseException {
         com.example.demo.src.recipeCrawl.Methods m = new com.example.demo.src.recipeCrawl.Methods();
