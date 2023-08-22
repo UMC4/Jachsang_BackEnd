@@ -13,7 +13,7 @@ public class GetRecipeItemRes {
     private String title;
     private boolean likeStatus;
     private int likeCount;
-    private String imagePath;
+    private String mainImageUrl;
 
     public static RowMapper<GetRecipeItemRes> recipeRowMapper =
             (rs,rowNum) -> new GetRecipeItemRes(
@@ -21,6 +21,6 @@ public class GetRecipeItemRes {
                     rs.getString("title"),
                     rs.getBoolean("likeStatus"),
                     rs.getInt("likeCount"),
-                    rs.getString("imagePath")
+                    rs.getString("mainImageUrl")
             );
 }
