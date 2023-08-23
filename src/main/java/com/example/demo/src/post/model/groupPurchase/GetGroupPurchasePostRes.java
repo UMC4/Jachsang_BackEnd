@@ -31,7 +31,7 @@ public class GetGroupPurchasePostRes extends Image {
     private double singlePrice;
     private double deliveryFee;
     private int members;
-    private Timestamp deadline;
+    private String deadline;
     private boolean hasExtension;
     private boolean calculated;
     private List<Integer> comments;
@@ -55,7 +55,7 @@ public class GetGroupPurchasePostRes extends Image {
         this.singlePrice = groupPurchasePost.getSinglePrice();
         this.deliveryFee = groupPurchasePost.getDeliveryFee();
         this.members = groupPurchasePost.getMembers();
-        this.deadline = groupPurchasePost.getDeadline();
+        this.deadline = groupPurchasePost.getDeadline().toString();
         this.hasExtension = groupPurchasePost.isHasExtension();
         this.calculated = groupPurchasePost.isCalculated();
     }
