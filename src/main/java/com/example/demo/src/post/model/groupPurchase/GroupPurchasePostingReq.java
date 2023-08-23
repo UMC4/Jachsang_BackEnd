@@ -22,7 +22,7 @@ public class GroupPurchasePostingReq extends PostingReq {
     private double singlePrice;
     private double deliveryFee;
     private int members;
-    private String deadline;
+    private Timestamp deadline;
     private boolean hasExtension;
     private boolean calculated;
 
@@ -34,7 +34,7 @@ public class GroupPurchasePostingReq extends PostingReq {
         this.singlePrice = (int)req.get("singlePrice");
         this.deliveryFee = (int)req.get("deliveryFee");
         this.members = (int)req.get("members");
-        this.deadline = Timestamp.valueOf((String)req.get("deadline")).toString();
+        this.deadline = Timestamp.valueOf((String)req.get("deadline"));
         this.hasExtension = false;
         this.calculated = false;
     }
