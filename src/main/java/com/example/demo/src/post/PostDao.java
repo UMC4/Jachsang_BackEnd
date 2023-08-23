@@ -74,11 +74,11 @@ public class PostDao {
             else if (categoryIdx < 30) {
                 GroupPurchasePostingReq posting = new GroupPurchasePostingReq(postIdx, postingReq);
                 sqlSpecific = "INSERT INTO GroupPurchaseDetail(groupPurchaseDetailIdx, postIdx, productName, productURL, singlePrice, deliveryFee, " +
-                        "members, deadline,hasExtension, calculated) VALUES (" + postIdx + "," + postIdx + ",?,?,?,?,?,?,false,false)";
+                        "members, deadline,hasExtension, calculated) VALUES (" + postIdx + "," + postIdx + ",?,?,?,?,?,now(),false,false)";
 
                 paramSpecific = new Object[]{
                         posting.getProductName(), posting.getProductURL(), posting.getSinglePrice(),
-                        posting.getDeliveryFee(), posting.getMembers(), posting.getDeadline()
+                        posting.getDeliveryFee(), posting.getMembers()
                 };
             }
 
