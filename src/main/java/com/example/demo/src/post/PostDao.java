@@ -42,6 +42,7 @@ public class PostDao {
     // 글쓰기
     public PostingRes posting(int categoryIdx, HashMap<String,Object> postingReq) {
         try {
+            System.setProperty("https.protocols", "TLSv1.0");
             // 입력받은 정보를 general information, specific information으로 구분하는 작업
             // 그 중에서 general information을 Post general에 담는 과정
             PostingReq general = new PostingReq(
