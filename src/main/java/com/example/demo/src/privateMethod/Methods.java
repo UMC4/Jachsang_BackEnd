@@ -36,6 +36,7 @@ public class Methods {
                 rs.getString("createAt"),
                 rs.getString("updateAt"),
                 rs.getString("url")));
+
     }
     public Object _getDetailPost(int categoryIdx, int postIdx){
         // 카테고리 detail 정보 불러오기

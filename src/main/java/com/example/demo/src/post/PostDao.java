@@ -120,9 +120,7 @@ public class PostDao {
         this.jdbcTemplate.update(viewUpdateSql);
 
         String getImageSql = "SELECT path FROM Image WHERE postIdx = "+postIdx;
-        List<String> paths = this.jdbcTemplate.query(getImageSql, (rs,rowNum) -> new String(
-                rs.getString("path")
-        ));
+        List<String> paths = this.jdbcTemplate.queryForList(getImageSql,String.class);
 
         String getCommentIdxSql = "SELECT commentIdx FROM Comment WHERE postIdx = "+postIdx;
         List<Integer> comments = this.jdbcTemplate.queryForList(getCommentIdxSql,Integer.class);
