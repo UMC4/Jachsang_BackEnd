@@ -22,7 +22,6 @@ public class GetGroupPurchasePostRes extends Image {
     private int viewCount;
     private int heartCount;
     private int likeCount;
-    private int heartCount;
     private String createAt;
     private String updateAt;
     private String url;
@@ -45,7 +44,6 @@ public class GetGroupPurchasePostRes extends Image {
         this.userIdx = generalPost.getUserIdx();
         this.title = generalPost.getTitle();
         this.viewCount = generalPost.getViewCount();
-        this.heartCount = groupPurchasePost.getHeartCount();
         this.likeCount = generalPost.getLikeCount();
         this.heartCount = groupPurchasePost.getHeartCount();
         this.createAt = generalPost.getCreateAt();

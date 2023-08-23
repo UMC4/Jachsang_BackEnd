@@ -4,12 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="740a7c08-5f0d-47a5-9908-2e7564bca36f" name="Changes" comment="레시피 get 업데이트">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2023-08-16__6_37__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2023-08-16__6_37__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2023-08-22__2_20__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2023-08-22__2_20__Changes_.xml" afterDir="false" />
+    <list default="true" id="740a7c08-5f0d-47a5-9908-2e7564bca36f" name="Changes" comment="paths 수정해봄">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Jachsang.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Jachsang_BackEnd.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dbnavigator.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/discord.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/jsoup_1_16_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/src/board/BoardDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/src/board/BoardDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/src/board/model/GetRecipeItemRes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/src/board/model/GetRecipeItemRes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/src/post/model/groupPurchase/GetGroupPurchasePostRes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/src/post/model/groupPurchase/GetGroupPurchasePostRes.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,6 +124,7 @@
       <workItem from="1692638351448" duration="3216000" />
       <workItem from="1692641617532" duration="3030000" />
       <workItem from="1692716361637" duration="4534000" />
+      <workItem from="1692767232640" duration="255000" />
     </task>
     <task id="LOCAL-00001" summary="신고 기능 개편">
       <created>1691241506359</created>
@@ -188,7 +196,14 @@
       <option name="project" value="LOCAL" />
       <updated>1692720720765</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="paths 수정해봄">
+      <created>1692767310797</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1692767310797</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -206,7 +221,8 @@
     <MESSAGE value="게시글 삭제 api 업데이트" />
     <MESSAGE value="레시피 get 업데이트" />
     <MESSAGE value="공동구매 게시글 정렬 기능 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="공동구매 게시글 정렬 기능 수정" />
+    <MESSAGE value="paths 수정해봄" />
+    <option name="LAST_COMMIT_MESSAGE" value="paths 수정해봄" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>
