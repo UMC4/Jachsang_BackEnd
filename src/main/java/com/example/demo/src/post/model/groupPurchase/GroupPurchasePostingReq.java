@@ -19,8 +19,8 @@ public class GroupPurchasePostingReq extends PostingReq {
     private int postIdx;
     private String productName;
     private String productURL;
-    private double singlePrice;
-    private double deliveryFee;
+    private int singlePrice;
+    private int deliveryFee;
     private int members;
     private String deadline;
     private boolean hasExtension;
